@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Klasszikus Borbély</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        color: #f5f5f5;
+        line-height: 1.6;
+        overflow-x: hidden;
+        position: relative;
+        z-index: 0;
+      }
+
+      /* 🎥 Videó háttér */
+      #hatter_video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -2;
+      }
+
+      /* 🌫️ Áttetsző sötét réteg a szöveg olvashatóságához */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: rgba(17, 17, 17, 0.8);
+        border-bottom: 2px solid #3cbcc7;
+      }
+
+      header .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #3cbcc7;
+      }
+
+      header nav ul {
+        list-style: none;
+        display: flex;
+        gap: 1rem;
+      }
+
+      header nav a {
+        text-decoration: none;
+        color: #f5f5f5;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      header nav a:hover {
+        color: #3cbcc7;
+      }
+
+      .hero {
+        text-align: center;
+        padding: 5rem 2rem;
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        color: #3cbcc7;
+        margin-bottom: 1rem;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        color: #ccc;
+      }
+
+      section {
+        padding: 4rem 2rem;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 10px;
+        margin: 2rem auto;
+        max-width: 1000px;
+      }
+
+      h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #3cbcc7;
+      }
+
+      .service-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+      }
+
+      .service {
+        background-color: rgba(34, 34, 34, 0.85);
+        padding: 2rem;
+        border-radius: 10px;
+        width: 200px;
+        text-align: center;
+        border: 1px solid #3cbcc7;
+        transition: transform 0.3s;
+      }
+
+      .service:hover {
+        transform: scale(1.05);
+      }
+
+      .service-nyitva {
+        background-color: rgba(34, 34, 34, 0.8);
+        padding: 1rem;
+        border-radius: 10px;
+        max-width: 500px;
+        border: 1px solid #3cbcc7;
+        margin: 0.5rem 0;
+      }
+
+      form {
+        max-width: 400px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      input,
+      select,
+      button {
+        padding: 0.8rem;
+        border-radius: 5px;
+        border: none;
+        outline: none;
+      }
+
+      input,
+      select {
+        background-color: #333;
+        color: #f5f5f5;
+      }
+
+      button {
+        background-color: #3cbcc7;
+        color: #111;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #3cbcc7;
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem;
+        background-color: rgba(17, 17, 17, 0.8);
+        border-top: 2px solid #3cbcc7;
+        color: #ccc;
+      }
+
+      .plusz-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: 2rem;
+      }
+
+      .plusz-info div {
+        margin: 0.3rem 0;
+      }
+
+      /* NAV LISTA NE MUTASSON • JELET */
+      .nav-list {
+        list-style: none;
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+      }
+
+      /* PROFIL IKON */
+      .profile-menu {
+        position: relative;
+        cursor: pointer;
+      }
+
+      .profile-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid #3cbcc7;
+        padding: 3px;
+        display: block;
+      }
+
+      /* LENYÍLÓ MENÜ */
+      .dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 50px;
+        background: rgba(17, 17, 17, 0.95);
+        border: 1px solid #3cbcc7;
+        border-radius: 8px;
+        list-style: none;
+        padding: 0.5rem 0;
+        width: 180px;
+        z-index: 999;
+      }
+
+      .dropdown li {
+        padding: 0.6rem 1rem;
+      }
+
+      .dropdown li a,
+      .logout-btn {
+        color: #fff;
+        text-decoration: none;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+      }
+
+      .dropdown li:hover {
+        background: rgba(60, 188, 199, 0.25);
+      }
+
+      /* AKTÍV ÁLLAPOT - LENYÍLVA */
+      .profile-menu.open .dropdown {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 🌊 VIDEÓ HÁTTÉR -->
+    <video id="hatter_video" autoplay muted loop>
+      <source src="/videos/video.mp4" type="video/mp4" />
+      A böngésződ nem támogatja a videó elemet.
+    </video>
+
+    <header>
+      <div class="logo">Beach Barbershop</div>
+
+      <nav>
+        <ul class="nav-list">
+          <li><a href="#services">Szolgáltatások</a></li>
+          <li><a href="#booking">Foglalás</a></li>
+
+          <!-- 🔽 PROFIL IKON MENÜ 🔽 -->
+          <li class="profile-menu">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
+
+            <ul class="dropdown" aria-hidden="true">
+              <li><a href="/bejelentkezes">Bejelentkezés</a></li>
+              <li><a href="/regisztracio">Regisztráció</a></li>
+              <li>
+                <form action="/api/logout" method="get">
+                  <button type="submit" class="logout-btn">Kijelentkezés</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          <!-- 🔼 PROFIL IKON MENÜ 🔼 -->
+        </ul>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>Üdvözlünk a Beach Barbershop</h1>
+      <p>Modern stílus, klasszikus borbély hangulat</p>
+      <div class="plusz-info">
+        <div class="service-nyitva">
+          <strong>Nyitvatartás:</strong> H–P: 09:00 – 20:00, Szo: 09:00 – 15:00, V: Zárva
+        </div>
+        <div class="service-nyitva"><strong>Cím:</strong> Egervár Sárviz folyó</div>
+        <div class="service-nyitva"><strong>Telefon:</strong> +36 30 123 4567</div>
+      </div>
+    </section>
+
+    <section id="services">
+      <h2>Szolgáltatásaink</h2>
+      <div class="service-list">
+        <div class="service">
+          <h3>Hajvágás</h3>
+          <p>Ár: 5000 Ft</p>
+        </div>
+        <div class="service">
+          <h3>Szakállvágás</h3>
+          <p>Ár: 3000 Ft</p>
+        </div>
+        <div class="service">
+          <h3>Borotválás</h3>
+          <p>Ár: 4000 Ft</p>
+        </div>
+        <div class="service">
+          <h3>Férfi frizura & Szakáll csomag</h3>
+          <p>Ár: 8000 Ft</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="booking">
+      <h2>Foglalás</h2>
+      <form id="foglalas_urlap">
+        <input type="text" placeholder="Teljes név" required />
+        <input type="email" placeholder="Email" required />
+        <input type="date" required />
+        <input type="time" required />
+        <select required>
+          <option value="">Válassz szolgáltatást</option>
+          <option value="haircut">Hajvágás</option>
+          <option value="beard">Szakállvágás</option>
+          <option value="shave">Borotválás</option>
+          <option value="combo">Csomag</option>
+        </select>
+        <button type="submit">Foglalás küldése</button>
+      </form>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 Beach Barbershop</p>
+    </footer>
+
+    <script>
+      // MINDEN eseményregisztrációt csak a DOMContentLoaded után végzünk,
+      // és mindig ellenőrizzük, hogy az elem létezik-e, hogy ne dobjon hibát.
+      document.addEventListener("DOMContentLoaded", () => {
+        // Foglalás űrlap (ha van)
+        const fogForm = document.getElementById("foglalas_urlap");
+        if (fogForm) {
+          fogForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            alert("Foglalás sikeresen rögzítve!");
+          });
+        }
+
+        // Bejelentkezés űrlap (ha van)
+        const bejForm = document.getElementById("bejelentkezes_urlap");
+        if (bejForm) {
+          bejForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            alert("Bejelentkezés sikeres (demo)!");
+          });
+        }
+
+        // Regisztráció űrlap (ha van)
+        const regForm = document.getElementById("regisztracio_urlap");
+        if (regForm) {
+          regForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            alert("Regisztráció sikeres (demo)!");
+          });
+        }
+
+        // Profil ikon -> lenyíló menü
+        const profileIcon = document.querySelector(".profile-icon");
+        const profileMenu = document.querySelector(".profile-menu");
+
+        if (!profileIcon || !profileMenu) {
+          console.log("Profil ikon vagy profil menü hiányzik.");
+          return;
+        }
+
+        // Nyitás / zárás
+        profileIcon.addEventListener("click", (e) => {
+          e.stopPropagation();
+          profileMenu.classList.toggle("open");
+          const dropdown = profileMenu.querySelector(".dropdown");
+          if (dropdown) {
+            const isOpen = profileMenu.classList.contains("open");
+            dropdown.setAttribute("aria-hidden", !isOpen);
+          }
+        });
+
+        // Klikk bárhova -> bezár
+        document.addEventListener("click", () => {
+          profileMenu.classList.remove("open");
+          const dropdown = profileMenu.querySelector(".dropdown");
+          if (dropdown) dropdown.setAttribute("aria-hidden", "true");
+        });
+      });
+    </script>
+  </body>
+</html>

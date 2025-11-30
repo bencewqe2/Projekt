@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model felhasznalok {
+  id          Int    @id @default(autoincrement()) @db.UnsignedInt
+  felhnev     String @default("0") @db.VarChar(50)
+  email       String @default("0") @db.VarChar(50)
+  hash        String @default("0") @db.Char(72)
+  telefonszam String @default("0") @db.VarChar(50)
+}
+
+model idopont {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  felhaszid Int      @db.UnsignedInt
+  idopont   DateTime @db.DateTime(0)
+
+  @@index([felhaszid], map: "FK_idopont_felhasznalok")
+}
+
+model borbelyok {
+  id       Int    @id @default(autoincrement()) @db.UnsignedInt
+  Nev      String @default("") @db.VarChar(50)
+  email    String @default("") @db.VarChar(50)
+  teleszam Int?
+}
