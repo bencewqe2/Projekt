@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fiók – Beach Barbershop</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        color: #f5f5f5;
+        line-height: 1.6;
+        overflow-x: hidden;
+        position: relative;
+        z-index: 0;
+      }
+
+      /* 🎥 Videó háttér */
+      #hatter_video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -2;
+      }
+
+      /* 🌫️ Overlay */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+      }
+
+      /* ===== HEADER (UGYANAZ) ===== */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: rgba(17, 17, 17, 0.8);
+        border-bottom: 2px solid #3cbcc7;
+      }
+
+      header .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #3cbcc7;
+      }
+
+      header nav ul {
+        list-style: none;
+        display: flex;
+        gap: 1rem;
+      }
+
+      header nav a {
+        text-decoration: none;
+        color: #f5f5f5;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      header nav a:hover {
+        color: #3cbcc7;
+      }
+
+      /* ===== ÜDV ===== */
+      .account-header {
+        max-width: 1100px;
+        margin: 2rem auto 1.5rem;
+        padding: 1rem 2rem;
+        background: rgba(0, 0, 0, 0.45);
+        border-radius: 12px;
+        text-align: right;
+        font-size: 1.3rem;
+        color: #3cbcc7;
+      }
+
+      /* ===== LAYOUT ===== */
+      .account-wrapper {
+        max-width: 1100px;
+        margin: 0 auto 4rem;
+        display: flex;
+        gap: 2rem;
+      }
+
+      /* ===== SIDEBAR ===== */
+      .account-sidebar {
+        width: 260px;
+        background: rgba(0, 0, 0, 0.45);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .account-sidebar button {
+        width: 100%;
+        padding: 1rem;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid rgba(60, 188, 199, 0.4);
+        color: #f5f5f5;
+        text-align: left;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .account-sidebar button:hover {
+        background: rgba(60, 188, 199, 0.2);
+        color: #3cbcc7;
+      }
+
+      /* ===== CONTENT ===== */
+      .account-content {
+        flex: 1;
+        padding: 2.5rem;
+        background: rgba(0, 0, 0, 0.45);
+        border-radius: 12px;
+      }
+
+      .account-section {
+        display: none;
+      }
+
+      .account-section.active {
+        display: block;
+      }
+
+      .account-section p {
+        margin-bottom: 1rem;
+        font-size: 1.05rem;
+      }
+
+      .account-section strong {
+        color: #3cbcc7;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Videó háttér -->
+    <video id="hatter_video" autoplay muted loop>
+      <source src="/videos/video.mp4" type="video/mp4" />
+    </video>
+
+    <header>
+      <div class="logo">Beach Barbershop</div>
+      <nav>
+        <ul>
+          <li><a href="/">Vissza a főoldalra</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="account-header">Üdv, <%= user.felhnev %></div>
+
+    <div class="account-wrapper">
+      <aside class="account-sidebar">
+        <button onclick="showSection('info')">Fiók részletek</button>
+        <button onclick="showSection('bookings')">Foglalások</button>
+        <button onclick="showSection('orders')">Rendelések</button>
+      </aside>
+
+      <main class="account-content">
+        <section id="info" class="account-section active">
+          <p><strong>Felhasználónév:</strong> <%= user.felhnev %></p>
+          <p><strong>Email:</strong> <%= user.email %></p>
+          <p><strong>Telefonszám:</strong> <%= user.pnumber || "nincs megadva" %></p>
+          <p><strong>Jelszó:</strong> ********</p>
+        </section>
+
+        <section id="bookings" class="account-section">
+          <p>Itt lesznek a foglalásaid.</p>
+        </section>
+
+        <section id="orders" class="account-section">
+          <p>Itt lesznek a rendeléseid.</p>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      function showSection(id) {
+        document.querySelectorAll(".account-section").forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+      }
+    </script>
+  </body>
+</html>
