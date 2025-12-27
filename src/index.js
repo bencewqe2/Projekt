@@ -47,6 +47,16 @@ app.get("/regisztracio", async (req, res) => {
   res.render("regisztracio");
 });
 
+app.get("/fiok", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/bejelentkezes");
+  }
+
+  res.render("fiok", {
+    user: req.session.user,
+  });
+});
+
 app.get("/api/hashTest", async (req, res) => {
   const hash = "$2a$12$09Hzf8/4jh/ODF6i84pXTe5uERYADJkAdtOT9DJiZa/6IcXOhOYGO"; // hash for "hello"
 
@@ -76,7 +86,7 @@ app.post("/api/login", async (req, res) => {
 
   // Sikeres belépés: mentsük a session-t (ne tegyünk bele érzékeny adatokat)
   const session = req.session;
-  session.user = { id: user.id, felhnev: user.felhnev, email: user.email };
+  session.user = { id: user.id, felhnev: user.felhnev, email: user.email, pnumber: user.telefonszam };
   await session.save();
 
   // Válasz JSON-nal, a kliens átirányít

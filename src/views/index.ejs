@@ -231,6 +231,14 @@
 
       .dropdown li {
         padding: 0.6rem 1rem;
+        text-align: center;
+      }
+
+      .dropdown li.username {
+        color: #3cbcc7;
+        font-weight: 700;
+        padding-top: 0.4rem;
+        padding-bottom: 0.4rem;
       }
 
       .dropdown li a,
@@ -242,7 +250,8 @@
         font-size: 1rem;
         cursor: pointer;
         width: 100%;
-        text-align: left;
+        text-align: center;
+        display: block;
       }
 
       .dropdown li:hover {
@@ -275,13 +284,18 @@
             <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
 
             <ul class="dropdown" aria-hidden="true">
-              <li><a href="/bejelentkezes">Bejelentkezés</a></li>
-              <li><a href="/regisztracio">Regisztráció</a></li>
+              <% if (user) { %>
+              <li style="padding: 0.6rem 1rem; color: #3cbcc7; font-weight: 700"><%= user.felhnev %></li>
+              <li><a href="/fiok">Fiók</a></li>
               <li>
                 <form action="/api/logout" method="get">
                   <button type="submit" class="logout-btn">Kijelentkezés</button>
                 </form>
               </li>
+              <% } else { %>
+              <li><a href="/bejelentkezes">Bejelentkezés</a></li>
+              <li><a href="/regisztracio">Regisztráció</a></li>
+              <% } %>
             </ul>
           </li>
           <!-- 🔼 PROFIL IKON MENÜ 🔼 -->
