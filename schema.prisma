@@ -20,6 +20,7 @@ model idopont {
   id        Int      @id @default(autoincrement()) @db.UnsignedInt
   felhaszid Int      @db.UnsignedInt
   idopont   DateTime @db.DateTime(0)
+  szolgal   String   @db.VarChar(50)
 
   @@index([felhaszid], map: "FK_idopont_felhasznalok")
 }
