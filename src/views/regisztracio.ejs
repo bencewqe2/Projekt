@@ -4,156 +4,77 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Beach Barbershop</title>
-
+    <link rel="stylesheet" href="/css/regisztracio.css" />
+  </head>
+  <body>
+    <!-- Videó háttér (seamless crossfade) -->
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
-
-      body {
-        color: #f5f5f5;
-        line-height: 1.6;
-        overflow-x: hidden;
-        position: relative;
-        z-index: 0;
-      }
-
-      /* 🎥 Videó háttér */
-      #hatter_video {
+      .bg-video-wrap {
         position: fixed;
-        top: 0;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+      }
+      .bg-video {
+        position: absolute;
         left: 0;
+        top: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
-        z-index: -2;
+        opacity: 0;
+        transition: opacity 0.6s linear;
       }
-
-      /* 🌫️ Sötét overlay */
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: -1;
-      }
-
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-        background-color: rgba(17, 17, 17, 0.8);
-        border-bottom: 2px solid #3cbcc7;
-      }
-
-      header .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #3cbcc7;
-      }
-
-      header nav ul {
-        list-style: none;
-        display: flex;
-        gap: 1rem;
-      }
-
-      header nav a {
-        text-decoration: none;
-        color: #f5f5f5;
-        font-weight: 500;
-        transition: color 0.3s;
-      }
-
-      header nav a:hover {
-        color: #3cbcc7;
-      }
-
-      /* Bejelentkezés */
-      section {
-        padding: 4rem 2rem;
-        background: rgba(0, 0, 0, 0.4);
-        border-radius: 10px;
-        margin: 13rem auto;
-        max-width: 400px;
-        text-align: center;
-      }
-
-      h2 {
-        font-size: 2rem;
-        margin-bottom: 2rem;
-        color: #3cbcc7;
-      }
-
-      form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      input,
-      button {
-        padding: 0.8rem;
-        border-radius: 5px;
-        border: none;
-        outline: none;
-      }
-
-      input {
-        background-color: #333;
-        color: #f5f5f5;
-      }
-
-      button {
-        background-color: #3cbcc7;
-        color: #111;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
-
-      button:hover {
-        background-color: #34aab4;
-      }
-
-      footer {
-        text-align: center;
-        padding: 2rem;
-        background-color: rgba(17, 17, 17, 0.8);
-        border-top: 2px solid #3cbcc7;
-        color: #ccc;
-      }
-
-      .regisztracio-link {
-        margin-top: 1rem;
-        font-size: 0.9rem;
-        color: #ccc;
-      }
-
-      .regisztracio-link a {
-        color: #3cbcc7;
-        text-decoration: none;
-        font-weight: bold;
-      }
-
-      .regisztracio-link a:hover {
-        text-decoration: underline;
+      .bg-video.active {
+        opacity: 1;
       }
     </style>
-  </head>
-  <body>
-    <!-- Videó háttér -->
-    <video id="hatter_video" autoplay muted loop>
-      <source src="/videos/video.mp4" type="video/mp4" />
-      A böngésződ nem támogatja a videó elemet.
-    </video>
+
+    <div class="bg-video-wrap">
+      <video class="bg-video active" id="hatter_video_a" autoplay muted playsinline>
+        <source src="/videos/video.mp4" type="video/mp4" />
+      </video>
+      <video class="bg-video" id="hatter_video_b" autoplay muted playsinline>
+        <source src="/videos/video.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <script>
+      (function () {
+        const fadeDuration = 0.6;
+        const preStart = 0.5;
+        let a = document.getElementById("hatter_video_a");
+        let b = document.getElementById("hatter_video_b");
+        let current = a,
+          next = b;
+        function ensurePlay(v) {
+          v.muted = true;
+          const p = v.play();
+          if (p && p.catch) p.catch(() => {});
+        }
+        ensurePlay(a);
+        function tick() {
+          if (!current.duration || isNaN(current.duration)) {
+            requestAnimationFrame(tick);
+            return;
+          }
+          if (current.duration - current.currentTime <= preStart) {
+            next.currentTime = 0;
+            ensurePlay(next);
+            next.classList.add("active");
+            current.classList.remove("active");
+            const old = current;
+            current = next;
+            next = old;
+            setTimeout(() => {
+              next.pause();
+            }, (fadeDuration + 0.1) * 1000);
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })();
+    </script>
 
     <header>
       <div class="logo">Beach Barbershop</div>

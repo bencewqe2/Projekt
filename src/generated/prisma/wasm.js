@@ -104,7 +104,8 @@ exports.Prisma.FelhasznalokScalarFieldEnum = {
 exports.Prisma.IdopontScalarFieldEnum = {
   id: 'id',
   felhaszid: 'felhaszid',
-  idopont: 'idopont'
+  idopont: 'idopont',
+  szolgal: 'szolgal'
 };
 
 exports.Prisma.BorbelyokScalarFieldEnum = {
@@ -124,6 +125,10 @@ exports.Prisma.felhasznalokOrderByRelevanceFieldEnum = {
   email: 'email',
   hash: 'hash',
   telefonszam: 'telefonszam'
+};
+
+exports.Prisma.idopontOrderByRelevanceFieldEnum = {
+  szolgal: 'szolgal'
 };
 
 exports.Prisma.NullsOrder = {
@@ -190,13 +195,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel felhasznalok {\n  id          Int    @id @default(autoincrement()) @db.UnsignedInt\n  felhnev     String @default(\"0\") @db.VarChar(50)\n  email       String @default(\"0\") @db.VarChar(50)\n  hash        String @default(\"0\") @db.Char(72)\n  telefonszam String @default(\"0\") @db.VarChar(50)\n}\n\nmodel idopont {\n  id        Int      @id @default(autoincrement()) @db.UnsignedInt\n  felhaszid Int      @db.UnsignedInt\n  idopont   DateTime @db.DateTime(0)\n\n  @@index([felhaszid], map: \"FK_idopont_felhasznalok\")\n}\n\nmodel borbelyok {\n  id       Int    @id @default(autoincrement()) @db.UnsignedInt\n  Nev      String @default(\"\") @db.VarChar(50)\n  email    String @default(\"\") @db.VarChar(50)\n  teleszam Int?\n}\n",
-  "inlineSchemaHash": "47cdf664bb9c96098fbc49c08776ccfaf72ad93acf0cd311028f187b28c3d611",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel felhasznalok {\n  id          Int    @id @default(autoincrement()) @db.UnsignedInt\n  felhnev     String @default(\"0\") @db.VarChar(50)\n  email       String @default(\"0\") @db.VarChar(50)\n  hash        String @default(\"0\") @db.Char(72)\n  telefonszam String @default(\"0\") @db.VarChar(50)\n}\n\nmodel idopont {\n  id        Int      @id @default(autoincrement()) @db.UnsignedInt\n  felhaszid Int      @db.UnsignedInt\n  idopont   DateTime @db.DateTime(0)\n  szolgal   String   @db.VarChar(50)\n\n  @@index([felhaszid], map: \"FK_idopont_felhasznalok\")\n}\n\nmodel borbelyok {\n  id       Int    @id @default(autoincrement()) @db.UnsignedInt\n  Nev      String @default(\"\") @db.VarChar(50)\n  email    String @default(\"\") @db.VarChar(50)\n  teleszam Int?\n}\n",
+  "inlineSchemaHash": "892798e5acfb5ce0f9cec916cc15c7d7d4d3799647d9d580addc5182fa548e59",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"felhasznalok\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"felhnev\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"telefonszam\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"idopont\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"felhaszid\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"idopont\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"borbelyok\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"Nev\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"teleszam\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"felhasznalok\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"felhnev\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"telefonszam\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"idopont\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"felhaszid\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"idopont\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"szolgal\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"borbelyok\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"Nev\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"teleszam\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

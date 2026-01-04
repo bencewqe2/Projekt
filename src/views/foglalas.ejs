@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Foglalás - Beach Barbershop</title>
+    <link rel="stylesheet" href="/css/foglalas.css" />
+  </head>
+  <body>
+    <video id="hatter_video" autoplay muted loop>
+      <source src="/videos/video.mp4" type="video/mp4" />
+      A böngésződ nem támogatja a videó elemet.
+    </video>
+
+    <header>
+      <div class="logo">Beach Barbershop</div>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="/">Főoldal</a></li>
+
+          <li class="profile-menu">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
+            <ul class="dropdown" aria-hidden="true">
+              <% if (user) { %>
+              <li style="padding: 0.6rem 1rem; color: #3cbcc7; font-weight: 700"><%= user.felhnev %></li>
+              <li><a href="/fiok">Fiók</a></li>
+              <li>
+                <form action="/api/logout" method="get">
+                  <button type="submit" class="logout-btn">Kijelentkezés</button>
+                </form>
+              </li>
+              <% } else { %>
+              <li><a href="/bejelentkezes">Bejelentkezés</a></li>
+              <li><a href="/regisztracio">Regisztráció</a></li>
+              <% } %>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section id="booking" class="booking-card">
+        <h2>Foglalás</h2>
+        <% if (user) { %>
+        <form id="foglalas_urlap" action="/api/booking" method="post">
+          <label>
+            Dátum
+            <input type="date" name="date" required />
+          </label>
+
+          <label>
+            Idő
+            <input type="time" name="time" required />
+          </label>
+
+          <label>
+            Borbély kiválasztása
+            <select name="barber" id="barber_select"></select>
+          </label>
+
+          <label>
+            Szolgáltatás
+            <select name="service" required>
+              <option value="">Válassz szolgáltatást</option>
+              <option value="haircut">Hajvágás</option>
+              <option value="beard">Szakállvágás</option>
+              <option value="shave">Borotválás</option>
+              <option value="combo">Csomag</option>
+            </select>
+          </label>
+
+          <button type="submit">Foglalás küldése</button>
+        </form>
+        <% } else { %>
+        <p>Kérlek <a href="/bejelentkezes">jelentkezz be</a>, hogy foglalhass időpontot.</p>
+        <% } %>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Beach Barbershop</p>
+    </footer>
+
+    <!-- Popup overlay -->
+    <div id="popup" class="popup-overlay" aria-hidden="true">
+      <div id="popupBox" class="popup-box" role="dialog" aria-modal="true">
+        <div id="popupMsg">Üzenet</div>
+        <div class="popup-actions">
+          <button id="popupClose" class="popup-close">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const fogForm = document.getElementById("foglalas_urlap");
+        const barberSelect = document.getElementById("barber_select");
+
+        const popupOverlay = document.getElementById("popup");
+        const popupBox = document.getElementById("popupBox");
+        const popupMsg = document.getElementById("popupMsg");
+        const popupClose = document.getElementById("popupClose");
+        let popupTimer = null;
+
+        function showPopup(msg, type = "success", autoHide = true) {
+          if (!popupOverlay || !popupBox || !popupMsg) return;
+          popupMsg.textContent = msg;
+          popupBox.classList.remove("success", "error");
+          popupBox.classList.add(type === "error" ? "error" : "success");
+          popupOverlay.classList.add("show");
+          popupOverlay.setAttribute("aria-hidden", "false");
+          if (popupTimer) clearTimeout(popupTimer);
+          if (autoHide) {
+            const duration = type === "error" ? 5000 : 3000;
+            popupTimer = setTimeout(hidePopup, duration);
+          }
+        }
+
+        function hidePopup() {
+          if (!popupOverlay) return;
+          popupOverlay.classList.remove("show");
+          popupOverlay.setAttribute("aria-hidden", "true");
+          if (popupTimer) {
+            clearTimeout(popupTimer);
+            popupTimer = null;
+          }
+        }
+
+        if (popupClose) popupClose.addEventListener("click", hidePopup);
+        if (popupOverlay)
+          popupOverlay.addEventListener("click", (e) => {
+            if (e.target === popupOverlay) hidePopup();
+          });
+
+        async function loadBarbers() {
+          if (!barberSelect) return;
+          try {
+            const res = await fetch("/api/barbers");
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && Array.isArray(data.barbers)) {
+              barberSelect.innerHTML = "";
+              const placeholder = document.createElement("option");
+              placeholder.value = "";
+              placeholder.textContent = "Válassz borbélyt";
+              placeholder.disabled = true;
+              placeholder.selected = true;
+              barberSelect.appendChild(placeholder);
+
+              data.barbers.forEach((name) => {
+                const opt = document.createElement("option");
+                opt.value = name;
+                opt.textContent = name;
+                barberSelect.appendChild(opt);
+              });
+            } else {
+              console.error("Barbers load failed", data);
+            }
+          } catch (err) {
+            console.error("Failed to load barbers", err);
+          }
+        }
+
+        loadBarbers();
+
+        if (fogForm) {
+          fogForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new URLSearchParams(new FormData(fogForm));
+
+            try {
+              const res = await fetch(fogForm.action || "/api/booking", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: formData.toString(),
+              });
+
+              const json = await res.json().catch(() => ({}));
+              if (res.ok && json.ok) {
+                showPopup("Foglalás sikeres!", "success");
+                fogForm.reset();
+              } else {
+                showPopup("Hiba: " + (json.error || "Ismeretlen hiba"), "error", true);
+              }
+            } catch (err) {
+              console.error(err);
+              showPopup("Nem sikerült elérni a szervert.", "error", true);
+            }
+          });
+        }
+
+        // Profil ikon -> lenyíló menü (megegyezik az index.ejs viselkedéssel)
+        const profileIcon = document.querySelector(".profile-icon");
+        const profileMenu = document.querySelector(".profile-menu");
+
+        if (!profileIcon || !profileMenu) {
+          // nincs profil elem az oldalon
+        } else {
+          profileIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            profileMenu.classList.toggle("open");
+            const dropdown = profileMenu.querySelector(".dropdown");
+            if (dropdown) {
+              const isOpen = profileMenu.classList.contains("open");
+              dropdown.setAttribute("aria-hidden", !isOpen);
+            }
+          });
+
+          document.addEventListener("click", () => {
+            profileMenu.classList.remove("open");
+            const dropdown = profileMenu.querySelector(".dropdown");
+            if (dropdown) dropdown.setAttribute("aria-hidden", "true");
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

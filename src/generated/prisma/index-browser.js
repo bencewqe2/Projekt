@@ -132,7 +132,8 @@ exports.Prisma.FelhasznalokScalarFieldEnum = {
 exports.Prisma.IdopontScalarFieldEnum = {
   id: 'id',
   felhaszid: 'felhaszid',
-  idopont: 'idopont'
+  idopont: 'idopont',
+  szolgal: 'szolgal'
 };
 
 exports.Prisma.BorbelyokScalarFieldEnum = {
@@ -152,6 +153,10 @@ exports.Prisma.felhasznalokOrderByRelevanceFieldEnum = {
   email: 'email',
   hash: 'hash',
   telefonszam: 'telefonszam'
+};
+
+exports.Prisma.idopontOrderByRelevanceFieldEnum = {
+  szolgal: 'szolgal'
 };
 
 exports.Prisma.NullsOrder = {

@@ -1961,18 +1961,21 @@ export namespace Prisma {
     id: number | null
     felhaszid: number | null
     idopont: Date | null
+    szolgal: string | null
   }
 
   export type IdopontMaxAggregateOutputType = {
     id: number | null
     felhaszid: number | null
     idopont: Date | null
+    szolgal: string | null
   }
 
   export type IdopontCountAggregateOutputType = {
     id: number
     felhaszid: number
     idopont: number
+    szolgal: number
     _all: number
   }
 
@@ -1991,18 +1994,21 @@ export namespace Prisma {
     id?: true
     felhaszid?: true
     idopont?: true
+    szolgal?: true
   }
 
   export type IdopontMaxAggregateInputType = {
     id?: true
     felhaszid?: true
     idopont?: true
+    szolgal?: true
   }
 
   export type IdopontCountAggregateInputType = {
     id?: true
     felhaszid?: true
     idopont?: true
+    szolgal?: true
     _all?: true
   }
 
@@ -2096,6 +2102,7 @@ export namespace Prisma {
     id: number
     felhaszid: number
     idopont: Date
+    szolgal: string
     _count: IdopontCountAggregateOutputType | null
     _avg: IdopontAvgAggregateOutputType | null
     _sum: IdopontSumAggregateOutputType | null
@@ -2121,6 +2128,7 @@ export namespace Prisma {
     id?: boolean
     felhaszid?: boolean
     idopont?: boolean
+    szolgal?: boolean
   }, ExtArgs["result"]["idopont"]>
 
 
@@ -2129,9 +2137,10 @@ export namespace Prisma {
     id?: boolean
     felhaszid?: boolean
     idopont?: boolean
+    szolgal?: boolean
   }
 
-  export type idopontOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "felhaszid" | "idopont", ExtArgs["result"]["idopont"]>
+  export type idopontOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "felhaszid" | "idopont" | "szolgal", ExtArgs["result"]["idopont"]>
 
   export type $idopontPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "idopont"
@@ -2140,6 +2149,7 @@ export namespace Prisma {
       id: number
       felhaszid: number
       idopont: Date
+      szolgal: string
     }, ExtArgs["result"]["idopont"]>
     composites: {}
   }
@@ -2512,6 +2522,7 @@ export namespace Prisma {
     readonly id: FieldRef<"idopont", 'Int'>
     readonly felhaszid: FieldRef<"idopont", 'Int'>
     readonly idopont: FieldRef<"idopont", 'DateTime'>
+    readonly szolgal: FieldRef<"idopont", 'String'>
   }
     
 
@@ -3770,7 +3781,8 @@ export namespace Prisma {
   export const IdopontScalarFieldEnum: {
     id: 'id',
     felhaszid: 'felhaszid',
-    idopont: 'idopont'
+    idopont: 'idopont',
+    szolgal: 'szolgal'
   };
 
   export type IdopontScalarFieldEnum = (typeof IdopontScalarFieldEnum)[keyof typeof IdopontScalarFieldEnum]
@@ -3802,6 +3814,13 @@ export namespace Prisma {
   };
 
   export type felhasznalokOrderByRelevanceFieldEnum = (typeof felhasznalokOrderByRelevanceFieldEnum)[keyof typeof felhasznalokOrderByRelevanceFieldEnum]
+
+
+  export const idopontOrderByRelevanceFieldEnum: {
+    szolgal: 'szolgal'
+  };
+
+  export type idopontOrderByRelevanceFieldEnum = (typeof idopontOrderByRelevanceFieldEnum)[keyof typeof idopontOrderByRelevanceFieldEnum]
 
 
   export const NullsOrder: {
@@ -3918,12 +3937,15 @@ export namespace Prisma {
     id?: IntFilter<"idopont"> | number
     felhaszid?: IntFilter<"idopont"> | number
     idopont?: DateTimeFilter<"idopont"> | Date | string
+    szolgal?: StringFilter<"idopont"> | string
   }
 
   export type idopontOrderByWithRelationInput = {
     id?: SortOrder
     felhaszid?: SortOrder
     idopont?: SortOrder
+    szolgal?: SortOrder
+    _relevance?: idopontOrderByRelevanceInput
   }
 
   export type idopontWhereUniqueInput = Prisma.AtLeast<{
@@ -3933,12 +3955,14 @@ export namespace Prisma {
     NOT?: idopontWhereInput | idopontWhereInput[]
     felhaszid?: IntFilter<"idopont"> | number
     idopont?: DateTimeFilter<"idopont"> | Date | string
+    szolgal?: StringFilter<"idopont"> | string
   }, "id">
 
   export type idopontOrderByWithAggregationInput = {
     id?: SortOrder
     felhaszid?: SortOrder
     idopont?: SortOrder
+    szolgal?: SortOrder
     _count?: idopontCountOrderByAggregateInput
     _avg?: idopontAvgOrderByAggregateInput
     _max?: idopontMaxOrderByAggregateInput
@@ -3953,6 +3977,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"idopont"> | number
     felhaszid?: IntWithAggregatesFilter<"idopont"> | number
     idopont?: DateTimeWithAggregatesFilter<"idopont"> | Date | string
+    szolgal?: StringWithAggregatesFilter<"idopont"> | string
   }
 
   export type borbelyokWhereInput = {
@@ -4061,40 +4086,47 @@ export namespace Prisma {
   export type idopontCreateInput = {
     felhaszid: number
     idopont: Date | string
+    szolgal: string
   }
 
   export type idopontUncheckedCreateInput = {
     id?: number
     felhaszid: number
     idopont: Date | string
+    szolgal: string
   }
 
   export type idopontUpdateInput = {
     felhaszid?: IntFieldUpdateOperationsInput | number
     idopont?: DateTimeFieldUpdateOperationsInput | Date | string
+    szolgal?: StringFieldUpdateOperationsInput | string
   }
 
   export type idopontUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     felhaszid?: IntFieldUpdateOperationsInput | number
     idopont?: DateTimeFieldUpdateOperationsInput | Date | string
+    szolgal?: StringFieldUpdateOperationsInput | string
   }
 
   export type idopontCreateManyInput = {
     id?: number
     felhaszid: number
     idopont: Date | string
+    szolgal: string
   }
 
   export type idopontUpdateManyMutationInput = {
     felhaszid?: IntFieldUpdateOperationsInput | number
     idopont?: DateTimeFieldUpdateOperationsInput | Date | string
+    szolgal?: StringFieldUpdateOperationsInput | string
   }
 
   export type idopontUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     felhaszid?: IntFieldUpdateOperationsInput | number
     idopont?: DateTimeFieldUpdateOperationsInput | Date | string
+    szolgal?: StringFieldUpdateOperationsInput | string
   }
 
   export type borbelyokCreateInput = {
@@ -4252,10 +4284,17 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type idopontOrderByRelevanceInput = {
+    fields: idopontOrderByRelevanceFieldEnum | idopontOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
   export type idopontCountOrderByAggregateInput = {
     id?: SortOrder
     felhaszid?: SortOrder
     idopont?: SortOrder
+    szolgal?: SortOrder
   }
 
   export type idopontAvgOrderByAggregateInput = {
@@ -4267,12 +4306,14 @@ export namespace Prisma {
     id?: SortOrder
     felhaszid?: SortOrder
     idopont?: SortOrder
+    szolgal?: SortOrder
   }
 
   export type idopontMinOrderByAggregateInput = {
     id?: SortOrder
     felhaszid?: SortOrder
     idopont?: SortOrder
+    szolgal?: SortOrder
   }
 
   export type idopontSumOrderByAggregateInput = {
