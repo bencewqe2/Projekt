@@ -20,8 +20,23 @@
         <ul class="nav-list">
           <li><a href="#services">Szolgáltatások</a></li>
           <li><a href="/foglalas">Foglalás</a></li>
+          <li><a href="/shop">Webshop</a></li>
 
-          <!-- 🔽 PROFIL IKON MENÜ 🔽 -->
+          <!-- � KOSÁR IKON -->
+          <li class="cart-menu">
+            <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="cart-icon" alt="Kosár" title="Kosár" />
+            <span class="cart-badge" id="cartBadge">0</span>
+
+            <ul class="cart-dropdown" aria-hidden="true" id="cartDropdown">
+              <li class="cart-title">Kosár</li>
+              <li id="cartItems" style="max-height: 300px; overflow-y: auto;"></li>
+              <li class="cart-total"><strong>Összesen: <span id="cartSum">0</span> Ft</strong></li>
+              <li style="padding: 0;"><a href="/fizetes" style="display: block; background: #27ae60; padding: 0.6rem 1rem; color: white; font-weight: bold;">💳 Fizetés</a></li>
+              <li><a href="/shop">Nyitd meg a shopp-ot</a></li>
+            </ul>
+          </li>
+
+          <!-- �🔽 PROFIL IKON MENÜ 🔽 -->
           <li class="profile-menu">
             <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
 
@@ -96,9 +111,71 @@
     </div>
 
     <script>
+      // Kosár funkciók
+      function updateCartDisplay() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const cartBadge = document.getElementById("cartBadge");
+        const cartItems = document.getElementById("cartItems");
+        const cartSum = document.getElementById("cartSum");
+
+        const itemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        cartBadge.textContent = itemCount;
+
+        let total = 0;
+        cartItems.innerHTML = "";
+
+        if (cart.length === 0) {
+          cartItems.innerHTML = '<li style="padding: 1rem; text-align: center; color: #999;">Üres kosár</li>';
+        } else {
+          cart.forEach((item, index) => {
+            const price = parseInt(item.price.replace(/\D/g, "")) || 0;
+            const quantity = item.quantity || 1;
+            const itemTotal = price * quantity;
+            total += itemTotal;
+            const li = document.createElement("li");
+            li.innerHTML = `
+              <div style="padding: 0.5rem 1rem; border-bottom: 1px solid #555; color: #ccc; font-size: 0.9em;">
+                <div><strong>${item.name}</strong></div>
+                <div>${item.price} × ${quantity} = ${(itemTotal).toLocaleString("hu-HU")} Ft</div>
+                <button onclick="removeFromCart(${index})" style="background: #e74c3c; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.8em; margin-top: 0.3rem;">Eltávolít</button>
+              </div>
+            `;
+            cartItems.appendChild(li);
+          });
+        }
+
+        cartSum.textContent = total.toLocaleString("hu-HU");
+      }
+
+      function removeFromCart(index) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartDisplay();
+      }
+
       // MINDEN eseményregisztrációt csak a DOMContentLoaded után végzünk,
       // és mindig ellenőrizzük, hogy az elem létezik-e, hogy ne dobjon hibát.
       document.addEventListener("DOMContentLoaded", () => {
+        // Kosár megjelenítés frissítése
+        updateCartDisplay();
+
+        // Kosár ikon klikk
+        const cartIcon = document.querySelector(".cart-icon");
+        const cartMenu = document.querySelector(".cart-menu");
+
+        if (cartIcon && cartMenu) {
+          cartIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            cartMenu.classList.toggle("open");
+            const cartDropdown = cartMenu.querySelector(".cart-dropdown");
+            if (cartDropdown) {
+              const isOpen = cartMenu.classList.contains("open");
+              cartDropdown.setAttribute("aria-hidden", !isOpen);
+            }
+          });
+        }
+
         // Foglalás űrlap (ha van) — elküldjük a szervernek és feldolgozzuk a választ
         const fogForm = document.getElementById("foglalas_urlap");
         // Popup helper funkciók
@@ -203,8 +280,11 @@
         // Klikk bárhova -> bezár
         document.addEventListener("click", () => {
           profileMenu.classList.remove("open");
+          cartMenu?.classList.remove("open");
           const dropdown = profileMenu.querySelector(".dropdown");
           if (dropdown) dropdown.setAttribute("aria-hidden", "true");
+          const cartDropdown = document.querySelector(".cart-dropdown");
+          if (cartDropdown) cartDropdown.setAttribute("aria-hidden", "true");
         });
       });
     </script>

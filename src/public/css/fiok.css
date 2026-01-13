@@ -136,3 +136,109 @@ header nav a:hover {
 .account-section strong {
   color: #3cbcc7;
 }
+
+.account-section h2 {
+  color: #3cbcc7;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  border-bottom: 2px solid #3cbcc7;
+  padding-bottom: 0.5rem;
+}
+
+/* Rendelések és Foglalások listája */
+.orders-list,
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.order-item,
+.booking-item {
+  background: rgba(34, 34, 34, 0.85);
+  border: 1px solid #3cbcc7;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.order-item:hover,
+.booking-item:hover {
+  box-shadow: 0 6px 20px rgba(60, 188, 199, 0.2);
+  transform: translateX(5px);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #555;
+}
+
+.order-id {
+  color: #3cbcc7;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.order-date {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.order-details,
+.booking-item {
+  color: #ccc;
+}
+
+.order-details ul {
+  list-style: none;
+  margin: 0.8rem 0;
+  padding-left: 1rem;
+}
+
+.order-details li {
+  padding: 0.4rem 0;
+  color: #ddd;
+}
+
+.order-details li::before {
+  content: "• ";
+  color: #3cbcc7;
+  margin-right: 0.5rem;
+}
+
+.order-total {
+  color: #3cbcc7;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.booking-item p {
+  margin: 0.5rem 0;
+}
+
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+.delete-btn:active {
+  transform: scale(0.95);
+}
+

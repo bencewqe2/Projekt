@@ -62,6 +62,16 @@ app.get("/foglalas", (req, res) => {
   res.render("foglalas", { user: req.session.user });
 });
 
+// Webshop oldal
+app.get("/shop", (req, res) => {
+  res.render("shop", { user: req.session.user });
+});
+
+// Fizetés oldal
+app.get("/fizetes", (req, res) => {
+  res.render("fizetes", { user: req.session.user });
+});
+
 // Lekérdezi a bejelentkezett felhasználó foglalásait
 app.get("/api/bookings", async (req, res) => {
   const session = req.session;
@@ -104,6 +114,55 @@ app.get("/api/barbers", async (req, res) => {
   } catch (err) {
     console.error("Error fetching barbers:", err);
     return res.status(500).json({ error: "Nem sikerült lekérni a borbélyokat." });
+  }
+});
+
+// Rendelések lekérése
+app.get("/api/orders", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user) {
+    return res.status(401).json({ error: "Kérjük, jelentkezz be a lekérdezéshez." });
+  }
+
+  try {
+    const rows = await db.rendeles.findMany({
+      where: { felhaszid: session.user.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return res.json({ ok: true, orders: rows });
+  } catch (err) {
+    console.error("Error fetching orders:", err);
+    return res.status(500).json({ error: "Nem sikerült lekérni a rendeléseket." });
+  }
+});
+
+// Rendelés mentése
+app.post("/api/order", urlencodedParser, async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user) {
+    return res.status(401).json({ error: "Kérjük, jelentkezz be a rendeléshez." });
+  }
+
+  const { products, shippingType, totalPrice } = req.body || {};
+  if (!products || !shippingType) {
+    return res.status(400).json({ error: "Hiányzó adatok." });
+  }
+
+  try {
+    await db.rendeles.create({
+      data: {
+        felhaszid: session.user.id,
+        products: products,
+        shippingType: shippingType,
+        totalPrice: parseInt(totalPrice) || 0,
+      },
+    });
+
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Order save error:", err);
+    return res.status(500).json({ error: "Nem sikerült menteni a rendelést." });
   }
 });
 
@@ -218,6 +277,43 @@ app.post("/api/booking", urlencodedParser, async (req, res) => {
   } catch (err) {
     console.error("Booking save error:", err);
     return res.status(500).json({ error: "Nem sikerült menteni a foglalást." });
+  }
+});
+
+// Foglalás törlése
+app.delete("/api/booking/:id", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user) {
+    return res.status(401).json({ error: "Kérjük, jelentkezz be a foglalás törléshez." });
+  }
+
+  const bookingId = req.params.id;
+  if (!bookingId) {
+    return res.status(400).json({ error: "Hiányzó foglalás ID." });
+  }
+
+  try {
+    // Ellenőrzés: csak a saját foglalásait lehet törölni
+    const booking = await db.idopont.findUnique({
+      where: { id: parseInt(bookingId) }
+    });
+
+    if (!booking) {
+      return res.status(404).json({ error: "Foglalás nem található." });
+    }
+
+    if (booking.felhaszid !== session.user.id) {
+      return res.status(403).json({ error: "Nincs jogosultságod törölni ezt a foglalást." });
+    }
+
+    await db.idopont.delete({
+      where: { id: parseInt(bookingId) }
+    });
+
+    return res.json({ ok: true, message: "Foglalás sikeresen törölve." });
+  } catch (err) {
+    console.error("Booking delete error:", err);
+    return res.status(500).json({ error: "Nem sikerült törölni a foglalást." });
   }
 });
 
