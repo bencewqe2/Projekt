@@ -42,11 +42,17 @@
         </section>
 
         <section id="bookings" class="account-section">
-          <p>Itt lesznek a foglalásaid.</p>
+          <h2>Foglalásaim</h2>
+          <div id="bookingsContainer">
+            <p style="text-align: center; color: #999;">Betöltés...</p>
+          </div>
         </section>
 
         <section id="orders" class="account-section">
-          <p>Itt lesznek a rendeléseid.</p>
+          <h2>Rendeléseim</h2>
+          <div id="ordersContainer">
+            <p style="text-align: center; color: #999;">Betöltés...</p>
+          </div>
         </section>
       </main>
     </div>
@@ -55,7 +61,121 @@
       function showSection(id) {
         document.querySelectorAll(".account-section").forEach((s) => s.classList.remove("active"));
         document.getElementById(id).classList.add("active");
+        
+        // Rendelések betöltése, amikor a rendelések szekciót megnyitják
+        if (id === "orders") {
+          loadOrders();
+        }
       }
+
+      async function loadOrders() {
+        try {
+          const res = await fetch("/api/orders");
+          const data = await res.json();
+
+          const ordersContainer = document.getElementById("ordersContainer");
+          
+          if (!data.ok || data.orders.length === 0) {
+            ordersContainer.innerHTML = '<p style="text-align: center; color: #999;">Még nincsenek rendeléseid.</p>';
+            return;
+          }
+
+          let html = '<div class="orders-list">';
+          data.orders.forEach((order, index) => {
+            html += `
+              <div class="order-item">
+                <div class="order-header">
+                  <span class="order-id">#${index + 1} Rendelés</span>
+                  <span class="order-date">${new Date(order.createdAt).toLocaleDateString("hu-HU")}</span>
+                </div>
+                <div class="order-details">
+                  <p><strong>Termékek:</strong></p>
+                  <ul>
+                    ${JSON.parse(order.products || "[]").map(p => `<li>${p.name} - ${p.price}</li>`).join("")}
+                  </ul>
+                  <p><strong>Szállítás:</strong> ${order.shippingType === "home" ? "🚚 Házhoz szállítás" : "🏪 Átvétel"}</p>
+                  <p><strong>Összeg:</strong> <span class="order-total">${order.totalPrice.toLocaleString("hu-HU")} Ft</span></p>
+                </div>
+              </div>
+            `;
+          });
+          html += '</div>';
+          ordersContainer.innerHTML = html;
+        } catch (err) {
+          console.error(err);
+          document.getElementById("ordersContainer").innerHTML = '<p style="color: #e74c3c;">Hiba történt a rendelések betöltésekor.</p>';
+        }
+      }
+
+      // Foglalás törlése
+      async function deleteBooking(bookingId) {
+        if (!confirm("Biztosan szeretnéd törölni ezt a foglalást?")) {
+          return;
+        }
+        
+        try {
+          const res = await fetch(`/api/booking/${bookingId}`, {
+            method: "DELETE"
+          });
+          const data = await res.json();
+          
+          if (res.ok && data.ok) {
+            alert("Foglalás sikeresen törölve!");
+            loadBookings();
+          } else {
+            alert("Hiba: " + (data.error || "Ismeretlen hiba"));
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Nem sikerült elérni a szervert.");
+        }
+      }
+
+      // Foglalások betöltése
+      async function loadBookings() {
+        try {
+          const res = await fetch("/api/bookings");
+          const data = await res.json();
+
+          const bookingsContainer = document.getElementById("bookingsContainer");
+          
+          if (!data.ok || data.bookings.length === 0) {
+            bookingsContainer.innerHTML = '<p style="text-align: center; color: #999;">Még nincsenek foglalásaid.</p>';
+            return;
+          }
+
+          let html = '<div class="bookings-list">';
+          data.bookings.forEach((booking) => {
+            // Az UTC-ben tárolt időpont helyi időzónára való konvertálása
+            const dt = new Date(booking.datetime);
+            // Az offset-et eltávolítjuk, hogy az eredeti (helyi) időt kapjuk meg
+            const offset = dt.getTimezoneOffset() * 60 * 1000;
+            const localDate = new Date(dt.getTime() + offset);
+            
+            const bookingDate = localDate.toLocaleDateString("hu-HU");
+            const bookingTime = localDate.toLocaleTimeString("hu-HU", { hour: "2-digit", minute: "2-digit" });
+            html += `
+              <div class="booking-item">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <p><strong>Dátum:</strong> ${bookingDate} ${bookingTime}</p>
+                    <p><strong>Szolgáltatás:</strong> ${booking.service || "Nem megadva"}</p>
+                  </div>
+                  <button onclick="deleteBooking(${booking.id})" class="delete-btn" title="Foglalás törlése">🗑️ Törlés</button>
+                </div>
+              </div>
+            `;
+          });
+          html += '</div>';
+          bookingsContainer.innerHTML = html;
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadBookings();
+      });
     </script>
   </body>
 </html>

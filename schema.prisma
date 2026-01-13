@@ -31,3 +31,14 @@ model borbelyok {
   email    String @default("") @db.VarChar(50)
   teleszam Int?
 }
+
+model rendeles {
+  id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  felhaszid    Int      @db.UnsignedInt
+  products     String   @db.LongText
+  shippingType String   @db.VarChar(20)
+  totalPrice   Int
+  createdAt    DateTime @default(now()) @db.DateTime(0)
+
+  @@index([felhaszid], map: "FK_rendeles_felhasznalok")
+}

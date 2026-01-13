@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Hajápolási Termékek</title>
+    <link rel="stylesheet" href="/css/shop.css">
+</head>
+<body>
+    <!-- 🌊 VIDEÓ HÁTTÉR -->
+    <video id="hatter_video" autoplay muted loop>
+      <source src="/videos/video.mp4" type="video/mp4" />
+      A böngésződ nem támogatja a videó elemet.
+    </video>
+
+    <header>
+      <div class="logo">Beach Barbershop</div>
+
+      <nav>
+        <ul class="nav-list">
+          <li><a href="/#services">Szolgáltatások</a></li>
+          <li><a href="/foglalas">Foglalás</a></li>
+          <li><a href="/shop">Webshop</a></li>
+
+          <!-- � KOSÁR IKON -->
+          <li class="cart-menu">
+            <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="cart-icon" alt="Kosár" title="Kosár" />
+            <span class="cart-badge" id="cartBadge">0</span>
+
+            <ul class="cart-dropdown" aria-hidden="true" id="cartDropdown">
+              <li class="cart-title">Kosár</li>
+              <li id="cartItems" style="max-height: 250px; overflow-y: auto;"></li>
+              <li class="cart-total"><strong>Összesen: <span id="cartSum">0</span> Ft</strong></li>
+              <li style="padding: 0; display: flex; gap: 0.3rem;">
+                <a href="/fizetes" style="flex: 1; display: block; background: #27ae60; padding: 0.6rem 1rem; color: white; font-weight: bold; text-align: center;">💳 Fizetés</a>
+                <button onclick="clearCart()" style="background: #e74c3c; color: white; border: none; padding: 0.6rem 1rem; cursor: pointer; font-weight: bold; border-radius: 4px;" title="Kosár törlése">🗑️ Törlés</button>
+              </li>
+              <li><a href="/shop">Folytasd a vásárlást</a></li>
+            </ul>
+          </li>
+
+          <!-- �🔽 PROFIL IKON MENÜ 🔽 -->
+          <li class="profile-menu">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
+
+            <ul class="dropdown" aria-hidden="true">
+              <% if (user) { %>
+              <li style="padding: 0.6rem 1rem; color: #3cbcc7; font-weight: 700"><%= user.felhnev %></li>
+              <li><a href="/fiok">Fiók</a></li>
+              <li>
+                <form action="/api/logout" method="get">
+                  <button type="submit" class="logout-btn">Kijelentkezés</button>
+                </form>
+              </li>
+              <% } else { %>
+              <li><a href="/bejelentkezes">Bejelentkezés</a></li>
+              <li><a href="/regisztracio">Regisztráció</a></li>
+              <% } %>
+            </ul>
+          </li>
+          <!-- 🔼 PROFIL IKON MENÜ 🔼 -->
+        </ul>
+      </nav>
+    </header>
+
+    <div class="container">
+        <h1>Hajápolási Termékek</h1>
+        
+        <!-- Szűrő Szekció -->
+        <div class="filter-section">
+            <h2>Kategória</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">Összes Termék</button>
+                <button class="filter-btn" data-category="haircare">💆 Hajápolás</button>
+                <button class="filter-btn" data-category="styling">💇 Hajformázás</button>
+                <button class="filter-btn" data-category="protection">🛡️ Védelem & Kiegészítők</button>
+            </div>
+        </div>
+        
+        <div class="products-grid" id="productsContainer">
+            <!-- Sampon -->
+            <div class="product-card" data-category="haircare">
+                <div class="product-image">
+                    <img src="/images/sampon.jpg" alt="Prémium Sampon">
+                </div>
+                <div class="product-info">
+                    <h3>Prémium Sampon</h3>
+                    <p class="description">Gyengéd tisztító formula minden hajtípushoz</p>
+                    <p class="price">2,990 Ft</p>
+                    <button class="btn-add-cart">Kosárba</button>
+                </div>
+            </div>
+
+            <!-- Hajolaj -->
+            <div class="product-card" data-category="haircare">
+                <div class="product-image">
+                    <img src="/images/hajolaj.jpg" alt="Argán Hajolaj">
+                </div>
+                <div class="product-info">
+                    <h3>Argán Hajolaj</h3>
+                    <p class="description">Intenzív ápolás és fény a száraz hajra</p>
+                    <p class="price">4,490 Ft</p>
+                    <button class="btn-add-cart">Kosárba</button>
+                </div>
+            </div>
+
+            <!-- Hajpor -->
+            <div class="product-card" data-category="protection">
+                <div class="product-image">
+                    <img src="/images/hajpor.jpg" alt="Szárazsampon Hajpor">
+                </div>
+                <div class="product-info">
+                    <h3>Szárazsampon Hajpor</h3>
+                    <p class="description">Frissen tartja a hajat, azonnali frisítés</p>
+                    <p class="price">1,990 Ft</p>
+                    <button class="btn-add-cart">Kosárba</button>
+                </div>
+            </div>
+
+            <!-- Hajzselé -->
+            <div class="product-card" data-category="styling">
+                <div class="product-image">
+                    <img src="/images/hajzele.jpg" alt="Formázó Hajzselé">
+                </div>
+                <div class="product-info">
+                    <h3>Formázó Hajzselé</h3>
+                    <p class="description">Erős tartás, csipesz- és hővédelem</p>
+                    <p class="price">1,590 Ft</p>
+                    <button class="btn-add-cart">Kosárba</button>
+                </div>
+            </div>
+
+            <!-- Kondicionáló -->
+            <div class="product-card" data-category="haircare">
+                <div class="product-image">
+                    <img src="/images/kondicionalo.jpg" alt="Mélyhidratáló Kondicionáló">
+                </div>
+                <div class="product-info">
+                    <h3>Mélyhidratáló Kondicionáló</h3>
+                    <p class="description">Regeneráló kezelés sérült hajra</p>
+                    <p class="price">3,290 Ft</p>
+                    <button class="btn-add-cart">Kosárba</button>
+                </div>
+            </div>
+
+            <!-- Hajmaszk -->
+            <div class="product-card" data-category="haircare">
+                <div class="product-image">
+                    <img src="/images/hajmaszk.jpg" alt="Intenzív Hajmaszk">
+                </div>
+                <div class="product-info">
+                    <h3>Intenzív Hajmaszk</h3>
+                    <p class="description">10 perces gyorskezelés fényes, sima hajért</p>
+                    <p class="price">3,890 Ft</p>
+                    <button class="btn-add-cart">Kosárba</button>
+                </div>
+            </div>
+
+            <!-- Hajspray -->
+            <div class="product-card" data-category="protection">
+                <div class="product-image">
+                    <img src="/images/hajspray.jpg" alt="UV Védő Hajspray">
+                </div>
+                <div class="product-info">
+                    <h3>UV Védő Hajspray</h3>
+                    <p class="description">Védelmi spray nap és hő ellen</p>
+                    <p class="price">2,490 Ft</p>
+                    <button class="btn-add-cart">Kosárba</button>
+                </div>
+            </div>
+
+            <!-- Hajfixi -->
+            <div class="product-card" data-category="styling">
+                <div class="product-image">
+                    <img src="/images/hajfixi.jpg" alt="Erős Tartás Hajfixi">
+                </div>
+                <div class="product-info">
+                    <h3>Erős Tartás Hajfixi</h3>
+                    <p class="description">Professzionális rögzítés egész napra</p>
+                    <p class="price">2,290 Ft</p>
+                    <button class="btn-add-cart">Kosárba</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Beach Barbershop</p>
+    </footer>
+
+    <!-- Mennyiség kiválasztó modal -->
+    <div id="quantityModal" class="quantity-modal" style="display: none;">
+      <div class="quantity-modal-content">
+        <h3 id="quantityProductName">Termék neve</h3>
+        <div class="quantity-selector">
+          <label>Mennyiség:</label>
+          <input type="number" id="quantityInput" min="1" max="999" value="1" />
+        </div>
+        <div class="quantity-buttons">
+          <button id="quantityConfirm" class="quantity-btn-confirm">✓ Kosárba</button>
+          <button id="quantityCancel" class="quantity-btn-cancel">✕ Mégsem</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Kosár funkciók (ugyanaz mint az index.ejs-ben)
+      function updateCartDisplay() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const cartBadge = document.getElementById("cartBadge");
+        const cartItems = document.getElementById("cartItems");
+        const cartSum = document.getElementById("cartSum");
+
+        const itemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        cartBadge.textContent = itemCount;
+
+        let total = 0;
+        cartItems.innerHTML = "";
+
+        if (cart.length === 0) {
+          cartItems.innerHTML = '<li style="padding: 1rem; text-align: center; color: #999;">Üres kosár</li>';
+        } else {
+          cart.forEach((item, index) => {
+            const price = parseInt(item.price.replace(/\D/g, "")) || 0;
+            const quantity = item.quantity || 1;
+            const itemTotal = price * quantity;
+            total += itemTotal;
+            const li = document.createElement("li");
+            li.innerHTML = `
+              <div style="padding: 0.5rem 1rem; border-bottom: 1px solid #555; color: #ccc; font-size: 0.9em;">
+                <div><strong>${item.name}</strong></div>
+                <div>${item.price} × ${quantity} = ${(itemTotal).toLocaleString("hu-HU")} Ft</div>
+                <button onclick="removeFromCart(${index})" style="background: #e74c3c; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.8em; margin-top: 0.3rem;">Eltávolít</button>
+              </div>
+            `;
+            cartItems.appendChild(li);
+          });
+        }
+
+        cartSum.textContent = total.toLocaleString("hu-HU");
+      }
+
+      function removeFromCart(index) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartDisplay();
+      }
+
+      function clearCart() {
+        if (confirm("Biztosan szeretnéd üríteni a kosárt?")) {
+          localStorage.setItem("cart", JSON.stringify([]));
+          updateCartDisplay();
+        }
+      }
+
+      let currentProductData = null;
+
+      function showQuantityModal(productCard) {
+        const productName = productCard.querySelector(".product-info h3").textContent;
+        const productPrice = productCard.querySelector(".product-info .price").textContent;
+        
+        currentProductData = { name: productName, price: productPrice, card: productCard };
+        
+        document.getElementById("quantityProductName").textContent = productName;
+        document.getElementById("quantityInput").value = 1;
+        document.getElementById("quantityModal").style.display = "flex";
+      }
+
+      function hideQuantityModal() {
+        document.getElementById("quantityModal").style.display = "none";
+        currentProductData = null;
+      }
+
+      function addToCartWithQuantity() {
+        if (!currentProductData) return;
+        
+        const quantity = parseInt(document.getElementById("quantityInput").value) || 1;
+        if (quantity < 1) {
+          alert("A mennyiség legalább 1 kell legyen!");
+          return;
+        }
+
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const existingItem = cart.find(item => item.name === currentProductData.name);
+        
+        if (existingItem) {
+          existingItem.quantity = (existingItem.quantity || 1) + quantity;
+        } else {
+          cart.push({
+            name: currentProductData.name,
+            price: currentProductData.price,
+            quantity: quantity
+          });
+        }
+        
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartDisplay();
+        
+        // Gombot megváltoztatjuk röviden
+        const btn = currentProductData.card.querySelector(".btn-add-cart");
+        const originalText = btn.textContent;
+        btn.textContent = "✓ Hozzáadva!";
+        btn.style.background = "#27ae60";
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = "";
+        }, 2000);
+        
+        hideQuantityModal();
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Szűrő funkciók
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        const productCards = document.querySelectorAll(".product-card");
+
+        filterButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            // Aktív gomb frissítése
+            filterButtons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            // Szűrés
+            const selectedCategory = btn.dataset.category;
+            productCards.forEach((card) => {
+              const cardCategory = card.dataset.category;
+              if (selectedCategory === "all" || cardCategory === selectedCategory) {
+                card.style.display = "block";
+                setTimeout(() => card.classList.add("visible"), 10);
+              } else {
+                card.classList.remove("visible");
+                setTimeout(() => card.style.display = "none", 300);
+              }
+            });
+          });
+        });
+
+        // Kosár megjelenítés frissítése
+        updateCartDisplay();
+
+        // Kosár ikon klikk
+        const cartIcon = document.querySelector(".cart-icon");
+        const cartMenu = document.querySelector(".cart-menu");
+
+        if (cartIcon && cartMenu) {
+          cartIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            cartMenu.classList.toggle("open");
+            const cartDropdown = cartMenu.querySelector(".cart-dropdown");
+            if (cartDropdown) {
+              const isOpen = cartMenu.classList.contains("open");
+              cartDropdown.setAttribute("aria-hidden", !isOpen);
+            }
+          });
+        }
+
+        // Kosárba gomb klikk - mennyiség kiválasztást megnyit
+        const cartButtons = document.querySelectorAll(".btn-add-cart");
+        cartButtons.forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const productCard = btn.closest(".product-card");
+            showQuantityModal(productCard);
+          });
+        });
+
+        // Mennyiség modal gombok
+        document.getElementById("quantityConfirm").addEventListener("click", addToCartWithQuantity);
+        document.getElementById("quantityCancel").addEventListener("click", hideQuantityModal);
+        
+        // Mennyiség input Enter billentűkezelés
+        document.getElementById("quantityInput").addEventListener("keypress", (e) => {
+          if (e.key === "Enter") addToCartWithQuantity();
+        });
+
+        // Modal zárása a háttérre kattintva
+        document.getElementById("quantityModal").addEventListener("click", (e) => {
+          if (e.target.id === "quantityModal") hideQuantityModal();
+        });
+
+        // Profil ikon -> lenyíló menü
+        const profileIcon = document.querySelector(".profile-icon");
+        const profileMenu = document.querySelector(".profile-menu");
+
+        if (!profileIcon || !profileMenu) {
+          console.log("Profil ikon vagy profil menü hiányzik.");
+          return;
+        }
+
+        // Nyitás / zárás
+        profileIcon.addEventListener("click", (e) => {
+          e.stopPropagation();
+          profileMenu.classList.toggle("open");
+          const dropdown = profileMenu.querySelector(".dropdown");
+          if (dropdown) {
+            const isOpen = profileMenu.classList.contains("open");
+            dropdown.setAttribute("aria-hidden", !isOpen);
+          }
+        });
+
+        // Klikk bárhova -> bezár
+        document.addEventListener("click", () => {
+          profileMenu.classList.remove("open");
+          cartMenu?.classList.remove("open");
+          const dropdown = profileMenu.querySelector(".dropdown");
+          if (dropdown) dropdown.setAttribute("aria-hidden", "true");
+          const cartDropdown = document.querySelector(".cart-dropdown");
+          if (cartDropdown) cartDropdown.setAttribute("aria-hidden", "true");
+        });
+      });
+    </script>
+</body>
+</html>
