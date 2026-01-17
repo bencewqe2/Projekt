@@ -66,9 +66,12 @@
             const old = current;
             current = next;
             next = old;
-            setTimeout(() => {
-              next.pause();
-            }, (fadeDuration + 0.1) * 1000);
+            setTimeout(
+              () => {
+                next.pause();
+              },
+              (fadeDuration + 0.1) * 1000,
+            );
           }
           requestAnimationFrame(tick);
         }
@@ -109,5 +112,6 @@
         alert("Bejelentkezés sikeres (demo)!");
       });
     </script>
+    <script src="/js/mobileNav.js"></script>
   </body>
 </html>

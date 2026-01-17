@@ -44,14 +44,14 @@
         <section id="bookings" class="account-section">
           <h2>Foglalásaim</h2>
           <div id="bookingsContainer">
-            <p style="text-align: center; color: #999;">Betöltés...</p>
+            <p style="text-align: center; color: #999">Betöltés...</p>
           </div>
         </section>
 
         <section id="orders" class="account-section">
           <h2>Rendeléseim</h2>
           <div id="ordersContainer">
-            <p style="text-align: center; color: #999;">Betöltés...</p>
+            <p style="text-align: center; color: #999">Betöltés...</p>
           </div>
         </section>
       </main>
@@ -61,7 +61,7 @@
       function showSection(id) {
         document.querySelectorAll(".account-section").forEach((s) => s.classList.remove("active"));
         document.getElementById(id).classList.add("active");
-        
+
         // Rendelések betöltése, amikor a rendelések szekciót megnyitják
         if (id === "orders") {
           loadOrders();
@@ -74,7 +74,7 @@
           const data = await res.json();
 
           const ordersContainer = document.getElementById("ordersContainer");
-          
+
           if (!data.ok || data.orders.length === 0) {
             ordersContainer.innerHTML = '<p style="text-align: center; color: #999;">Még nincsenek rendeléseid.</p>';
             return;
@@ -91,7 +91,9 @@
                 <div class="order-details">
                   <p><strong>Termékek:</strong></p>
                   <ul>
-                    ${JSON.parse(order.products || "[]").map(p => `<li>${p.name} - ${p.price}</li>`).join("")}
+                    ${JSON.parse(order.products || "[]")
+                      .map((p) => `<li>${p.name} - ${p.price}</li>`)
+                      .join("")}
                   </ul>
                   <p><strong>Szállítás:</strong> ${order.shippingType === "home" ? "🚚 Házhoz szállítás" : "🏪 Átvétel"}</p>
                   <p><strong>Összeg:</strong> <span class="order-total">${order.totalPrice.toLocaleString("hu-HU")} Ft</span></p>
@@ -99,11 +101,12 @@
               </div>
             `;
           });
-          html += '</div>';
+          html += "</div>";
           ordersContainer.innerHTML = html;
         } catch (err) {
           console.error(err);
-          document.getElementById("ordersContainer").innerHTML = '<p style="color: #e74c3c;">Hiba történt a rendelések betöltésekor.</p>';
+          document.getElementById("ordersContainer").innerHTML =
+            '<p style="color: #e74c3c;">Hiba történt a rendelések betöltésekor.</p>';
         }
       }
 
@@ -112,13 +115,13 @@
         if (!confirm("Biztosan szeretnéd törölni ezt a foglalást?")) {
           return;
         }
-        
+
         try {
           const res = await fetch(`/api/booking/${bookingId}`, {
-            method: "DELETE"
+            method: "DELETE",
           });
           const data = await res.json();
-          
+
           if (res.ok && data.ok) {
             alert("Foglalás sikeresen törölve!");
             loadBookings();
@@ -138,7 +141,7 @@
           const data = await res.json();
 
           const bookingsContainer = document.getElementById("bookingsContainer");
-          
+
           if (!data.ok || data.bookings.length === 0) {
             bookingsContainer.innerHTML = '<p style="text-align: center; color: #999;">Még nincsenek foglalásaid.</p>';
             return;
@@ -151,7 +154,7 @@
             // Az offset-et eltávolítjuk, hogy az eredeti (helyi) időt kapjuk meg
             const offset = dt.getTimezoneOffset() * 60 * 1000;
             const localDate = new Date(dt.getTime() + offset);
-            
+
             const bookingDate = localDate.toLocaleDateString("hu-HU");
             const bookingTime = localDate.toLocaleTimeString("hu-HU", { hour: "2-digit", minute: "2-digit" });
             html += `
@@ -166,7 +169,7 @@
               </div>
             `;
           });
-          html += '</div>';
+          html += "</div>";
           bookingsContainer.innerHTML = html;
         } catch (err) {
           console.error(err);
@@ -177,5 +180,6 @@
         loadBookings();
       });
     </script>
+    <script src="/js/mobileNav.js"></script>
   </body>
 </html>

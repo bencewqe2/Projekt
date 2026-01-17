@@ -42,7 +42,7 @@
             <ul class="dropdown" aria-hidden="true">
               <% if (user) { %>
               <li style="padding: 0.6rem 1rem; color: #3cbcc7; font-weight: 700"><%= user.felhnev %></li>
-              <li><a href="/fiók">Fiók</a></li>
+              <li><a href="/fiok"><%= (user && user.role === 'ADMIN') ? 'Admin Panel' : 'Fiók' %></a></li>
               <li>
                 <form action="/api/logout" method="get">
                   <button type="submit" class="logout-btn">Kijelentkezés</button>
@@ -61,6 +61,7 @@
 
     <section class="payment-container">
       <h1>Fizetés</h1>
+      <div id="orderMessage" class="order-message" aria-hidden="true"></div>
       
       <div class="payment-content">
         <!-- Kosár összegzés -->
@@ -105,6 +106,53 @@
                 <p class="price">Ingyenes</p>
               </div>
             </label>
+          </div>
+        </div>
+
+        <!-- Külön konténer a házhozszállítási űrlapnak (vízszintes elrendezés) -->
+        <div class="delivery-container">
+          <div class="delivery-form" id="deliveryForm" aria-hidden="true">
+            <h3>Szállítási adatok</h3>
+            <div class="input-row">
+              <label>Teljes név <span class="required">*</span>
+                <input type="text" id="del_name" name="del_name" placeholder="Vezetéknév Keresztnév" />
+                <span class="field-error" id="err_name"></span>
+              </label>
+            </div>
+
+            <div class="input-row">
+              <label>Telefonszám <span class="required">*</span>
+                <input type="tel" id="del_phone" name="del_phone" placeholder="+36 30 123 4567" />
+                <span class="field-error" id="err_phone"></span>
+              </label>
+            </div>
+
+            <div class="input-row">
+              <label>Utca, házszám <span class="required">*</span>
+                <input type="text" id="del_address" name="del_address" placeholder="Kossuth L. u. 1" />
+                <span class="field-error" id="err_address"></span>
+              </label>
+            </div>
+
+            <div class="input-row">
+              <label>Irányítószám <span class="required">*</span>
+                <input type="text" id="del_postal" name="del_postal" placeholder="1234" />
+                <span class="field-error" id="err_postal"></span>
+              </label>
+            </div>
+
+            <div class="input-row">
+              <label>Város <span class="required">*</span>
+                <input type="text" id="del_city" name="del_city" placeholder="Budapest" />
+                <span class="field-error" id="err_city"></span>
+              </label>
+            </div>
+
+            <div class="input-row">
+              <label>Megjegyzés (opcionális)
+                <input type="text" id="del_note" name="del_note" placeholder="Pl. kapucsengő: 12" />
+              </label>
+            </div>
           </div>
         </div>
 
@@ -191,7 +239,7 @@
           paymentBtn.addEventListener("click", async () => {
             const cart = JSON.parse(localStorage.getItem("cart")) || [];
             if (cart.length === 0) {
-              alert("A kosár üres!");
+              showOrderMessage('A kosár üres!', 'error');
               return;
             }
 
@@ -206,12 +254,58 @@
             const shippingCost = selectedShipping === "home" ? 1490 : 0;
             const totalPrice = subtotal + shippingCost;
 
+            // Ha házhoz szállítás, validáljuk a kötelező mezőket inline
+            const deliveryForm = document.getElementById('deliveryForm');
+            const isHome = (selectedShipping === 'home');
+
+            function clearErrors() {
+              document.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; el.classList.remove('visible'); });
+            }
+
+            function validateDelivery() {
+              clearErrors();
+              if (!isHome) return true;
+              let ok = true;
+              const name = document.getElementById('del_name').value.trim();
+              const phone = document.getElementById('del_phone').value.trim();
+              const address = document.getElementById('del_address').value.trim();
+              const postal = document.getElementById('del_postal').value.trim();
+              const city = document.getElementById('del_city').value.trim();
+
+              if (!name) { document.getElementById('err_name').textContent = 'Kötelező megadni a teljes nevet.'; document.getElementById('err_name').classList.add('visible'); ok = false; }
+              if (!phone) { document.getElementById('err_phone').textContent = 'Kötelező telefonszámot megadni.'; document.getElementById('err_phone').classList.add('visible'); ok = false; }
+              if (!address) { document.getElementById('err_address').textContent = 'Kötelező az utca és házszám.'; document.getElementById('err_address').classList.add('visible'); ok = false; }
+              if (!postal) { document.getElementById('err_postal').textContent = 'Kötelező az irányítószám.'; document.getElementById('err_postal').classList.add('visible'); ok = false; }
+              if (!city) { document.getElementById('err_city').textContent = 'Kötelező a város megadása.'; document.getElementById('err_city').classList.add('visible'); ok = false; }
+
+              return ok;
+            }
+
+            if (!validateDelivery()) {
+              // Ne küldjük el, csak jelezzük a hibákat az űrlapon
+              // görgessünk a formra, hogy a felhasználó lássa
+              if (deliveryForm) deliveryForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              return;
+            }
+
             // Adatbázisba mentés
             try {
               const formData = new URLSearchParams();
               formData.append("products", JSON.stringify(cart));
               formData.append("shippingType", selectedShipping);
               formData.append("totalPrice", totalPrice);
+
+              if (isHome) {
+                const addressObj = {
+                  name: document.getElementById('del_name').value.trim(),
+                  phone: document.getElementById('del_phone').value.trim(),
+                  address: document.getElementById('del_address').value.trim(),
+                  postal: document.getElementById('del_postal').value.trim(),
+                  city: document.getElementById('del_city').value.trim(),
+                  note: document.getElementById('del_note').value.trim() || ''
+                };
+                formData.append('address', JSON.stringify(addressObj));
+              }
 
               const res = await fetch("/api/order", {
                 method: "POST",
@@ -221,17 +315,15 @@
 
               const json = await res.json();
               if (res.ok && json.ok) {
-                alert("Rendelés visszaigazolása:\n\nSzállítási mód: " + (selectedShipping === "home" ? "Házhoz szállítás" : "Átvétel a barbershopban") + "\n\nKöszönöm a vásárlást!");
-                
-                // Kosár ürítése
-                localStorage.removeItem("cart");
-                window.location.href = "/shop";
+                showOrderMessage('Rendelés rögzítve. Köszönjük a vásárlást!', 'success');
+                localStorage.removeItem('cart');
+                setTimeout(() => { window.location.href = '/shop'; }, 2200);
               } else {
-                alert("Hiba történt a rendelés mentésekor!");
+                showOrderMessage('Hiba történt a rendelés mentésekor!', 'error');
               }
             } catch (err) {
               console.error(err);
-              alert("Nem sikerült elérni a szervert!");
+              showOrderMessage('Nem sikerült elérni a szervert!', 'error');
             }
           });
         }
@@ -277,7 +369,46 @@
           const cartDropdown = document.querySelector(".cart-dropdown");
           if (cartDropdown) cartDropdown.setAttribute("aria-hidden", "true");
         });
+
+        // További: megjelenítés/eltüntetés a delivery formhoz
+        const deliveryForm = document.getElementById('deliveryForm');
+        const shippingRadiosAll = document.getElementsByName('shipping');
+
+        function toggleDeliveryForm() {
+          const sel = document.querySelector('input[name="shipping"]:checked').value;
+          if (deliveryForm) {
+            if (sel === 'home') {
+              deliveryForm.style.display = '';
+              deliveryForm.setAttribute('aria-hidden','false');
+            } else {
+              deliveryForm.style.display = 'none';
+              deliveryForm.setAttribute('aria-hidden','true');
+            }
+          }
+        }
+
+        // Init state
+        toggleDeliveryForm();
+
+        shippingRadiosAll.forEach(r => r.addEventListener('change', toggleDeliveryForm));
+
+        // Inline order message helper (success / error)
+        function showOrderMessage(text, type) {
+          const msg = document.getElementById('orderMessage');
+          if (!msg) { alert(text); return; }
+          msg.textContent = text;
+          msg.classList.remove('success','error','visible');
+          msg.classList.add(type === 'success' ? 'success' : 'error');
+          msg.classList.add('visible');
+          msg.setAttribute('aria-hidden','false');
+          msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (type === 'success') {
+            // auto-hide after short delay (redirect happens elsewhere)
+            setTimeout(() => { msg.classList.remove('visible'); msg.setAttribute('aria-hidden','true'); }, 2000);
+          }
+        }
       });
     </script>
-</body>
-</html>
+    <script src="/js/mobileNav.js"></script>
+  </body>
+  </html>

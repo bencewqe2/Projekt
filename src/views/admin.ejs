@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel – Beach Barbershop</title>
+    <link rel="stylesheet" href="/css/fiok.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+  </head>
+  <body>
+    <video id="hatter_video" autoplay muted loop>
+      <source src="/videos/video.mp4" type="video/mp4" />
+    </video>
+
+    <header>
+      <div class="logo">Beach Barbershop - Admin</div>
+      <nav>
+        <ul>
+          <li><a href="/">Főoldal</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="account-header">Admin: <%= user.felhnev %></div>
+
+    <div class="account-wrapper">
+      <aside class="account-sidebar">
+        <button onclick="showSection('bookings')">Foglalások</button>
+        <button onclick="showSection('orders')">Rendelések</button>
+        <button onclick="showSection('users')">Felhasználók</button>
+      </aside>
+
+      <main class="account-content">
+        <section id="bookings" class="account-section active">
+          <h2>Minden foglalás</h2>
+          <div id="bookingsContainer">
+            <p style="text-align: center; color: #999">Betöltés...</p>
+          </div>
+        </section>
+
+        <section id="orders" class="account-section">
+          <h2>Minden rendelés</h2>
+          <div id="ordersContainer">
+            <p style="text-align: center; color: #999">Betöltés...</p>
+          </div>
+        </section>
+
+        <section id="users" class="account-section">
+          <h2>Felhasználók kezelése</h2>
+          <div id="usersContainer">
+            <p style="text-align: center; color: #999">Betöltés...</p>
+          </div>
+          <div
+            id="userPanel"
+            style="
+              display: none;
+              margin-top: 1rem;
+              background: rgba(17, 17, 17, 0.6);
+              padding: 1rem;
+              border-radius: 6px;
+              border: 1px solid rgba(255, 255, 255, 0.04);
+            ">
+            <h3>Felhasználó adatai</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem; max-width: 520px">
+              <label>Felhasználónév<br /><input id="up_felhnev" type="text" style="width: 100%" /></label>
+              <label>Email<br /><input id="up_email" type="email" style="width: 100%" /></label>
+              <label>Telefonszám<br /><input id="up_telefonszam" type="text" style="width: 100%" /></label>
+              <label
+                >Szerep<br /><select id="up_role">
+                  <option>USER</option>
+                  <option>BARBER</option>
+                  <option>ADMIN</option>
+                </select></label
+              >
+              <div style="display: flex; gap: 0.6rem">
+                <button id="btnSaveUser">Mentés</button>
+                <button id="btnChangePassword">Jelszó módosítása</button>
+                <button id="btnDeleteUser" class="danger">Törlés</button>
+                <button id="btnClosePanel">Bezár</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      function showSection(id) {
+        document.querySelectorAll(".account-section").forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        if (id === "bookings") loadBookings();
+        if (id === "orders") loadOrders();
+        if (id === "users") loadUsers();
+      }
+
+      async function loadBookings() {
+        const container = document.getElementById("bookingsContainer");
+        container.innerHTML = '<p style="text-align:center;color:#999">Betöltés...</p>';
+        try {
+          const res = await fetch("/api/admin/bookings");
+          const json = await res.json();
+          if (!res.ok) throw new Error(json.error || "Hiba");
+          if (!json.bookings || json.bookings.length === 0) {
+            container.innerHTML = '<p style="text-align:center;color:#999">Nincs foglalás.</p>';
+            return;
+          }
+          let html = '<div class="bookings-list">';
+          json.bookings.forEach((b) => {
+            html += `<div class="booking-item"><div style="display:flex;justify-content:space-between;align-items:center;"><div><p><strong>Dátum:</strong> ${new Date(b.datetime).toLocaleString("hu-HU")}</p><p><strong>Szolgáltatás:</strong> ${b.service || "—"}</p></div><div><p><strong>Felhasználó:</strong> ${b.user ? b.user.felhnev : "ismeretlen"}</p><p>${b.user ? b.user.email : ""}</p></div></div></div>`;
+          });
+          html += "</div>";
+          container.innerHTML = html;
+        } catch (err) {
+          console.error(err);
+          container.innerHTML = '<p style="color:#e74c3c;">Hiba történt a foglalások betöltésekor.</p>';
+        }
+      }
+
+      async function loadOrders() {
+        const container = document.getElementById("ordersContainer");
+        container.innerHTML = '<p style="text-align:center;color:#999">Betöltés...</p>';
+        try {
+          const res = await fetch("/api/admin/orders");
+          const json = await res.json();
+          if (!res.ok) throw new Error(json.error || "Hiba");
+          if (!json.orders || json.orders.length === 0) {
+            container.innerHTML = '<p style="text-align:center;color:#999">Nincs rendelés.</p>';
+            return;
+          }
+          let html = '<div class="orders-list">';
+          json.orders.forEach((o) => {
+            const products = (() => {
+              try {
+                return JSON.parse(o.products || "[]")
+                  .map((p) => `<li>${p.name} - ${p.price} × ${p.quantity || 1}</li>`)
+                  .join("");
+              } catch (e) {
+                return "<li>Nem értelmezhető</li>";
+              }
+            })();
+            html += `<div class="order-item"><div class="order-header"><span>#${o.id}</span><span>${new Date(o.createdAt).toLocaleString("hu-HU")}</span></div><div class="order-details"><p><strong>Felhasználó:</strong> ${o.user ? o.user.felhnev : "ismeretlen"} (${o.user ? o.user.email : ""})</p><p><strong>Szállítás:</strong> ${o.shippingType}</p><p><strong>Összeg:</strong> ${o.totalPrice} Ft</p><p><strong>Termékek:</strong></p><ul>${products}</ul></div><div class="order-actions"><button onclick="deleteOrder(${o.id})" class="danger">Törlés</button></div></div>`;
+          });
+          html += "</div>";
+          container.innerHTML = html;
+        } catch (err) {
+          console.error(err);
+          container.innerHTML = '<p style="color:#e74c3c;">Hiba történt a rendelések betöltésekor.</p>';
+        }
+      }
+
+      async function loadUsers() {
+        const container = document.getElementById("usersContainer");
+        container.innerHTML = '<p style="text-align:center;color:#999">Betöltés...</p>';
+        try {
+          const res = await fetch("/api/admin/users");
+          const json = await res.json();
+          if (!res.ok) throw new Error(json.error || "Hiba");
+          if (!json.users || json.users.length === 0) {
+            container.innerHTML = '<p style="text-align:center;color:#999">Nincsenek felhasználók.</p>';
+            return;
+          }
+          let html = '<div class="users-list">';
+          window.usersData = json.users;
+          json.users.forEach((u) => {
+            html += `<div class="user-item"><div class="user-header"><div><p style="margin:0;color:#3cbcc7;font-weight:bold;font-size:1.05rem;">${u.felhnev}</p><p style="margin:0.3rem 0 0 0;color:#999;font-size:0.9rem;">ID: ${u.id}</p></div><div style="text-align:right;"><p style="margin:0;color:#ddd;"><strong>Email:</strong> ${u.email}</p><p style="margin:0.3rem 0 0 0;color:#999;font-size:0.9rem;">Szerep: <span style="color:#3cbcc7;">${u.role}</span></p></div></div><div class="user-details"><p style="margin:0.5rem 0;"><strong>Telefon:</strong> ${u.telefonszam}</p></div><div class="user-actions"><button onclick="selectUser(${u.id})" class="action-btn">Szerkeszt</button><button onclick="changePassword(${u.id})" class="action-btn">Jelszó</button><button onclick="deleteUser(${u.id})" class="danger">Törlés</button></div></div>`;
+          });
+          html += "</div>";
+          container.innerHTML = html;
+        } catch (err) {
+          console.error(err);
+          container.innerHTML = '<p style="color:#e74c3c;">Hiba történt a felhasználók betöltésekor.</p>';
+        }
+      }
+
+      function selectUser(id) {
+        const u = (window.usersData || []).find((x) => x.id === id);
+        if (!u) return alert("Felhasználó nem található");
+        document.getElementById("up_felhnev").value = u.felhnev || "";
+        document.getElementById("up_email").value = u.email || "";
+        document.getElementById("up_telefonszam").value = u.telefonszam || "";
+        document.getElementById("up_role").value = u.role || "USER";
+        document.getElementById("userPanel").style.display = "block";
+        document.getElementById("userPanel").dataset.userId = id;
+      }
+
+      function editUser(id) {
+        selectUser(id);
+      }
+
+      function changePassword(id) {
+        selectUser(id);
+      }
+
+      function deleteUser(id) {
+        if (!confirm("Biztosan törlöd a felhasználót?")) return;
+        try {
+          const res = fetch(`/api/admin/user/${id}`, { method: "DELETE" });
+          res.then(async (response) => {
+            const j = await response.json();
+            if (!response.ok) throw new Error(j.error || "Hiba");
+            alert("Felhasználó törölve");
+            loadUsers();
+          });
+        } catch (err) {
+          console.error(err);
+          alert("Hiba történt");
+        }
+      }
+
+      async function deleteOrder(id) {
+        if (!confirm("Biztosan törlöd a rendelést?")) return;
+        try {
+          const res = await fetch(`/api/admin/order/${id}`, { method: "DELETE" });
+          const j = await res.json();
+          if (!res.ok) throw new Error(j.error || "Hiba");
+          alert("Rendelés törölve");
+          loadOrders();
+        } catch (err) {
+          console.error(err);
+          alert("Hiba történt");
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadBookings();
+
+        // Bezárás gomb
+        document.getElementById("btnClosePanel").addEventListener("click", () => {
+          document.getElementById("userPanel").style.display = "none";
+        });
+
+        // Mentés gomb
+        document.getElementById("btnSaveUser").addEventListener("click", async () => {
+          const panel = document.getElementById("userPanel");
+          const id = parseInt(panel.dataset.userId);
+          const form = new URLSearchParams();
+          form.append("felhnev", document.getElementById("up_felhnev").value);
+          form.append("email", document.getElementById("up_email").value);
+          form.append("telefonszam", document.getElementById("up_telefonszam").value || "0");
+          form.append("role", document.getElementById("up_role").value || "USER");
+          try {
+            const res = await fetch(`/api/admin/user/${id}/update`, {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: form,
+            });
+            const j = await res.json();
+            if (!res.ok) throw new Error(j.error || "Hiba");
+            alert("Mentve");
+            document.getElementById("userPanel").style.display = "none";
+            loadUsers();
+          } catch (err) {
+            console.error(err);
+            alert("Hiba történt");
+          }
+        });
+
+        // Jelszó módosítás gomb
+        document.getElementById("btnChangePassword").addEventListener("click", async () => {
+          const panel = document.getElementById("userPanel");
+          const id = parseInt(panel.dataset.userId);
+          const pw = prompt("Új jelszó:");
+          if (pw === null) return;
+          if (!confirm("Biztos?")) return;
+          try {
+            const form = new URLSearchParams();
+            form.append("password", pw);
+            const res = await fetch(`/api/admin/user/${id}/password`, {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: form,
+            });
+            const j = await res.json();
+            if (!res.ok) throw new Error(j.error || "Hiba");
+            alert("Jelszó módosítva");
+          } catch (err) {
+            console.error(err);
+            alert("Hiba történt");
+          }
+        });
+
+        // Törlés gomb
+        document.getElementById("btnDeleteUser").addEventListener("click", async () => {
+          const panel = document.getElementById("userPanel");
+          const id = parseInt(panel.dataset.userId);
+          if (!confirm("Biztosan törlöd a felhasználót?")) return;
+          try {
+            const res = await fetch(`/api/admin/user/${id}`, { method: "DELETE" });
+            const j = await res.json();
+            if (!res.ok) throw new Error(j.error || "Hiba");
+            alert("Felhasználó törölve");
+            document.getElementById("userPanel").style.display = "none";
+            loadUsers();
+          } catch (err) {
+            console.error(err);
+            alert("Hiba történt");
+          }
+        });
+      });
+    </script>
+
+    <script src="/js/mobileNav.js"></script>
+  </body>
+</html>

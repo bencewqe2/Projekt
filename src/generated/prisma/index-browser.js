@@ -126,7 +126,11 @@ exports.Prisma.FelhasznalokScalarFieldEnum = {
   felhnev: 'felhnev',
   email: 'email',
   hash: 'hash',
-  telefonszam: 'telefonszam'
+  telefonszam: 'telefonszam',
+  role: 'role',
+  emailVerified: 'emailVerified',
+  verifyToken: 'verifyToken',
+  verifyTokenExpiry: 'verifyTokenExpiry'
 };
 
 exports.Prisma.IdopontScalarFieldEnum = {
@@ -143,20 +147,19 @@ exports.Prisma.BorbelyokScalarFieldEnum = {
   teleszam: 'teleszam'
 };
 
+exports.Prisma.RendelesScalarFieldEnum = {
+  id: 'id',
+  felhaszid: 'felhaszid',
+  products: 'products',
+  address: 'address',
+  shippingType: 'shippingType',
+  totalPrice: 'totalPrice',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
-};
-
-exports.Prisma.felhasznalokOrderByRelevanceFieldEnum = {
-  felhnev: 'felhnev',
-  email: 'email',
-  hash: 'hash',
-  telefonszam: 'telefonszam'
-};
-
-exports.Prisma.idopontOrderByRelevanceFieldEnum = {
-  szolgal: 'szolgal'
 };
 
 exports.Prisma.NullsOrder = {
@@ -164,16 +167,39 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.felhasznalokOrderByRelevanceFieldEnum = {
+  felhnev: 'felhnev',
+  email: 'email',
+  hash: 'hash',
+  telefonszam: 'telefonszam',
+  verifyToken: 'verifyToken'
+};
+
+exports.Prisma.idopontOrderByRelevanceFieldEnum = {
+  szolgal: 'szolgal'
+};
+
 exports.Prisma.borbelyokOrderByRelevanceFieldEnum = {
   Nev: 'Nev',
   email: 'email'
 };
 
+exports.Prisma.rendelesOrderByRelevanceFieldEnum = {
+  products: 'products',
+  address: 'address',
+  shippingType: 'shippingType'
+};
+exports.Role = exports.$Enums.Role = {
+  ADMIN: 'ADMIN',
+  BARBER: 'BARBER',
+  USER: 'USER'
+};
 
 exports.Prisma.ModelName = {
   felhasznalok: 'felhasznalok',
   idopont: 'idopont',
-  borbelyok: 'borbelyok'
+  borbelyok: 'borbelyok',
+  rendeles: 'rendeles'
 };
 
 /**
