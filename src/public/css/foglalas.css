@@ -202,7 +202,9 @@ form {
   max-width: 92%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   transform: translateY(18px) scale(0.98);
-  transition: transform 240ms cubic-bezier(0.2, 0.9, 0.3, 1), opacity 240ms;
+  transition:
+    transform 240ms cubic-bezier(0.2, 0.9, 0.3, 1),
+    opacity 240ms;
   opacity: 0;
 }
 
@@ -276,6 +278,32 @@ footer {
   max-width: 900px;
   margin: 0 auto;
   flex: 1 0 auto;
+}
+
+/* Mobile improvements */
+@media (max-width: 768px) {
+  #hatter_video {
+    display: none;
+  }
+  .hero {
+    padding: 2rem 1rem;
+  }
+  section {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  .booking-card {
+    padding: 2rem;
+  }
+  form {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-card {
+    padding: 1rem;
+  }
 }
 
 .plusz-info {

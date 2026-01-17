@@ -8,12 +8,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  BARBER
+  USER
+}
+
 model felhasznalok {
   id          Int    @id @default(autoincrement()) @db.UnsignedInt
   felhnev     String @default("0") @db.VarChar(50)
   email       String @default("0") @db.VarChar(50)
   hash        String @default("0") @db.Char(72)
   telefonszam String @default("0") @db.VarChar(50)
+  role        Role   @default(USER)
+  emailVerified     Boolean   @default(false)
+  verifyToken       String?   @db.VarChar(128)
+  verifyTokenExpiry DateTime? @db.DateTime(0)
 }
 
 model idopont {
@@ -36,6 +46,7 @@ model rendeles {
   id           Int      @id @default(autoincrement()) @db.UnsignedInt
   felhaszid    Int      @db.UnsignedInt
   products     String   @db.LongText
+  address      String?  @db.LongText
   shippingType String   @db.VarChar(20)
   totalPrice   Int
   createdAt    DateTime @default(now()) @db.DateTime(0)

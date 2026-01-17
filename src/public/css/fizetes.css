@@ -5,7 +5,6 @@
   margin: 2rem auto;
   max-width: 1000px;
 }
-
 .payment-container h1 {
   text-align: center;
   font-size: 2rem;
@@ -126,6 +125,124 @@
   margin-top: 0.5rem;
 }
 
+/* Delivery form */
+.delivery-form {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(34, 34, 34, 0.7);
+  border: 1px solid #444;
+}
+
+.delivery-form h3 {
+  color: #3cbcc7;
+  margin-bottom: 0.75rem;
+}
+
+.input-row {
+  margin-bottom: 0.75rem;
+}
+
+.input-row label {
+  display: block;
+  color: #ddd;
+  font-size: 0.95rem;
+}
+
+.input-row input[type="text"],
+.input-row input[type="tel"] {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  margin-top: 0.35rem;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #0f0f0f;
+  color: #fff;
+}
+
+.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.required {
+  color: #e07a7a;
+  margin-left: 0.25rem;
+}
+
+.field-error {
+  display: none;
+  color: #ff8a8a;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.field-error.visible {
+  display: block;
+}
+
+/* Inline order message */
+.order-message {
+  display: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.order-message.visible {
+  display: block;
+}
+.order-message.success {
+  background: rgba(60, 188, 199, 0.08);
+  color: #bff7f4;
+  border: 1px solid rgba(60, 188, 199, 0.25);
+}
+.order-message.error {
+  background: rgba(224, 122, 122, 0.06);
+  color: #ffd6d6;
+  border: 1px solid rgba(224, 122, 122, 0.18);
+}
+/* Delivery container (separate box spanning full width under the columns) */
+.delivery-container {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 0 0.25rem 0.75rem 0.25rem;
+}
+
+/* Horizontal delivery form layout */
+.delivery-form {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(34, 34, 34, 0.85);
+  border: 1px solid #444;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.delivery-form h3 {
+  flex-basis: 100%;
+  color: #3cbcc7;
+  margin-bottom: 0.5rem;
+}
+
+.input-row {
+  margin-bottom: 0.75rem;
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
+.input-row.full {
+  flex-basis: 100%;
+}
 /* Fizetés gombk */
 .payment-actions {
   grid-column: 1 / -1;

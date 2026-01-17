@@ -23,7 +23,7 @@
             <ul class="dropdown" aria-hidden="true">
               <% if (user) { %>
               <li style="padding: 0.6rem 1rem; color: #3cbcc7; font-weight: 700"><%= user.felhnev %></li>
-              <li><a href="/fiok">Fiók</a></li>
+              <li><a href="/fiok"><%= (user && user.role === 'ADMIN') ? 'Admin Panel' : 'Fiók' %></a></li>
               <li>
                 <form action="/api/logout" method="get">
                   <button type="submit" class="logout-btn">Kijelentkezés</button>
@@ -214,5 +214,6 @@
         }
       });
     </script>
+    <script src="/js/mobileNav.js"></script>
   </body>
 </html>

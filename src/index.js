@@ -2,6 +2,8 @@ import express, { response } from "express";
 import { PrismaClient } from "./generated/prisma/client.js";
 import { getIronSession } from "iron-session";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 dotenv.config();
@@ -50,6 +52,11 @@ app.get("/regisztracio", async (req, res) => {
 app.get("/fiok", (req, res) => {
   if (!req.session.user) {
     return res.redirect("/bejelentkezes");
+  }
+
+  // ha adnmin, akkor az admin felületre vigyen
+  if (req.session.user.role === "ADMIN") {
+    return res.render("admin", { user: req.session.user });
   }
 
   res.render("fiok", {
@@ -137,6 +144,123 @@ app.get("/api/orders", async (req, res) => {
   }
 });
 
+// Admin-only: list all bookings with user info
+app.get("/api/admin/bookings", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+
+  try {
+    const rows = await db.idopont.findMany({ orderBy: { idopont: "asc" } });
+    const userIds = Array.from(new Set(rows.map((r) => r.felhaszid)));
+    const users = await db.felhasznalok.findMany({ where: { id: { in: userIds } } });
+    const userMap = Object.fromEntries(
+      users.map((u) => [u.id, { id: u.id, felhnev: u.felhnev, email: u.email, telefonszam: u.telefonszam }]),
+    );
+    const bookings = rows.map((r) => ({
+      id: r.id,
+      datetime: r.idopont,
+      service: r.szolgal,
+      user: userMap[r.felhaszid] || null,
+    }));
+    return res.json({ ok: true, bookings });
+  } catch (err) {
+    console.error("Admin bookings error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
+// Admin-only: list all orders with user info
+app.get("/api/admin/orders", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  try {
+    const rows = await db.rendeles.findMany({ orderBy: { createdAt: "desc" } });
+    const userIds = Array.from(new Set(rows.map((r) => r.felhaszid)));
+    const users = await db.felhasznalok.findMany({ where: { id: { in: userIds } } });
+    const userMap = Object.fromEntries(
+      users.map((u) => [u.id, { id: u.id, felhnev: u.felhnev, email: u.email, telefonszam: u.telefonszam }]),
+    );
+    const orders = rows.map((r) => ({ ...r, user: userMap[r.felhaszid] || null }));
+    return res.json({ ok: true, orders });
+  } catch (err) {
+    console.error("Admin orders error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
+// Admin-only: list all users
+app.get("/api/admin/users", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  try {
+    const users = await db.felhasznalok.findMany({ orderBy: { id: "asc" } });
+    const sanitized = users.map((u) => ({
+      id: u.id,
+      felhnev: u.felhnev,
+      email: u.email,
+      telefonszam: u.telefonszam,
+      role: u.role,
+      emailVerified: u.emailVerified,
+    }));
+    return res.json({ ok: true, users: sanitized });
+  } catch (err) {
+    console.error("Admin users error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
+// Admin-only: update user basic fields
+app.post("/api/admin/user/:id/update", urlencodedParser, async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  const id = parseInt(req.params.id);
+  const { felhnev, email, telefonszam, role, emailVerified } = req.body || {};
+  try {
+    const data = {};
+    if (felhnev !== undefined) data.felhnev = String(felhnev);
+    if (email !== undefined) data.email = String(email);
+    if (telefonszam !== undefined) data.telefonszam = String(telefonszam);
+    if (role !== undefined) data.role = role;
+    if (emailVerified !== undefined) data.emailVerified = emailVerified === "true" || emailVerified === true;
+    const user = await db.felhasznalok.update({ where: { id }, data });
+    return res.json({ ok: true, user: { id: user.id, felhnev: user.felhnev, email: user.email } });
+  } catch (err) {
+    console.error("Admin update user error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
+// Admin-only: change password
+app.post("/api/admin/user/:id/password", urlencodedParser, async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  const id = parseInt(req.params.id);
+  const { password } = req.body || {};
+  if (!password) return res.status(400).json({ error: "Missing password" });
+  try {
+    const hash = await bcrypt.hash(String(password), 12);
+    await db.felhasznalok.update({ where: { id }, data: { hash } });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Admin change password error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
+// Admin-only: delete user
+app.delete("/api/admin/user/:id", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  const id = parseInt(req.params.id);
+  try {
+    await db.felhasznalok.delete({ where: { id } });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Admin delete user error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
 // Rendelés mentése
 app.post("/api/order", urlencodedParser, async (req, res) => {
   const session = req.session;
@@ -144,7 +268,7 @@ app.post("/api/order", urlencodedParser, async (req, res) => {
     return res.status(401).json({ error: "Kérjük, jelentkezz be a rendeléshez." });
   }
 
-  const { products, shippingType, totalPrice } = req.body || {};
+  const { products, shippingType, totalPrice, address } = req.body || {};
   if (!products || !shippingType) {
     return res.status(400).json({ error: "Hiányzó adatok." });
   }
@@ -154,6 +278,7 @@ app.post("/api/order", urlencodedParser, async (req, res) => {
       data: {
         felhaszid: session.user.id,
         products: products,
+        address: address ? String(address) : null,
         shippingType: shippingType,
         totalPrice: parseInt(totalPrice) || 0,
       },
@@ -195,7 +320,7 @@ app.post("/api/login", async (req, res) => {
 
   // Sikeres belépés: mentsük a session-t (ne tegyünk bele érzékeny adatokat)
   const session = req.session;
-  session.user = { id: user.id, felhnev: user.felhnev, email: user.email, pnumber: user.telefonszam };
+  session.user = { id: user.id, felhnev: user.felhnev, email: user.email, pnumber: user.telefonszam, role: user.role };
   await session.save();
 
   // Válasz JSON-nal, a kliens átirányít
@@ -210,19 +335,94 @@ app.get("/api/logout", async (req, res) => {
 
 app.post("/api/register", urlencodedParser, async (req, res) => {
   const { username, email, password, pnumber } = req.body;
-  console.log(password);
+  if (!username || !email || !password) {
+    return res.status(400).send("Hiányzó mezők");
+  }
+
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  await db.felhasznalok.create({
+  // generate email verification token
+  const token = crypto.randomBytes(32).toString("hex");
+  const expiry = new Date(Date.now() + 24 * 3600 * 1000); // 24h
+
+  const user = await db.felhasznalok.create({
     data: {
       felhnev: username,
       email: email,
       hash: hashedPassword,
       telefonszam: pnumber,
+      role: "USER",
+      emailVerified: false,
+      verifyToken: token,
+      verifyTokenExpiry: expiry,
     },
   });
 
+  // send verification email (fire-and-forget)
+  try {
+    await sendVerificationEmail(user.email, user.felhnev, token);
+  } catch (err) {
+    console.error("Failed to send verification email:", err);
+  }
+
+  // Redirect to login page with a message to check email
   res.redirect("/bejelentkezes");
+});
+
+// Email sender helper (uses SMTP configured via env)
+async function sendVerificationEmail(email, username, token) {
+  const host = process.env.SMTP_HOST;
+  const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const from = process.env.FROM_EMAIL || `no-reply@${process.env.SMTP_HOST || "example.com"}`;
+
+  if (!host || !user || !pass) {
+    throw new Error("SMTP not configured (SMTP_HOST/SMTP_USER/SMTP_PASS required)");
+  }
+
+  const transporter = nodemailer.createTransport({ host, port, auth: { user, pass }, secure: port === 465 });
+
+  const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const verifyUrl = `${baseUrl}/verify?token=${encodeURIComponent(token)}`;
+
+  const info = await transporter.sendMail({
+    from,
+    to: email,
+    subject: "Beach Barbershop - Email megerősítése",
+    html: `<p>Szia ${username},</p>
+      <p>Kérlek erősítsd meg az e-mail címed a következő linkre kattintva:</p>
+      <p><a href="${verifyUrl}">E-mail megerősítése</a></p>
+      <p>A link 24 óráig érvényes.</p>`,
+  });
+
+  console.log("Verification email sent:", info.messageId);
+}
+
+// Verify endpoint
+app.get("/verify", async (req, res) => {
+  const token = req.query.token;
+  if (!token) return res.status(400).send("Hiányzó token.");
+
+  try {
+    const user = await db.felhasznalok.findFirst({ where: { verifyToken: String(token) } });
+    if (!user) return res.status(400).send("Érvénytelen vagy lejárt token.");
+
+    if (!user.verifyTokenExpiry || user.verifyTokenExpiry < new Date()) {
+      return res.status(400).send("A token lejárt. Kérlek regisztrálj újra.");
+    }
+
+    await db.felhasznalok.update({
+      where: { id: user.id },
+      data: { emailVerified: true, verifyToken: null, verifyTokenExpiry: null },
+    });
+
+    // redirect to login with a success message (could show a page instead)
+    return res.redirect("/bejelentkezes");
+  } catch (err) {
+    console.error("Verification error:", err);
+    return res.status(500).send("Hiba történt a megerősítéskor.");
+  }
 });
 
 // Foglalás mentése — csak bejelentkezett felhasználó menthet
@@ -295,7 +495,7 @@ app.delete("/api/booking/:id", async (req, res) => {
   try {
     // Ellenőrzés: csak a saját foglalásait lehet törölni
     const booking = await db.idopont.findUnique({
-      where: { id: parseInt(bookingId) }
+      where: { id: parseInt(bookingId) },
     });
 
     if (!booking) {
@@ -307,7 +507,7 @@ app.delete("/api/booking/:id", async (req, res) => {
     }
 
     await db.idopont.delete({
-      where: { id: parseInt(bookingId) }
+      where: { id: parseInt(bookingId) },
     });
 
     return res.json({ ok: true, message: "Foglalás sikeresen törölve." });

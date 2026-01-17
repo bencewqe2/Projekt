@@ -28,6 +28,29 @@ export type idopont = $Result.DefaultSelection<Prisma.$idopontPayload>
  * 
  */
 export type borbelyok = $Result.DefaultSelection<Prisma.$borbelyokPayload>
+/**
+ * Model rendeles
+ * 
+ */
+export type rendeles = $Result.DefaultSelection<Prisma.$rendelesPayload>
+
+/**
+ * Enums
+ */
+export namespace $Enums {
+  export const Role: {
+  ADMIN: 'ADMIN',
+  BARBER: 'BARBER',
+  USER: 'USER'
+};
+
+export type Role = (typeof Role)[keyof typeof Role]
+
+}
+
+export type Role = $Enums.Role
+
+export const Role: typeof $Enums.Role
 
 /**
  * ##  Prisma Client ʲˢ
@@ -176,6 +199,16 @@ export class PrismaClient<
     * ```
     */
   get borbelyok(): Prisma.borbelyokDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.rendeles`: Exposes CRUD operations for the **rendeles** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Rendeles
+    * const rendeles = await prisma.rendeles.findMany()
+    * ```
+    */
+  get rendeles(): Prisma.rendelesDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -619,7 +652,8 @@ export namespace Prisma {
   export const ModelName: {
     felhasznalok: 'felhasznalok',
     idopont: 'idopont',
-    borbelyok: 'borbelyok'
+    borbelyok: 'borbelyok',
+    rendeles: 'rendeles'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -638,7 +672,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "felhasznalok" | "idopont" | "borbelyok"
+      modelProps: "felhasznalok" | "idopont" | "borbelyok" | "rendeles"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -840,6 +874,72 @@ export namespace Prisma {
           }
         }
       }
+      rendeles: {
+        payload: Prisma.$rendelesPayload<ExtArgs>
+        fields: Prisma.rendelesFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.rendelesFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$rendelesPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.rendelesFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$rendelesPayload>
+          }
+          findFirst: {
+            args: Prisma.rendelesFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$rendelesPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.rendelesFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$rendelesPayload>
+          }
+          findMany: {
+            args: Prisma.rendelesFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$rendelesPayload>[]
+          }
+          create: {
+            args: Prisma.rendelesCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$rendelesPayload>
+          }
+          createMany: {
+            args: Prisma.rendelesCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.rendelesDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$rendelesPayload>
+          }
+          update: {
+            args: Prisma.rendelesUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$rendelesPayload>
+          }
+          deleteMany: {
+            args: Prisma.rendelesDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.rendelesUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.rendelesUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$rendelesPayload>
+          }
+          aggregate: {
+            args: Prisma.RendelesAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRendeles>
+          }
+          groupBy: {
+            args: Prisma.rendelesGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RendelesGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.rendelesCountArgs<ExtArgs>
+            result: $Utils.Optional<RendelesCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -939,6 +1039,7 @@ export namespace Prisma {
     felhasznalok?: felhasznalokOmit
     idopont?: idopontOmit
     borbelyok?: borbelyokOmit
+    rendeles?: rendelesOmit
   }
 
   /* Types for Logging */
@@ -1045,6 +1146,10 @@ export namespace Prisma {
     email: string | null
     hash: string | null
     telefonszam: string | null
+    role: $Enums.Role | null
+    emailVerified: boolean | null
+    verifyToken: string | null
+    verifyTokenExpiry: Date | null
   }
 
   export type FelhasznalokMaxAggregateOutputType = {
@@ -1053,6 +1158,10 @@ export namespace Prisma {
     email: string | null
     hash: string | null
     telefonszam: string | null
+    role: $Enums.Role | null
+    emailVerified: boolean | null
+    verifyToken: string | null
+    verifyTokenExpiry: Date | null
   }
 
   export type FelhasznalokCountAggregateOutputType = {
@@ -1061,6 +1170,10 @@ export namespace Prisma {
     email: number
     hash: number
     telefonszam: number
+    role: number
+    emailVerified: number
+    verifyToken: number
+    verifyTokenExpiry: number
     _all: number
   }
 
@@ -1079,6 +1192,10 @@ export namespace Prisma {
     email?: true
     hash?: true
     telefonszam?: true
+    role?: true
+    emailVerified?: true
+    verifyToken?: true
+    verifyTokenExpiry?: true
   }
 
   export type FelhasznalokMaxAggregateInputType = {
@@ -1087,6 +1204,10 @@ export namespace Prisma {
     email?: true
     hash?: true
     telefonszam?: true
+    role?: true
+    emailVerified?: true
+    verifyToken?: true
+    verifyTokenExpiry?: true
   }
 
   export type FelhasznalokCountAggregateInputType = {
@@ -1095,6 +1216,10 @@ export namespace Prisma {
     email?: true
     hash?: true
     telefonszam?: true
+    role?: true
+    emailVerified?: true
+    verifyToken?: true
+    verifyTokenExpiry?: true
     _all?: true
   }
 
@@ -1190,6 +1315,10 @@ export namespace Prisma {
     email: string
     hash: string
     telefonszam: string
+    role: $Enums.Role
+    emailVerified: boolean
+    verifyToken: string | null
+    verifyTokenExpiry: Date | null
     _count: FelhasznalokCountAggregateOutputType | null
     _avg: FelhasznalokAvgAggregateOutputType | null
     _sum: FelhasznalokSumAggregateOutputType | null
@@ -1217,6 +1346,10 @@ export namespace Prisma {
     email?: boolean
     hash?: boolean
     telefonszam?: boolean
+    role?: boolean
+    emailVerified?: boolean
+    verifyToken?: boolean
+    verifyTokenExpiry?: boolean
   }, ExtArgs["result"]["felhasznalok"]>
 
 
@@ -1227,9 +1360,13 @@ export namespace Prisma {
     email?: boolean
     hash?: boolean
     telefonszam?: boolean
+    role?: boolean
+    emailVerified?: boolean
+    verifyToken?: boolean
+    verifyTokenExpiry?: boolean
   }
 
-  export type felhasznalokOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "felhnev" | "email" | "hash" | "telefonszam", ExtArgs["result"]["felhasznalok"]>
+  export type felhasznalokOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "felhnev" | "email" | "hash" | "telefonszam" | "role" | "emailVerified" | "verifyToken" | "verifyTokenExpiry", ExtArgs["result"]["felhasznalok"]>
 
   export type $felhasznalokPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "felhasznalok"
@@ -1240,6 +1377,10 @@ export namespace Prisma {
       email: string
       hash: string
       telefonszam: string
+      role: $Enums.Role
+      emailVerified: boolean
+      verifyToken: string | null
+      verifyTokenExpiry: Date | null
     }, ExtArgs["result"]["felhasznalok"]>
     composites: {}
   }
@@ -1614,6 +1755,10 @@ export namespace Prisma {
     readonly email: FieldRef<"felhasznalok", 'String'>
     readonly hash: FieldRef<"felhasznalok", 'String'>
     readonly telefonszam: FieldRef<"felhasznalok", 'String'>
+    readonly role: FieldRef<"felhasznalok", 'Role'>
+    readonly emailVerified: FieldRef<"felhasznalok", 'Boolean'>
+    readonly verifyToken: FieldRef<"felhasznalok", 'String'>
+    readonly verifyTokenExpiry: FieldRef<"felhasznalok", 'DateTime'>
   }
     
 
@@ -3754,6 +3899,952 @@ export namespace Prisma {
 
 
   /**
+   * Model rendeles
+   */
+
+  export type AggregateRendeles = {
+    _count: RendelesCountAggregateOutputType | null
+    _avg: RendelesAvgAggregateOutputType | null
+    _sum: RendelesSumAggregateOutputType | null
+    _min: RendelesMinAggregateOutputType | null
+    _max: RendelesMaxAggregateOutputType | null
+  }
+
+  export type RendelesAvgAggregateOutputType = {
+    id: number | null
+    felhaszid: number | null
+    totalPrice: number | null
+  }
+
+  export type RendelesSumAggregateOutputType = {
+    id: number | null
+    felhaszid: number | null
+    totalPrice: number | null
+  }
+
+  export type RendelesMinAggregateOutputType = {
+    id: number | null
+    felhaszid: number | null
+    products: string | null
+    address: string | null
+    shippingType: string | null
+    totalPrice: number | null
+    createdAt: Date | null
+  }
+
+  export type RendelesMaxAggregateOutputType = {
+    id: number | null
+    felhaszid: number | null
+    products: string | null
+    address: string | null
+    shippingType: string | null
+    totalPrice: number | null
+    createdAt: Date | null
+  }
+
+  export type RendelesCountAggregateOutputType = {
+    id: number
+    felhaszid: number
+    products: number
+    address: number
+    shippingType: number
+    totalPrice: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type RendelesAvgAggregateInputType = {
+    id?: true
+    felhaszid?: true
+    totalPrice?: true
+  }
+
+  export type RendelesSumAggregateInputType = {
+    id?: true
+    felhaszid?: true
+    totalPrice?: true
+  }
+
+  export type RendelesMinAggregateInputType = {
+    id?: true
+    felhaszid?: true
+    products?: true
+    address?: true
+    shippingType?: true
+    totalPrice?: true
+    createdAt?: true
+  }
+
+  export type RendelesMaxAggregateInputType = {
+    id?: true
+    felhaszid?: true
+    products?: true
+    address?: true
+    shippingType?: true
+    totalPrice?: true
+    createdAt?: true
+  }
+
+  export type RendelesCountAggregateInputType = {
+    id?: true
+    felhaszid?: true
+    products?: true
+    address?: true
+    shippingType?: true
+    totalPrice?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type RendelesAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which rendeles to aggregate.
+     */
+    where?: rendelesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of rendeles to fetch.
+     */
+    orderBy?: rendelesOrderByWithRelationInput | rendelesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: rendelesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` rendeles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` rendeles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned rendeles
+    **/
+    _count?: true | RendelesCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RendelesAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RendelesSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RendelesMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RendelesMaxAggregateInputType
+  }
+
+  export type GetRendelesAggregateType<T extends RendelesAggregateArgs> = {
+        [P in keyof T & keyof AggregateRendeles]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRendeles[P]>
+      : GetScalarType<T[P], AggregateRendeles[P]>
+  }
+
+
+
+
+  export type rendelesGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: rendelesWhereInput
+    orderBy?: rendelesOrderByWithAggregationInput | rendelesOrderByWithAggregationInput[]
+    by: RendelesScalarFieldEnum[] | RendelesScalarFieldEnum
+    having?: rendelesScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RendelesCountAggregateInputType | true
+    _avg?: RendelesAvgAggregateInputType
+    _sum?: RendelesSumAggregateInputType
+    _min?: RendelesMinAggregateInputType
+    _max?: RendelesMaxAggregateInputType
+  }
+
+  export type RendelesGroupByOutputType = {
+    id: number
+    felhaszid: number
+    products: string
+    address: string | null
+    shippingType: string
+    totalPrice: number
+    createdAt: Date
+    _count: RendelesCountAggregateOutputType | null
+    _avg: RendelesAvgAggregateOutputType | null
+    _sum: RendelesSumAggregateOutputType | null
+    _min: RendelesMinAggregateOutputType | null
+    _max: RendelesMaxAggregateOutputType | null
+  }
+
+  type GetRendelesGroupByPayload<T extends rendelesGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RendelesGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RendelesGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RendelesGroupByOutputType[P]>
+            : GetScalarType<T[P], RendelesGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type rendelesSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    felhaszid?: boolean
+    products?: boolean
+    address?: boolean
+    shippingType?: boolean
+    totalPrice?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["rendeles"]>
+
+
+
+  export type rendelesSelectScalar = {
+    id?: boolean
+    felhaszid?: boolean
+    products?: boolean
+    address?: boolean
+    shippingType?: boolean
+    totalPrice?: boolean
+    createdAt?: boolean
+  }
+
+  export type rendelesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "felhaszid" | "products" | "address" | "shippingType" | "totalPrice" | "createdAt", ExtArgs["result"]["rendeles"]>
+
+  export type $rendelesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "rendeles"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      felhaszid: number
+      products: string
+      address: string | null
+      shippingType: string
+      totalPrice: number
+      createdAt: Date
+    }, ExtArgs["result"]["rendeles"]>
+    composites: {}
+  }
+
+  type rendelesGetPayload<S extends boolean | null | undefined | rendelesDefaultArgs> = $Result.GetResult<Prisma.$rendelesPayload, S>
+
+  type rendelesCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<rendelesFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RendelesCountAggregateInputType | true
+    }
+
+  export interface rendelesDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['rendeles'], meta: { name: 'rendeles' } }
+    /**
+     * Find zero or one Rendeles that matches the filter.
+     * @param {rendelesFindUniqueArgs} args - Arguments to find a Rendeles
+     * @example
+     * // Get one Rendeles
+     * const rendeles = await prisma.rendeles.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends rendelesFindUniqueArgs>(args: SelectSubset<T, rendelesFindUniqueArgs<ExtArgs>>): Prisma__rendelesClient<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Rendeles that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {rendelesFindUniqueOrThrowArgs} args - Arguments to find a Rendeles
+     * @example
+     * // Get one Rendeles
+     * const rendeles = await prisma.rendeles.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends rendelesFindUniqueOrThrowArgs>(args: SelectSubset<T, rendelesFindUniqueOrThrowArgs<ExtArgs>>): Prisma__rendelesClient<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Rendeles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {rendelesFindFirstArgs} args - Arguments to find a Rendeles
+     * @example
+     * // Get one Rendeles
+     * const rendeles = await prisma.rendeles.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends rendelesFindFirstArgs>(args?: SelectSubset<T, rendelesFindFirstArgs<ExtArgs>>): Prisma__rendelesClient<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Rendeles that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {rendelesFindFirstOrThrowArgs} args - Arguments to find a Rendeles
+     * @example
+     * // Get one Rendeles
+     * const rendeles = await prisma.rendeles.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends rendelesFindFirstOrThrowArgs>(args?: SelectSubset<T, rendelesFindFirstOrThrowArgs<ExtArgs>>): Prisma__rendelesClient<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Rendeles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {rendelesFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Rendeles
+     * const rendeles = await prisma.rendeles.findMany()
+     * 
+     * // Get first 10 Rendeles
+     * const rendeles = await prisma.rendeles.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const rendelesWithIdOnly = await prisma.rendeles.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends rendelesFindManyArgs>(args?: SelectSubset<T, rendelesFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Rendeles.
+     * @param {rendelesCreateArgs} args - Arguments to create a Rendeles.
+     * @example
+     * // Create one Rendeles
+     * const Rendeles = await prisma.rendeles.create({
+     *   data: {
+     *     // ... data to create a Rendeles
+     *   }
+     * })
+     * 
+     */
+    create<T extends rendelesCreateArgs>(args: SelectSubset<T, rendelesCreateArgs<ExtArgs>>): Prisma__rendelesClient<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Rendeles.
+     * @param {rendelesCreateManyArgs} args - Arguments to create many Rendeles.
+     * @example
+     * // Create many Rendeles
+     * const rendeles = await prisma.rendeles.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends rendelesCreateManyArgs>(args?: SelectSubset<T, rendelesCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Rendeles.
+     * @param {rendelesDeleteArgs} args - Arguments to delete one Rendeles.
+     * @example
+     * // Delete one Rendeles
+     * const Rendeles = await prisma.rendeles.delete({
+     *   where: {
+     *     // ... filter to delete one Rendeles
+     *   }
+     * })
+     * 
+     */
+    delete<T extends rendelesDeleteArgs>(args: SelectSubset<T, rendelesDeleteArgs<ExtArgs>>): Prisma__rendelesClient<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Rendeles.
+     * @param {rendelesUpdateArgs} args - Arguments to update one Rendeles.
+     * @example
+     * // Update one Rendeles
+     * const rendeles = await prisma.rendeles.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends rendelesUpdateArgs>(args: SelectSubset<T, rendelesUpdateArgs<ExtArgs>>): Prisma__rendelesClient<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Rendeles.
+     * @param {rendelesDeleteManyArgs} args - Arguments to filter Rendeles to delete.
+     * @example
+     * // Delete a few Rendeles
+     * const { count } = await prisma.rendeles.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends rendelesDeleteManyArgs>(args?: SelectSubset<T, rendelesDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Rendeles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {rendelesUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Rendeles
+     * const rendeles = await prisma.rendeles.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends rendelesUpdateManyArgs>(args: SelectSubset<T, rendelesUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Rendeles.
+     * @param {rendelesUpsertArgs} args - Arguments to update or create a Rendeles.
+     * @example
+     * // Update or create a Rendeles
+     * const rendeles = await prisma.rendeles.upsert({
+     *   create: {
+     *     // ... data to create a Rendeles
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Rendeles we want to update
+     *   }
+     * })
+     */
+    upsert<T extends rendelesUpsertArgs>(args: SelectSubset<T, rendelesUpsertArgs<ExtArgs>>): Prisma__rendelesClient<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Rendeles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {rendelesCountArgs} args - Arguments to filter Rendeles to count.
+     * @example
+     * // Count the number of Rendeles
+     * const count = await prisma.rendeles.count({
+     *   where: {
+     *     // ... the filter for the Rendeles we want to count
+     *   }
+     * })
+    **/
+    count<T extends rendelesCountArgs>(
+      args?: Subset<T, rendelesCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RendelesCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Rendeles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RendelesAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RendelesAggregateArgs>(args: Subset<T, RendelesAggregateArgs>): Prisma.PrismaPromise<GetRendelesAggregateType<T>>
+
+    /**
+     * Group by Rendeles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {rendelesGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends rendelesGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: rendelesGroupByArgs['orderBy'] }
+        : { orderBy?: rendelesGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, rendelesGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRendelesGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the rendeles model
+   */
+  readonly fields: rendelesFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for rendeles.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__rendelesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the rendeles model
+   */
+  interface rendelesFieldRefs {
+    readonly id: FieldRef<"rendeles", 'Int'>
+    readonly felhaszid: FieldRef<"rendeles", 'Int'>
+    readonly products: FieldRef<"rendeles", 'String'>
+    readonly address: FieldRef<"rendeles", 'String'>
+    readonly shippingType: FieldRef<"rendeles", 'String'>
+    readonly totalPrice: FieldRef<"rendeles", 'Int'>
+    readonly createdAt: FieldRef<"rendeles", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * rendeles findUnique
+   */
+  export type rendelesFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Filter, which rendeles to fetch.
+     */
+    where: rendelesWhereUniqueInput
+  }
+
+  /**
+   * rendeles findUniqueOrThrow
+   */
+  export type rendelesFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Filter, which rendeles to fetch.
+     */
+    where: rendelesWhereUniqueInput
+  }
+
+  /**
+   * rendeles findFirst
+   */
+  export type rendelesFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Filter, which rendeles to fetch.
+     */
+    where?: rendelesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of rendeles to fetch.
+     */
+    orderBy?: rendelesOrderByWithRelationInput | rendelesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for rendeles.
+     */
+    cursor?: rendelesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` rendeles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` rendeles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of rendeles.
+     */
+    distinct?: RendelesScalarFieldEnum | RendelesScalarFieldEnum[]
+  }
+
+  /**
+   * rendeles findFirstOrThrow
+   */
+  export type rendelesFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Filter, which rendeles to fetch.
+     */
+    where?: rendelesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of rendeles to fetch.
+     */
+    orderBy?: rendelesOrderByWithRelationInput | rendelesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for rendeles.
+     */
+    cursor?: rendelesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` rendeles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` rendeles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of rendeles.
+     */
+    distinct?: RendelesScalarFieldEnum | RendelesScalarFieldEnum[]
+  }
+
+  /**
+   * rendeles findMany
+   */
+  export type rendelesFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Filter, which rendeles to fetch.
+     */
+    where?: rendelesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of rendeles to fetch.
+     */
+    orderBy?: rendelesOrderByWithRelationInput | rendelesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing rendeles.
+     */
+    cursor?: rendelesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` rendeles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` rendeles.
+     */
+    skip?: number
+    distinct?: RendelesScalarFieldEnum | RendelesScalarFieldEnum[]
+  }
+
+  /**
+   * rendeles create
+   */
+  export type rendelesCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * The data needed to create a rendeles.
+     */
+    data: XOR<rendelesCreateInput, rendelesUncheckedCreateInput>
+  }
+
+  /**
+   * rendeles createMany
+   */
+  export type rendelesCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many rendeles.
+     */
+    data: rendelesCreateManyInput | rendelesCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * rendeles update
+   */
+  export type rendelesUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * The data needed to update a rendeles.
+     */
+    data: XOR<rendelesUpdateInput, rendelesUncheckedUpdateInput>
+    /**
+     * Choose, which rendeles to update.
+     */
+    where: rendelesWhereUniqueInput
+  }
+
+  /**
+   * rendeles updateMany
+   */
+  export type rendelesUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update rendeles.
+     */
+    data: XOR<rendelesUpdateManyMutationInput, rendelesUncheckedUpdateManyInput>
+    /**
+     * Filter which rendeles to update
+     */
+    where?: rendelesWhereInput
+    /**
+     * Limit how many rendeles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * rendeles upsert
+   */
+  export type rendelesUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * The filter to search for the rendeles to update in case it exists.
+     */
+    where: rendelesWhereUniqueInput
+    /**
+     * In case the rendeles found by the `where` argument doesn't exist, create a new rendeles with this data.
+     */
+    create: XOR<rendelesCreateInput, rendelesUncheckedCreateInput>
+    /**
+     * In case the rendeles was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<rendelesUpdateInput, rendelesUncheckedUpdateInput>
+  }
+
+  /**
+   * rendeles delete
+   */
+  export type rendelesDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Filter which rendeles to delete.
+     */
+    where: rendelesWhereUniqueInput
+  }
+
+  /**
+   * rendeles deleteMany
+   */
+  export type rendelesDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which rendeles to delete
+     */
+    where?: rendelesWhereInput
+    /**
+     * Limit how many rendeles to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * rendeles without action
+   */
+  export type rendelesDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -3772,7 +4863,11 @@ export namespace Prisma {
     felhnev: 'felhnev',
     email: 'email',
     hash: 'hash',
-    telefonszam: 'telefonszam'
+    telefonszam: 'telefonszam',
+    role: 'role',
+    emailVerified: 'emailVerified',
+    verifyToken: 'verifyToken',
+    verifyTokenExpiry: 'verifyTokenExpiry'
   };
 
   export type FelhasznalokScalarFieldEnum = (typeof FelhasznalokScalarFieldEnum)[keyof typeof FelhasznalokScalarFieldEnum]
@@ -3798,6 +4893,19 @@ export namespace Prisma {
   export type BorbelyokScalarFieldEnum = (typeof BorbelyokScalarFieldEnum)[keyof typeof BorbelyokScalarFieldEnum]
 
 
+  export const RendelesScalarFieldEnum: {
+    id: 'id',
+    felhaszid: 'felhaszid',
+    products: 'products',
+    address: 'address',
+    shippingType: 'shippingType',
+    totalPrice: 'totalPrice',
+    createdAt: 'createdAt'
+  };
+
+  export type RendelesScalarFieldEnum = (typeof RendelesScalarFieldEnum)[keyof typeof RendelesScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -3806,11 +4914,20 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
   export const felhasznalokOrderByRelevanceFieldEnum: {
     felhnev: 'felhnev',
     email: 'email',
     hash: 'hash',
-    telefonszam: 'telefonszam'
+    telefonszam: 'telefonszam',
+    verifyToken: 'verifyToken'
   };
 
   export type felhasznalokOrderByRelevanceFieldEnum = (typeof felhasznalokOrderByRelevanceFieldEnum)[keyof typeof felhasznalokOrderByRelevanceFieldEnum]
@@ -3823,20 +4940,21 @@ export namespace Prisma {
   export type idopontOrderByRelevanceFieldEnum = (typeof idopontOrderByRelevanceFieldEnum)[keyof typeof idopontOrderByRelevanceFieldEnum]
 
 
-  export const NullsOrder: {
-    first: 'first',
-    last: 'last'
-  };
-
-  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
   export const borbelyokOrderByRelevanceFieldEnum: {
     Nev: 'Nev',
     email: 'email'
   };
 
   export type borbelyokOrderByRelevanceFieldEnum = (typeof borbelyokOrderByRelevanceFieldEnum)[keyof typeof borbelyokOrderByRelevanceFieldEnum]
+
+
+  export const rendelesOrderByRelevanceFieldEnum: {
+    products: 'products',
+    address: 'address',
+    shippingType: 'shippingType'
+  };
+
+  export type rendelesOrderByRelevanceFieldEnum = (typeof rendelesOrderByRelevanceFieldEnum)[keyof typeof rendelesOrderByRelevanceFieldEnum]
 
 
   /**
@@ -3855,6 +4973,20 @@ export namespace Prisma {
    * Reference to a field of type 'String'
    */
   export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role'
+   */
+  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -3884,6 +5016,10 @@ export namespace Prisma {
     email?: StringFilter<"felhasznalok"> | string
     hash?: StringFilter<"felhasznalok"> | string
     telefonszam?: StringFilter<"felhasznalok"> | string
+    role?: EnumRoleFilter<"felhasznalok"> | $Enums.Role
+    emailVerified?: BoolFilter<"felhasznalok"> | boolean
+    verifyToken?: StringNullableFilter<"felhasznalok"> | string | null
+    verifyTokenExpiry?: DateTimeNullableFilter<"felhasznalok"> | Date | string | null
   }
 
   export type felhasznalokOrderByWithRelationInput = {
@@ -3892,6 +5028,10 @@ export namespace Prisma {
     email?: SortOrder
     hash?: SortOrder
     telefonszam?: SortOrder
+    role?: SortOrder
+    emailVerified?: SortOrder
+    verifyToken?: SortOrderInput | SortOrder
+    verifyTokenExpiry?: SortOrderInput | SortOrder
     _relevance?: felhasznalokOrderByRelevanceInput
   }
 
@@ -3904,6 +5044,10 @@ export namespace Prisma {
     email?: StringFilter<"felhasznalok"> | string
     hash?: StringFilter<"felhasznalok"> | string
     telefonszam?: StringFilter<"felhasznalok"> | string
+    role?: EnumRoleFilter<"felhasznalok"> | $Enums.Role
+    emailVerified?: BoolFilter<"felhasznalok"> | boolean
+    verifyToken?: StringNullableFilter<"felhasznalok"> | string | null
+    verifyTokenExpiry?: DateTimeNullableFilter<"felhasznalok"> | Date | string | null
   }, "id">
 
   export type felhasznalokOrderByWithAggregationInput = {
@@ -3912,6 +5056,10 @@ export namespace Prisma {
     email?: SortOrder
     hash?: SortOrder
     telefonszam?: SortOrder
+    role?: SortOrder
+    emailVerified?: SortOrder
+    verifyToken?: SortOrderInput | SortOrder
+    verifyTokenExpiry?: SortOrderInput | SortOrder
     _count?: felhasznalokCountOrderByAggregateInput
     _avg?: felhasznalokAvgOrderByAggregateInput
     _max?: felhasznalokMaxOrderByAggregateInput
@@ -3928,6 +5076,10 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"felhasznalok"> | string
     hash?: StringWithAggregatesFilter<"felhasznalok"> | string
     telefonszam?: StringWithAggregatesFilter<"felhasznalok"> | string
+    role?: EnumRoleWithAggregatesFilter<"felhasznalok"> | $Enums.Role
+    emailVerified?: BoolWithAggregatesFilter<"felhasznalok"> | boolean
+    verifyToken?: StringNullableWithAggregatesFilter<"felhasznalok"> | string | null
+    verifyTokenExpiry?: DateTimeNullableWithAggregatesFilter<"felhasznalok"> | Date | string | null
   }
 
   export type idopontWhereInput = {
@@ -4030,11 +5182,80 @@ export namespace Prisma {
     teleszam?: IntNullableWithAggregatesFilter<"borbelyok"> | number | null
   }
 
+  export type rendelesWhereInput = {
+    AND?: rendelesWhereInput | rendelesWhereInput[]
+    OR?: rendelesWhereInput[]
+    NOT?: rendelesWhereInput | rendelesWhereInput[]
+    id?: IntFilter<"rendeles"> | number
+    felhaszid?: IntFilter<"rendeles"> | number
+    products?: StringFilter<"rendeles"> | string
+    address?: StringNullableFilter<"rendeles"> | string | null
+    shippingType?: StringFilter<"rendeles"> | string
+    totalPrice?: IntFilter<"rendeles"> | number
+    createdAt?: DateTimeFilter<"rendeles"> | Date | string
+  }
+
+  export type rendelesOrderByWithRelationInput = {
+    id?: SortOrder
+    felhaszid?: SortOrder
+    products?: SortOrder
+    address?: SortOrderInput | SortOrder
+    shippingType?: SortOrder
+    totalPrice?: SortOrder
+    createdAt?: SortOrder
+    _relevance?: rendelesOrderByRelevanceInput
+  }
+
+  export type rendelesWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: rendelesWhereInput | rendelesWhereInput[]
+    OR?: rendelesWhereInput[]
+    NOT?: rendelesWhereInput | rendelesWhereInput[]
+    felhaszid?: IntFilter<"rendeles"> | number
+    products?: StringFilter<"rendeles"> | string
+    address?: StringNullableFilter<"rendeles"> | string | null
+    shippingType?: StringFilter<"rendeles"> | string
+    totalPrice?: IntFilter<"rendeles"> | number
+    createdAt?: DateTimeFilter<"rendeles"> | Date | string
+  }, "id">
+
+  export type rendelesOrderByWithAggregationInput = {
+    id?: SortOrder
+    felhaszid?: SortOrder
+    products?: SortOrder
+    address?: SortOrderInput | SortOrder
+    shippingType?: SortOrder
+    totalPrice?: SortOrder
+    createdAt?: SortOrder
+    _count?: rendelesCountOrderByAggregateInput
+    _avg?: rendelesAvgOrderByAggregateInput
+    _max?: rendelesMaxOrderByAggregateInput
+    _min?: rendelesMinOrderByAggregateInput
+    _sum?: rendelesSumOrderByAggregateInput
+  }
+
+  export type rendelesScalarWhereWithAggregatesInput = {
+    AND?: rendelesScalarWhereWithAggregatesInput | rendelesScalarWhereWithAggregatesInput[]
+    OR?: rendelesScalarWhereWithAggregatesInput[]
+    NOT?: rendelesScalarWhereWithAggregatesInput | rendelesScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"rendeles"> | number
+    felhaszid?: IntWithAggregatesFilter<"rendeles"> | number
+    products?: StringWithAggregatesFilter<"rendeles"> | string
+    address?: StringNullableWithAggregatesFilter<"rendeles"> | string | null
+    shippingType?: StringWithAggregatesFilter<"rendeles"> | string
+    totalPrice?: IntWithAggregatesFilter<"rendeles"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"rendeles"> | Date | string
+  }
+
   export type felhasznalokCreateInput = {
     felhnev?: string
     email?: string
     hash?: string
     telefonszam?: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    verifyToken?: string | null
+    verifyTokenExpiry?: Date | string | null
   }
 
   export type felhasznalokUncheckedCreateInput = {
@@ -4043,6 +5264,10 @@ export namespace Prisma {
     email?: string
     hash?: string
     telefonszam?: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    verifyToken?: string | null
+    verifyTokenExpiry?: Date | string | null
   }
 
   export type felhasznalokUpdateInput = {
@@ -4050,6 +5275,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     hash?: StringFieldUpdateOperationsInput | string
     telefonszam?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type felhasznalokUncheckedUpdateInput = {
@@ -4058,6 +5287,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     hash?: StringFieldUpdateOperationsInput | string
     telefonszam?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type felhasznalokCreateManyInput = {
@@ -4066,6 +5299,10 @@ export namespace Prisma {
     email?: string
     hash?: string
     telefonszam?: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    verifyToken?: string | null
+    verifyTokenExpiry?: Date | string | null
   }
 
   export type felhasznalokUpdateManyMutationInput = {
@@ -4073,6 +5310,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     hash?: StringFieldUpdateOperationsInput | string
     telefonszam?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type felhasznalokUncheckedUpdateManyInput = {
@@ -4081,6 +5322,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     hash?: StringFieldUpdateOperationsInput | string
     telefonszam?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type idopontCreateInput = {
@@ -4175,6 +5420,73 @@ export namespace Prisma {
     teleszam?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
+  export type rendelesCreateInput = {
+    felhaszid: number
+    products: string
+    address?: string | null
+    shippingType: string
+    totalPrice: number
+    createdAt?: Date | string
+  }
+
+  export type rendelesUncheckedCreateInput = {
+    id?: number
+    felhaszid: number
+    products: string
+    address?: string | null
+    shippingType: string
+    totalPrice: number
+    createdAt?: Date | string
+  }
+
+  export type rendelesUpdateInput = {
+    felhaszid?: IntFieldUpdateOperationsInput | number
+    products?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingType?: StringFieldUpdateOperationsInput | string
+    totalPrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type rendelesUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    felhaszid?: IntFieldUpdateOperationsInput | number
+    products?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingType?: StringFieldUpdateOperationsInput | string
+    totalPrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type rendelesCreateManyInput = {
+    id?: number
+    felhaszid: number
+    products: string
+    address?: string | null
+    shippingType: string
+    totalPrice: number
+    createdAt?: Date | string
+  }
+
+  export type rendelesUpdateManyMutationInput = {
+    felhaszid?: IntFieldUpdateOperationsInput | number
+    products?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingType?: StringFieldUpdateOperationsInput | string
+    totalPrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type rendelesUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    felhaszid?: IntFieldUpdateOperationsInput | number
+    products?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingType?: StringFieldUpdateOperationsInput | string
+    totalPrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -4201,6 +5513,49 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type EnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[]
+    notIn?: $Enums.Role[]
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type felhasznalokOrderByRelevanceInput = {
     fields: felhasznalokOrderByRelevanceFieldEnum | felhasznalokOrderByRelevanceFieldEnum[]
     sort: SortOrder
@@ -4213,6 +5568,10 @@ export namespace Prisma {
     email?: SortOrder
     hash?: SortOrder
     telefonszam?: SortOrder
+    role?: SortOrder
+    emailVerified?: SortOrder
+    verifyToken?: SortOrder
+    verifyTokenExpiry?: SortOrder
   }
 
   export type felhasznalokAvgOrderByAggregateInput = {
@@ -4225,6 +5584,10 @@ export namespace Prisma {
     email?: SortOrder
     hash?: SortOrder
     telefonszam?: SortOrder
+    role?: SortOrder
+    emailVerified?: SortOrder
+    verifyToken?: SortOrder
+    verifyTokenExpiry?: SortOrder
   }
 
   export type felhasznalokMinOrderByAggregateInput = {
@@ -4233,6 +5596,10 @@ export namespace Prisma {
     email?: SortOrder
     hash?: SortOrder
     telefonszam?: SortOrder
+    role?: SortOrder
+    emailVerified?: SortOrder
+    verifyToken?: SortOrder
+    verifyTokenExpiry?: SortOrder
   }
 
   export type felhasznalokSumOrderByAggregateInput = {
@@ -4271,6 +5638,56 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[]
+    notIn?: $Enums.Role[]
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -4346,11 +5763,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
   export type borbelyokOrderByRelevanceInput = {
     fields: borbelyokOrderByRelevanceFieldEnum | borbelyokOrderByRelevanceFieldEnum[]
     sort: SortOrder
@@ -4404,8 +5816,72 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type rendelesOrderByRelevanceInput = {
+    fields: rendelesOrderByRelevanceFieldEnum | rendelesOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type rendelesCountOrderByAggregateInput = {
+    id?: SortOrder
+    felhaszid?: SortOrder
+    products?: SortOrder
+    address?: SortOrder
+    shippingType?: SortOrder
+    totalPrice?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type rendelesAvgOrderByAggregateInput = {
+    id?: SortOrder
+    felhaszid?: SortOrder
+    totalPrice?: SortOrder
+  }
+
+  export type rendelesMaxOrderByAggregateInput = {
+    id?: SortOrder
+    felhaszid?: SortOrder
+    products?: SortOrder
+    address?: SortOrder
+    shippingType?: SortOrder
+    totalPrice?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type rendelesMinOrderByAggregateInput = {
+    id?: SortOrder
+    felhaszid?: SortOrder
+    products?: SortOrder
+    address?: SortOrder
+    shippingType?: SortOrder
+    totalPrice?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type rendelesSumOrderByAggregateInput = {
+    id?: SortOrder
+    felhaszid?: SortOrder
+    totalPrice?: SortOrder
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type EnumRoleFieldUpdateOperationsInput = {
+    set?: $Enums.Role
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -4454,6 +5930,44 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type NestedEnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[]
+    notIn?: $Enums.Role[]
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -4499,6 +6013,67 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[]
+    notIn?: $Enums.Role[]
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[]
@@ -4522,17 +6097,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {

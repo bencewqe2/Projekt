@@ -190,7 +190,9 @@ form {
   max-width: 92%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   transform: translateY(18px) scale(0.98);
-  transition: transform 240ms cubic-bezier(0.2, 0.9, 0.3, 1), opacity 240ms;
+  transition:
+    transform 240ms cubic-bezier(0.2, 0.9, 0.3, 1),
+    opacity 240ms;
   opacity: 0;
 }
 
@@ -348,6 +350,11 @@ footer {
   cursor: pointer;
 }
 
+.mobile-top-nav {
+  display: none;
+}
+
+/* Cart icon sizing (kept) */
 .cart-icon {
   width: 32px;
   height: 32px;
@@ -357,6 +364,44 @@ footer {
 
 .cart-icon:hover {
   filter: brightness(0) saturate(100%) invert(1) hue-rotate(180deg);
+}
+
+@media (max-width: 768px) {
+  .mobile-top-nav {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: rgba(17, 17, 17, 0.95);
+    border-bottom: 1px solid rgba(60, 188, 199, 0.12);
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1500;
+    padding: 0 6px;
+  }
+
+  /* avoid content being hidden under fixed top nav */
+  body {
+    padding-top: 56px;
+  }
+}
+
+.mobile-top-nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.mobile-top-nav a .icon {
+  font-size: 1.2rem;
+}
+.mobile-top-nav a .label {
+  font-size: 0.75rem;
 }
 
 .cart-badge {
@@ -429,4 +474,172 @@ footer {
 /* AKTÍV ÁLLAPOT - KOSÁR LENYÍLVA */
 .cart-menu.open .cart-dropdown {
   display: block;
+}
+
+/* Global mobile optimizations */
+@media (max-width: 768px) {
+  #hatter_video {
+    display: none;
+  }
+  header {
+    padding: 0.6rem 1rem;
+  }
+  header .logo {
+    font-size: 1.1rem;
+  }
+  header nav ul {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+  }
+  .hero {
+    padding: 2.5rem 1rem;
+  }
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+  section {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  .service {
+    width: calc(50% - 1rem);
+  }
+  form {
+    max-width: 100%;
+    padding: 0;
+  }
+  input,
+  select,
+  button {
+    width: 100%;
+  }
+  .cart-dropdown {
+    width: 90vw;
+    right: 5vw;
+  }
+}
+
+@media (max-width: 480px) {
+  header nav ul {
+    align-items: stretch;
+  }
+  .service {
+    width: 100%;
+  }
+  .hero h1 {
+    font-size: 1.4rem;
+  }
+  .popup-box {
+    min-width: 92%;
+  }
+  .cart-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+  }
+}
+
+/* Admin panel styling tweaks */
+.account-wrapper {
+  display: flex;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+}
+.account-sidebar {
+  min-width: 200px;
+  background: rgba(20, 20, 20, 0.6);
+  border: 1px solid rgba(60, 188, 199, 0.08);
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.account-sidebar button {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.account-sidebar button:hover {
+  background: rgba(60, 188, 199, 0.06);
+}
+.account-content {
+  flex: 1;
+}
+.account-section {
+  display: none;
+}
+.account-section.active {
+  display: block;
+}
+
+.bookings-list .booking-item,
+.orders-list .order-item {
+  background: rgba(17, 17, 17, 0.6);
+  border: 1px solid rgba(60, 188, 199, 0.06);
+  padding: 0.8rem;
+  margin-bottom: 0.6rem;
+  border-radius: 6px;
+}
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+.order-details ul {
+  margin: 0.4rem 0 0 1rem;
+}
+.order-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.4rem;
+}
+.danger {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+table th,
+table td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  text-align: left;
+}
+table thead th {
+  background: rgba(17, 17, 17, 0.6);
+  color: #3cbcc7;
+}
+
+@media (max-width: 768px) {
+  .account-wrapper {
+    flex-direction: column;
+    padding: 0 0.6rem;
+  }
+  body {
+    padding-top: 56px;
+  }
+  .account-sidebar {
+    min-width: auto;
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+  }
+  .account-sidebar button {
+    flex: 1 0 auto;
+  }
 }
