@@ -1115,6 +1115,45 @@ export namespace Prisma {
    */
 
 
+  /**
+   * Count Type FelhasznalokCountOutputType
+   */
+
+  export type FelhasznalokCountOutputType = {
+    idopontok: number
+    rendelesek: number
+  }
+
+  export type FelhasznalokCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    idopontok?: boolean | FelhasznalokCountOutputTypeCountIdopontokArgs
+    rendelesek?: boolean | FelhasznalokCountOutputTypeCountRendelesekArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * FelhasznalokCountOutputType without action
+   */
+  export type FelhasznalokCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FelhasznalokCountOutputType
+     */
+    select?: FelhasznalokCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * FelhasznalokCountOutputType without action
+   */
+  export type FelhasznalokCountOutputTypeCountIdopontokArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: idopontWhereInput
+  }
+
+  /**
+   * FelhasznalokCountOutputType without action
+   */
+  export type FelhasznalokCountOutputTypeCountRendelesekArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: rendelesWhereInput
+  }
+
 
   /**
    * Models
@@ -1350,6 +1389,9 @@ export namespace Prisma {
     emailVerified?: boolean
     verifyToken?: boolean
     verifyTokenExpiry?: boolean
+    idopontok?: boolean | felhasznalok$idopontokArgs<ExtArgs>
+    rendelesek?: boolean | felhasznalok$rendelesekArgs<ExtArgs>
+    _count?: boolean | FelhasznalokCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["felhasznalok"]>
 
 
@@ -1367,10 +1409,18 @@ export namespace Prisma {
   }
 
   export type felhasznalokOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "felhnev" | "email" | "hash" | "telefonszam" | "role" | "emailVerified" | "verifyToken" | "verifyTokenExpiry", ExtArgs["result"]["felhasznalok"]>
+  export type felhasznalokInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    idopontok?: boolean | felhasznalok$idopontokArgs<ExtArgs>
+    rendelesek?: boolean | felhasznalok$rendelesekArgs<ExtArgs>
+    _count?: boolean | FelhasznalokCountOutputTypeDefaultArgs<ExtArgs>
+  }
 
   export type $felhasznalokPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "felhasznalok"
-    objects: {}
+    objects: {
+      idopontok: Prisma.$idopontPayload<ExtArgs>[]
+      rendelesek: Prisma.$rendelesPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       felhnev: string
@@ -1721,6 +1771,8 @@ export namespace Prisma {
    */
   export interface Prisma__felhasznalokClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    idopontok<T extends felhasznalok$idopontokArgs<ExtArgs> = {}>(args?: Subset<T, felhasznalok$idopontokArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$idopontPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    rendelesek<T extends felhasznalok$rendelesekArgs<ExtArgs> = {}>(args?: Subset<T, felhasznalok$rendelesekArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$rendelesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1776,6 +1828,10 @@ export namespace Prisma {
      */
     omit?: felhasznalokOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
+    /**
      * Filter, which felhasznalok to fetch.
      */
     where: felhasznalokWhereUniqueInput
@@ -1794,6 +1850,10 @@ export namespace Prisma {
      */
     omit?: felhasznalokOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
+    /**
      * Filter, which felhasznalok to fetch.
      */
     where: felhasznalokWhereUniqueInput
@@ -1811,6 +1871,10 @@ export namespace Prisma {
      * Omit specific fields from the felhasznalok
      */
     omit?: felhasznalokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
     /**
      * Filter, which felhasznalok to fetch.
      */
@@ -1860,6 +1924,10 @@ export namespace Prisma {
      */
     omit?: felhasznalokOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
+    /**
      * Filter, which felhasznalok to fetch.
      */
     where?: felhasznalokWhereInput
@@ -1908,6 +1976,10 @@ export namespace Prisma {
      */
     omit?: felhasznalokOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
+    /**
      * Filter, which felhasznaloks to fetch.
      */
     where?: felhasznalokWhereInput
@@ -1951,6 +2023,10 @@ export namespace Prisma {
      */
     omit?: felhasznalokOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
+    /**
      * The data needed to create a felhasznalok.
      */
     data?: XOR<felhasznalokCreateInput, felhasznalokUncheckedCreateInput>
@@ -1979,6 +2055,10 @@ export namespace Prisma {
      * Omit specific fields from the felhasznalok
      */
     omit?: felhasznalokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
     /**
      * The data needed to update a felhasznalok.
      */
@@ -2020,6 +2100,10 @@ export namespace Prisma {
      */
     omit?: felhasznalokOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
+    /**
      * The filter to search for the felhasznalok to update in case it exists.
      */
     where: felhasznalokWhereUniqueInput
@@ -2046,6 +2130,10 @@ export namespace Prisma {
      */
     omit?: felhasznalokOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
+    /**
      * Filter which felhasznalok to delete.
      */
     where: felhasznalokWhereUniqueInput
@@ -2066,6 +2154,54 @@ export namespace Prisma {
   }
 
   /**
+   * felhasznalok.idopontok
+   */
+  export type felhasznalok$idopontokArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the idopont
+     */
+    select?: idopontSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the idopont
+     */
+    omit?: idopontOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
+    where?: idopontWhereInput
+    orderBy?: idopontOrderByWithRelationInput | idopontOrderByWithRelationInput[]
+    cursor?: idopontWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IdopontScalarFieldEnum | IdopontScalarFieldEnum[]
+  }
+
+  /**
+   * felhasznalok.rendelesek
+   */
+  export type felhasznalok$rendelesekArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the rendeles
+     */
+    select?: rendelesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the rendeles
+     */
+    omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
+    where?: rendelesWhereInput
+    orderBy?: rendelesOrderByWithRelationInput | rendelesOrderByWithRelationInput[]
+    cursor?: rendelesWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RendelesScalarFieldEnum | RendelesScalarFieldEnum[]
+  }
+
+  /**
    * felhasznalok without action
    */
   export type felhasznalokDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2077,6 +2213,10 @@ export namespace Prisma {
      * Omit specific fields from the felhasznalok
      */
     omit?: felhasznalokOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: felhasznalokInclude<ExtArgs> | null
   }
 
 
@@ -2274,6 +2414,7 @@ export namespace Prisma {
     felhaszid?: boolean
     idopont?: boolean
     szolgal?: boolean
+    felhasznalo?: boolean | felhasznalokDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["idopont"]>
 
 
@@ -2286,10 +2427,15 @@ export namespace Prisma {
   }
 
   export type idopontOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "felhaszid" | "idopont" | "szolgal", ExtArgs["result"]["idopont"]>
+  export type idopontInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    felhasznalo?: boolean | felhasznalokDefaultArgs<ExtArgs>
+  }
 
   export type $idopontPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "idopont"
-    objects: {}
+    objects: {
+      felhasznalo: Prisma.$felhasznalokPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       felhaszid: number
@@ -2635,6 +2781,7 @@ export namespace Prisma {
    */
   export interface Prisma__idopontClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    felhasznalo<T extends felhasznalokDefaultArgs<ExtArgs> = {}>(args?: Subset<T, felhasznalokDefaultArgs<ExtArgs>>): Prisma__felhasznalokClient<$Result.GetResult<Prisma.$felhasznalokPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2685,6 +2832,10 @@ export namespace Prisma {
      */
     omit?: idopontOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
+    /**
      * Filter, which idopont to fetch.
      */
     where: idopontWhereUniqueInput
@@ -2703,6 +2854,10 @@ export namespace Prisma {
      */
     omit?: idopontOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
+    /**
      * Filter, which idopont to fetch.
      */
     where: idopontWhereUniqueInput
@@ -2720,6 +2875,10 @@ export namespace Prisma {
      * Omit specific fields from the idopont
      */
     omit?: idopontOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
     /**
      * Filter, which idopont to fetch.
      */
@@ -2769,6 +2928,10 @@ export namespace Prisma {
      */
     omit?: idopontOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
+    /**
      * Filter, which idopont to fetch.
      */
     where?: idopontWhereInput
@@ -2817,6 +2980,10 @@ export namespace Prisma {
      */
     omit?: idopontOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
+    /**
      * Filter, which idoponts to fetch.
      */
     where?: idopontWhereInput
@@ -2860,6 +3027,10 @@ export namespace Prisma {
      */
     omit?: idopontOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
+    /**
      * The data needed to create a idopont.
      */
     data: XOR<idopontCreateInput, idopontUncheckedCreateInput>
@@ -2888,6 +3059,10 @@ export namespace Prisma {
      * Omit specific fields from the idopont
      */
     omit?: idopontOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
     /**
      * The data needed to update a idopont.
      */
@@ -2929,6 +3104,10 @@ export namespace Prisma {
      */
     omit?: idopontOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
+    /**
      * The filter to search for the idopont to update in case it exists.
      */
     where: idopontWhereUniqueInput
@@ -2954,6 +3133,10 @@ export namespace Prisma {
      * Omit specific fields from the idopont
      */
     omit?: idopontOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
     /**
      * Filter which idopont to delete.
      */
@@ -2986,6 +3169,10 @@ export namespace Prisma {
      * Omit specific fields from the idopont
      */
     omit?: idopontOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: idopontInclude<ExtArgs> | null
   }
 
 
@@ -4120,6 +4307,7 @@ export namespace Prisma {
     shippingType?: boolean
     totalPrice?: boolean
     createdAt?: boolean
+    felhasznalo?: boolean | felhasznalokDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["rendeles"]>
 
 
@@ -4135,10 +4323,15 @@ export namespace Prisma {
   }
 
   export type rendelesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "felhaszid" | "products" | "address" | "shippingType" | "totalPrice" | "createdAt", ExtArgs["result"]["rendeles"]>
+  export type rendelesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    felhasznalo?: boolean | felhasznalokDefaultArgs<ExtArgs>
+  }
 
   export type $rendelesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "rendeles"
-    objects: {}
+    objects: {
+      felhasznalo: Prisma.$felhasznalokPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       felhaszid: number
@@ -4487,6 +4680,7 @@ export namespace Prisma {
    */
   export interface Prisma__rendelesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    felhasznalo<T extends felhasznalokDefaultArgs<ExtArgs> = {}>(args?: Subset<T, felhasznalokDefaultArgs<ExtArgs>>): Prisma__felhasznalokClient<$Result.GetResult<Prisma.$felhasznalokPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4540,6 +4734,10 @@ export namespace Prisma {
      */
     omit?: rendelesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
+    /**
      * Filter, which rendeles to fetch.
      */
     where: rendelesWhereUniqueInput
@@ -4558,6 +4756,10 @@ export namespace Prisma {
      */
     omit?: rendelesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
+    /**
      * Filter, which rendeles to fetch.
      */
     where: rendelesWhereUniqueInput
@@ -4575,6 +4777,10 @@ export namespace Prisma {
      * Omit specific fields from the rendeles
      */
     omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
     /**
      * Filter, which rendeles to fetch.
      */
@@ -4624,6 +4830,10 @@ export namespace Prisma {
      */
     omit?: rendelesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
+    /**
      * Filter, which rendeles to fetch.
      */
     where?: rendelesWhereInput
@@ -4672,6 +4882,10 @@ export namespace Prisma {
      */
     omit?: rendelesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
+    /**
      * Filter, which rendeles to fetch.
      */
     where?: rendelesWhereInput
@@ -4715,6 +4929,10 @@ export namespace Prisma {
      */
     omit?: rendelesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
+    /**
      * The data needed to create a rendeles.
      */
     data: XOR<rendelesCreateInput, rendelesUncheckedCreateInput>
@@ -4743,6 +4961,10 @@ export namespace Prisma {
      * Omit specific fields from the rendeles
      */
     omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
     /**
      * The data needed to update a rendeles.
      */
@@ -4784,6 +5006,10 @@ export namespace Prisma {
      */
     omit?: rendelesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
+    /**
      * The filter to search for the rendeles to update in case it exists.
      */
     where: rendelesWhereUniqueInput
@@ -4809,6 +5035,10 @@ export namespace Prisma {
      * Omit specific fields from the rendeles
      */
     omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
     /**
      * Filter which rendeles to delete.
      */
@@ -4841,6 +5071,10 @@ export namespace Prisma {
      * Omit specific fields from the rendeles
      */
     omit?: rendelesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: rendelesInclude<ExtArgs> | null
   }
 
 
@@ -5020,6 +5254,8 @@ export namespace Prisma {
     emailVerified?: BoolFilter<"felhasznalok"> | boolean
     verifyToken?: StringNullableFilter<"felhasznalok"> | string | null
     verifyTokenExpiry?: DateTimeNullableFilter<"felhasznalok"> | Date | string | null
+    idopontok?: IdopontListRelationFilter
+    rendelesek?: RendelesListRelationFilter
   }
 
   export type felhasznalokOrderByWithRelationInput = {
@@ -5032,6 +5268,8 @@ export namespace Prisma {
     emailVerified?: SortOrder
     verifyToken?: SortOrderInput | SortOrder
     verifyTokenExpiry?: SortOrderInput | SortOrder
+    idopontok?: idopontOrderByRelationAggregateInput
+    rendelesek?: rendelesOrderByRelationAggregateInput
     _relevance?: felhasznalokOrderByRelevanceInput
   }
 
@@ -5048,6 +5286,8 @@ export namespace Prisma {
     emailVerified?: BoolFilter<"felhasznalok"> | boolean
     verifyToken?: StringNullableFilter<"felhasznalok"> | string | null
     verifyTokenExpiry?: DateTimeNullableFilter<"felhasznalok"> | Date | string | null
+    idopontok?: IdopontListRelationFilter
+    rendelesek?: RendelesListRelationFilter
   }, "id">
 
   export type felhasznalokOrderByWithAggregationInput = {
@@ -5090,6 +5330,7 @@ export namespace Prisma {
     felhaszid?: IntFilter<"idopont"> | number
     idopont?: DateTimeFilter<"idopont"> | Date | string
     szolgal?: StringFilter<"idopont"> | string
+    felhasznalo?: XOR<FelhasznalokScalarRelationFilter, felhasznalokWhereInput>
   }
 
   export type idopontOrderByWithRelationInput = {
@@ -5097,6 +5338,7 @@ export namespace Prisma {
     felhaszid?: SortOrder
     idopont?: SortOrder
     szolgal?: SortOrder
+    felhasznalo?: felhasznalokOrderByWithRelationInput
     _relevance?: idopontOrderByRelevanceInput
   }
 
@@ -5108,6 +5350,7 @@ export namespace Prisma {
     felhaszid?: IntFilter<"idopont"> | number
     idopont?: DateTimeFilter<"idopont"> | Date | string
     szolgal?: StringFilter<"idopont"> | string
+    felhasznalo?: XOR<FelhasznalokScalarRelationFilter, felhasznalokWhereInput>
   }, "id">
 
   export type idopontOrderByWithAggregationInput = {
@@ -5193,6 +5436,7 @@ export namespace Prisma {
     shippingType?: StringFilter<"rendeles"> | string
     totalPrice?: IntFilter<"rendeles"> | number
     createdAt?: DateTimeFilter<"rendeles"> | Date | string
+    felhasznalo?: XOR<FelhasznalokScalarRelationFilter, felhasznalokWhereInput>
   }
 
   export type rendelesOrderByWithRelationInput = {
@@ -5203,6 +5447,7 @@ export namespace Prisma {
     shippingType?: SortOrder
     totalPrice?: SortOrder
     createdAt?: SortOrder
+    felhasznalo?: felhasznalokOrderByWithRelationInput
     _relevance?: rendelesOrderByRelevanceInput
   }
 
@@ -5217,6 +5462,7 @@ export namespace Prisma {
     shippingType?: StringFilter<"rendeles"> | string
     totalPrice?: IntFilter<"rendeles"> | number
     createdAt?: DateTimeFilter<"rendeles"> | Date | string
+    felhasznalo?: XOR<FelhasznalokScalarRelationFilter, felhasznalokWhereInput>
   }, "id">
 
   export type rendelesOrderByWithAggregationInput = {
@@ -5256,6 +5502,8 @@ export namespace Prisma {
     emailVerified?: boolean
     verifyToken?: string | null
     verifyTokenExpiry?: Date | string | null
+    idopontok?: idopontCreateNestedManyWithoutFelhasznaloInput
+    rendelesek?: rendelesCreateNestedManyWithoutFelhasznaloInput
   }
 
   export type felhasznalokUncheckedCreateInput = {
@@ -5268,6 +5516,8 @@ export namespace Prisma {
     emailVerified?: boolean
     verifyToken?: string | null
     verifyTokenExpiry?: Date | string | null
+    idopontok?: idopontUncheckedCreateNestedManyWithoutFelhasznaloInput
+    rendelesek?: rendelesUncheckedCreateNestedManyWithoutFelhasznaloInput
   }
 
   export type felhasznalokUpdateInput = {
@@ -5279,6 +5529,8 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
     verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    idopontok?: idopontUpdateManyWithoutFelhasznaloNestedInput
+    rendelesek?: rendelesUpdateManyWithoutFelhasznaloNestedInput
   }
 
   export type felhasznalokUncheckedUpdateInput = {
@@ -5291,6 +5543,8 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
     verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    idopontok?: idopontUncheckedUpdateManyWithoutFelhasznaloNestedInput
+    rendelesek?: rendelesUncheckedUpdateManyWithoutFelhasznaloNestedInput
   }
 
   export type felhasznalokCreateManyInput = {
@@ -5329,9 +5583,9 @@ export namespace Prisma {
   }
 
   export type idopontCreateInput = {
-    felhaszid: number
     idopont: Date | string
     szolgal: string
+    felhasznalo: felhasznalokCreateNestedOneWithoutIdopontokInput
   }
 
   export type idopontUncheckedCreateInput = {
@@ -5342,9 +5596,9 @@ export namespace Prisma {
   }
 
   export type idopontUpdateInput = {
-    felhaszid?: IntFieldUpdateOperationsInput | number
     idopont?: DateTimeFieldUpdateOperationsInput | Date | string
     szolgal?: StringFieldUpdateOperationsInput | string
+    felhasznalo?: felhasznalokUpdateOneRequiredWithoutIdopontokNestedInput
   }
 
   export type idopontUncheckedUpdateInput = {
@@ -5362,7 +5616,6 @@ export namespace Prisma {
   }
 
   export type idopontUpdateManyMutationInput = {
-    felhaszid?: IntFieldUpdateOperationsInput | number
     idopont?: DateTimeFieldUpdateOperationsInput | Date | string
     szolgal?: StringFieldUpdateOperationsInput | string
   }
@@ -5421,12 +5674,12 @@ export namespace Prisma {
   }
 
   export type rendelesCreateInput = {
-    felhaszid: number
     products: string
     address?: string | null
     shippingType: string
     totalPrice: number
     createdAt?: Date | string
+    felhasznalo: felhasznalokCreateNestedOneWithoutRendelesekInput
   }
 
   export type rendelesUncheckedCreateInput = {
@@ -5440,12 +5693,12 @@ export namespace Prisma {
   }
 
   export type rendelesUpdateInput = {
-    felhaszid?: IntFieldUpdateOperationsInput | number
     products?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     shippingType?: StringFieldUpdateOperationsInput | string
     totalPrice?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    felhasznalo?: felhasznalokUpdateOneRequiredWithoutRendelesekNestedInput
   }
 
   export type rendelesUncheckedUpdateInput = {
@@ -5469,7 +5722,6 @@ export namespace Prisma {
   }
 
   export type rendelesUpdateManyMutationInput = {
-    felhaszid?: IntFieldUpdateOperationsInput | number
     products?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     shippingType?: StringFieldUpdateOperationsInput | string
@@ -5551,9 +5803,29 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type IdopontListRelationFilter = {
+    every?: idopontWhereInput
+    some?: idopontWhereInput
+    none?: idopontWhereInput
+  }
+
+  export type RendelesListRelationFilter = {
+    every?: rendelesWhereInput
+    some?: rendelesWhereInput
+    none?: rendelesWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
+  }
+
+  export type idopontOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type rendelesOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type felhasznalokOrderByRelevanceInput = {
@@ -5699,6 +5971,11 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type FelhasznalokScalarRelationFilter = {
+    is?: felhasznalokWhereInput
+    isNot?: felhasznalokWhereInput
   }
 
   export type idopontOrderByRelevanceInput = {
@@ -5864,6 +6141,34 @@ export namespace Prisma {
     totalPrice?: SortOrder
   }
 
+  export type idopontCreateNestedManyWithoutFelhasznaloInput = {
+    create?: XOR<idopontCreateWithoutFelhasznaloInput, idopontUncheckedCreateWithoutFelhasznaloInput> | idopontCreateWithoutFelhasznaloInput[] | idopontUncheckedCreateWithoutFelhasznaloInput[]
+    connectOrCreate?: idopontCreateOrConnectWithoutFelhasznaloInput | idopontCreateOrConnectWithoutFelhasznaloInput[]
+    createMany?: idopontCreateManyFelhasznaloInputEnvelope
+    connect?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+  }
+
+  export type rendelesCreateNestedManyWithoutFelhasznaloInput = {
+    create?: XOR<rendelesCreateWithoutFelhasznaloInput, rendelesUncheckedCreateWithoutFelhasznaloInput> | rendelesCreateWithoutFelhasznaloInput[] | rendelesUncheckedCreateWithoutFelhasznaloInput[]
+    connectOrCreate?: rendelesCreateOrConnectWithoutFelhasznaloInput | rendelesCreateOrConnectWithoutFelhasznaloInput[]
+    createMany?: rendelesCreateManyFelhasznaloInputEnvelope
+    connect?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+  }
+
+  export type idopontUncheckedCreateNestedManyWithoutFelhasznaloInput = {
+    create?: XOR<idopontCreateWithoutFelhasznaloInput, idopontUncheckedCreateWithoutFelhasznaloInput> | idopontCreateWithoutFelhasznaloInput[] | idopontUncheckedCreateWithoutFelhasznaloInput[]
+    connectOrCreate?: idopontCreateOrConnectWithoutFelhasznaloInput | idopontCreateOrConnectWithoutFelhasznaloInput[]
+    createMany?: idopontCreateManyFelhasznaloInputEnvelope
+    connect?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+  }
+
+  export type rendelesUncheckedCreateNestedManyWithoutFelhasznaloInput = {
+    create?: XOR<rendelesCreateWithoutFelhasznaloInput, rendelesUncheckedCreateWithoutFelhasznaloInput> | rendelesCreateWithoutFelhasznaloInput[] | rendelesUncheckedCreateWithoutFelhasznaloInput[]
+    connectOrCreate?: rendelesCreateOrConnectWithoutFelhasznaloInput | rendelesCreateOrConnectWithoutFelhasznaloInput[]
+    createMany?: rendelesCreateManyFelhasznaloInputEnvelope
+    connect?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -5884,6 +6189,34 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
+  export type idopontUpdateManyWithoutFelhasznaloNestedInput = {
+    create?: XOR<idopontCreateWithoutFelhasznaloInput, idopontUncheckedCreateWithoutFelhasznaloInput> | idopontCreateWithoutFelhasznaloInput[] | idopontUncheckedCreateWithoutFelhasznaloInput[]
+    connectOrCreate?: idopontCreateOrConnectWithoutFelhasznaloInput | idopontCreateOrConnectWithoutFelhasznaloInput[]
+    upsert?: idopontUpsertWithWhereUniqueWithoutFelhasznaloInput | idopontUpsertWithWhereUniqueWithoutFelhasznaloInput[]
+    createMany?: idopontCreateManyFelhasznaloInputEnvelope
+    set?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+    disconnect?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+    delete?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+    connect?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+    update?: idopontUpdateWithWhereUniqueWithoutFelhasznaloInput | idopontUpdateWithWhereUniqueWithoutFelhasznaloInput[]
+    updateMany?: idopontUpdateManyWithWhereWithoutFelhasznaloInput | idopontUpdateManyWithWhereWithoutFelhasznaloInput[]
+    deleteMany?: idopontScalarWhereInput | idopontScalarWhereInput[]
+  }
+
+  export type rendelesUpdateManyWithoutFelhasznaloNestedInput = {
+    create?: XOR<rendelesCreateWithoutFelhasznaloInput, rendelesUncheckedCreateWithoutFelhasznaloInput> | rendelesCreateWithoutFelhasznaloInput[] | rendelesUncheckedCreateWithoutFelhasznaloInput[]
+    connectOrCreate?: rendelesCreateOrConnectWithoutFelhasznaloInput | rendelesCreateOrConnectWithoutFelhasznaloInput[]
+    upsert?: rendelesUpsertWithWhereUniqueWithoutFelhasznaloInput | rendelesUpsertWithWhereUniqueWithoutFelhasznaloInput[]
+    createMany?: rendelesCreateManyFelhasznaloInputEnvelope
+    set?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+    disconnect?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+    delete?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+    connect?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+    update?: rendelesUpdateWithWhereUniqueWithoutFelhasznaloInput | rendelesUpdateWithWhereUniqueWithoutFelhasznaloInput[]
+    updateMany?: rendelesUpdateManyWithWhereWithoutFelhasznaloInput | rendelesUpdateManyWithWhereWithoutFelhasznaloInput[]
+    deleteMany?: rendelesScalarWhereInput | rendelesScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -5892,8 +6225,50 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type idopontUncheckedUpdateManyWithoutFelhasznaloNestedInput = {
+    create?: XOR<idopontCreateWithoutFelhasznaloInput, idopontUncheckedCreateWithoutFelhasznaloInput> | idopontCreateWithoutFelhasznaloInput[] | idopontUncheckedCreateWithoutFelhasznaloInput[]
+    connectOrCreate?: idopontCreateOrConnectWithoutFelhasznaloInput | idopontCreateOrConnectWithoutFelhasznaloInput[]
+    upsert?: idopontUpsertWithWhereUniqueWithoutFelhasznaloInput | idopontUpsertWithWhereUniqueWithoutFelhasznaloInput[]
+    createMany?: idopontCreateManyFelhasznaloInputEnvelope
+    set?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+    disconnect?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+    delete?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+    connect?: idopontWhereUniqueInput | idopontWhereUniqueInput[]
+    update?: idopontUpdateWithWhereUniqueWithoutFelhasznaloInput | idopontUpdateWithWhereUniqueWithoutFelhasznaloInput[]
+    updateMany?: idopontUpdateManyWithWhereWithoutFelhasznaloInput | idopontUpdateManyWithWhereWithoutFelhasznaloInput[]
+    deleteMany?: idopontScalarWhereInput | idopontScalarWhereInput[]
+  }
+
+  export type rendelesUncheckedUpdateManyWithoutFelhasznaloNestedInput = {
+    create?: XOR<rendelesCreateWithoutFelhasznaloInput, rendelesUncheckedCreateWithoutFelhasznaloInput> | rendelesCreateWithoutFelhasznaloInput[] | rendelesUncheckedCreateWithoutFelhasznaloInput[]
+    connectOrCreate?: rendelesCreateOrConnectWithoutFelhasznaloInput | rendelesCreateOrConnectWithoutFelhasznaloInput[]
+    upsert?: rendelesUpsertWithWhereUniqueWithoutFelhasznaloInput | rendelesUpsertWithWhereUniqueWithoutFelhasznaloInput[]
+    createMany?: rendelesCreateManyFelhasznaloInputEnvelope
+    set?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+    disconnect?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+    delete?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+    connect?: rendelesWhereUniqueInput | rendelesWhereUniqueInput[]
+    update?: rendelesUpdateWithWhereUniqueWithoutFelhasznaloInput | rendelesUpdateWithWhereUniqueWithoutFelhasznaloInput[]
+    updateMany?: rendelesUpdateManyWithWhereWithoutFelhasznaloInput | rendelesUpdateManyWithWhereWithoutFelhasznaloInput[]
+    deleteMany?: rendelesScalarWhereInput | rendelesScalarWhereInput[]
+  }
+
+  export type felhasznalokCreateNestedOneWithoutIdopontokInput = {
+    create?: XOR<felhasznalokCreateWithoutIdopontokInput, felhasznalokUncheckedCreateWithoutIdopontokInput>
+    connectOrCreate?: felhasznalokCreateOrConnectWithoutIdopontokInput
+    connect?: felhasznalokWhereUniqueInput
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type felhasznalokUpdateOneRequiredWithoutIdopontokNestedInput = {
+    create?: XOR<felhasznalokCreateWithoutIdopontokInput, felhasznalokUncheckedCreateWithoutIdopontokInput>
+    connectOrCreate?: felhasznalokCreateOrConnectWithoutIdopontokInput
+    upsert?: felhasznalokUpsertWithoutIdopontokInput
+    connect?: felhasznalokWhereUniqueInput
+    update?: XOR<XOR<felhasznalokUpdateToOneWithWhereWithoutIdopontokInput, felhasznalokUpdateWithoutIdopontokInput>, felhasznalokUncheckedUpdateWithoutIdopontokInput>
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -5902,6 +6277,20 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type felhasznalokCreateNestedOneWithoutRendelesekInput = {
+    create?: XOR<felhasznalokCreateWithoutRendelesekInput, felhasznalokUncheckedCreateWithoutRendelesekInput>
+    connectOrCreate?: felhasznalokCreateOrConnectWithoutRendelesekInput
+    connect?: felhasznalokWhereUniqueInput
+  }
+
+  export type felhasznalokUpdateOneRequiredWithoutRendelesekNestedInput = {
+    create?: XOR<felhasznalokCreateWithoutRendelesekInput, felhasznalokUncheckedCreateWithoutRendelesekInput>
+    connectOrCreate?: felhasznalokCreateOrConnectWithoutRendelesekInput
+    upsert?: felhasznalokUpsertWithoutRendelesekInput
+    connect?: felhasznalokWhereUniqueInput
+    update?: XOR<XOR<felhasznalokUpdateToOneWithWhereWithoutRendelesekInput, felhasznalokUpdateWithoutRendelesekInput>, felhasznalokUncheckedUpdateWithoutRendelesekInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -6124,6 +6513,299 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type idopontCreateWithoutFelhasznaloInput = {
+    idopont: Date | string
+    szolgal: string
+  }
+
+  export type idopontUncheckedCreateWithoutFelhasznaloInput = {
+    id?: number
+    idopont: Date | string
+    szolgal: string
+  }
+
+  export type idopontCreateOrConnectWithoutFelhasznaloInput = {
+    where: idopontWhereUniqueInput
+    create: XOR<idopontCreateWithoutFelhasznaloInput, idopontUncheckedCreateWithoutFelhasznaloInput>
+  }
+
+  export type idopontCreateManyFelhasznaloInputEnvelope = {
+    data: idopontCreateManyFelhasznaloInput | idopontCreateManyFelhasznaloInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type rendelesCreateWithoutFelhasznaloInput = {
+    products: string
+    address?: string | null
+    shippingType: string
+    totalPrice: number
+    createdAt?: Date | string
+  }
+
+  export type rendelesUncheckedCreateWithoutFelhasznaloInput = {
+    id?: number
+    products: string
+    address?: string | null
+    shippingType: string
+    totalPrice: number
+    createdAt?: Date | string
+  }
+
+  export type rendelesCreateOrConnectWithoutFelhasznaloInput = {
+    where: rendelesWhereUniqueInput
+    create: XOR<rendelesCreateWithoutFelhasznaloInput, rendelesUncheckedCreateWithoutFelhasznaloInput>
+  }
+
+  export type rendelesCreateManyFelhasznaloInputEnvelope = {
+    data: rendelesCreateManyFelhasznaloInput | rendelesCreateManyFelhasznaloInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type idopontUpsertWithWhereUniqueWithoutFelhasznaloInput = {
+    where: idopontWhereUniqueInput
+    update: XOR<idopontUpdateWithoutFelhasznaloInput, idopontUncheckedUpdateWithoutFelhasznaloInput>
+    create: XOR<idopontCreateWithoutFelhasznaloInput, idopontUncheckedCreateWithoutFelhasznaloInput>
+  }
+
+  export type idopontUpdateWithWhereUniqueWithoutFelhasznaloInput = {
+    where: idopontWhereUniqueInput
+    data: XOR<idopontUpdateWithoutFelhasznaloInput, idopontUncheckedUpdateWithoutFelhasznaloInput>
+  }
+
+  export type idopontUpdateManyWithWhereWithoutFelhasznaloInput = {
+    where: idopontScalarWhereInput
+    data: XOR<idopontUpdateManyMutationInput, idopontUncheckedUpdateManyWithoutFelhasznaloInput>
+  }
+
+  export type idopontScalarWhereInput = {
+    AND?: idopontScalarWhereInput | idopontScalarWhereInput[]
+    OR?: idopontScalarWhereInput[]
+    NOT?: idopontScalarWhereInput | idopontScalarWhereInput[]
+    id?: IntFilter<"idopont"> | number
+    felhaszid?: IntFilter<"idopont"> | number
+    idopont?: DateTimeFilter<"idopont"> | Date | string
+    szolgal?: StringFilter<"idopont"> | string
+  }
+
+  export type rendelesUpsertWithWhereUniqueWithoutFelhasznaloInput = {
+    where: rendelesWhereUniqueInput
+    update: XOR<rendelesUpdateWithoutFelhasznaloInput, rendelesUncheckedUpdateWithoutFelhasznaloInput>
+    create: XOR<rendelesCreateWithoutFelhasznaloInput, rendelesUncheckedCreateWithoutFelhasznaloInput>
+  }
+
+  export type rendelesUpdateWithWhereUniqueWithoutFelhasznaloInput = {
+    where: rendelesWhereUniqueInput
+    data: XOR<rendelesUpdateWithoutFelhasznaloInput, rendelesUncheckedUpdateWithoutFelhasznaloInput>
+  }
+
+  export type rendelesUpdateManyWithWhereWithoutFelhasznaloInput = {
+    where: rendelesScalarWhereInput
+    data: XOR<rendelesUpdateManyMutationInput, rendelesUncheckedUpdateManyWithoutFelhasznaloInput>
+  }
+
+  export type rendelesScalarWhereInput = {
+    AND?: rendelesScalarWhereInput | rendelesScalarWhereInput[]
+    OR?: rendelesScalarWhereInput[]
+    NOT?: rendelesScalarWhereInput | rendelesScalarWhereInput[]
+    id?: IntFilter<"rendeles"> | number
+    felhaszid?: IntFilter<"rendeles"> | number
+    products?: StringFilter<"rendeles"> | string
+    address?: StringNullableFilter<"rendeles"> | string | null
+    shippingType?: StringFilter<"rendeles"> | string
+    totalPrice?: IntFilter<"rendeles"> | number
+    createdAt?: DateTimeFilter<"rendeles"> | Date | string
+  }
+
+  export type felhasznalokCreateWithoutIdopontokInput = {
+    felhnev?: string
+    email?: string
+    hash?: string
+    telefonszam?: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    verifyToken?: string | null
+    verifyTokenExpiry?: Date | string | null
+    rendelesek?: rendelesCreateNestedManyWithoutFelhasznaloInput
+  }
+
+  export type felhasznalokUncheckedCreateWithoutIdopontokInput = {
+    id?: number
+    felhnev?: string
+    email?: string
+    hash?: string
+    telefonszam?: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    verifyToken?: string | null
+    verifyTokenExpiry?: Date | string | null
+    rendelesek?: rendelesUncheckedCreateNestedManyWithoutFelhasznaloInput
+  }
+
+  export type felhasznalokCreateOrConnectWithoutIdopontokInput = {
+    where: felhasznalokWhereUniqueInput
+    create: XOR<felhasznalokCreateWithoutIdopontokInput, felhasznalokUncheckedCreateWithoutIdopontokInput>
+  }
+
+  export type felhasznalokUpsertWithoutIdopontokInput = {
+    update: XOR<felhasznalokUpdateWithoutIdopontokInput, felhasznalokUncheckedUpdateWithoutIdopontokInput>
+    create: XOR<felhasznalokCreateWithoutIdopontokInput, felhasznalokUncheckedCreateWithoutIdopontokInput>
+    where?: felhasznalokWhereInput
+  }
+
+  export type felhasznalokUpdateToOneWithWhereWithoutIdopontokInput = {
+    where?: felhasznalokWhereInput
+    data: XOR<felhasznalokUpdateWithoutIdopontokInput, felhasznalokUncheckedUpdateWithoutIdopontokInput>
+  }
+
+  export type felhasznalokUpdateWithoutIdopontokInput = {
+    felhnev?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    hash?: StringFieldUpdateOperationsInput | string
+    telefonszam?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rendelesek?: rendelesUpdateManyWithoutFelhasznaloNestedInput
+  }
+
+  export type felhasznalokUncheckedUpdateWithoutIdopontokInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    felhnev?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    hash?: StringFieldUpdateOperationsInput | string
+    telefonszam?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rendelesek?: rendelesUncheckedUpdateManyWithoutFelhasznaloNestedInput
+  }
+
+  export type felhasznalokCreateWithoutRendelesekInput = {
+    felhnev?: string
+    email?: string
+    hash?: string
+    telefonszam?: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    verifyToken?: string | null
+    verifyTokenExpiry?: Date | string | null
+    idopontok?: idopontCreateNestedManyWithoutFelhasznaloInput
+  }
+
+  export type felhasznalokUncheckedCreateWithoutRendelesekInput = {
+    id?: number
+    felhnev?: string
+    email?: string
+    hash?: string
+    telefonszam?: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    verifyToken?: string | null
+    verifyTokenExpiry?: Date | string | null
+    idopontok?: idopontUncheckedCreateNestedManyWithoutFelhasznaloInput
+  }
+
+  export type felhasznalokCreateOrConnectWithoutRendelesekInput = {
+    where: felhasznalokWhereUniqueInput
+    create: XOR<felhasznalokCreateWithoutRendelesekInput, felhasznalokUncheckedCreateWithoutRendelesekInput>
+  }
+
+  export type felhasznalokUpsertWithoutRendelesekInput = {
+    update: XOR<felhasznalokUpdateWithoutRendelesekInput, felhasznalokUncheckedUpdateWithoutRendelesekInput>
+    create: XOR<felhasznalokCreateWithoutRendelesekInput, felhasznalokUncheckedCreateWithoutRendelesekInput>
+    where?: felhasznalokWhereInput
+  }
+
+  export type felhasznalokUpdateToOneWithWhereWithoutRendelesekInput = {
+    where?: felhasznalokWhereInput
+    data: XOR<felhasznalokUpdateWithoutRendelesekInput, felhasznalokUncheckedUpdateWithoutRendelesekInput>
+  }
+
+  export type felhasznalokUpdateWithoutRendelesekInput = {
+    felhnev?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    hash?: StringFieldUpdateOperationsInput | string
+    telefonszam?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    idopontok?: idopontUpdateManyWithoutFelhasznaloNestedInput
+  }
+
+  export type felhasznalokUncheckedUpdateWithoutRendelesekInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    felhnev?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    hash?: StringFieldUpdateOperationsInput | string
+    telefonszam?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verifyToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verifyTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    idopontok?: idopontUncheckedUpdateManyWithoutFelhasznaloNestedInput
+  }
+
+  export type idopontCreateManyFelhasznaloInput = {
+    id?: number
+    idopont: Date | string
+    szolgal: string
+  }
+
+  export type rendelesCreateManyFelhasznaloInput = {
+    id?: number
+    products: string
+    address?: string | null
+    shippingType: string
+    totalPrice: number
+    createdAt?: Date | string
+  }
+
+  export type idopontUpdateWithoutFelhasznaloInput = {
+    idopont?: DateTimeFieldUpdateOperationsInput | Date | string
+    szolgal?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type idopontUncheckedUpdateWithoutFelhasznaloInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    idopont?: DateTimeFieldUpdateOperationsInput | Date | string
+    szolgal?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type idopontUncheckedUpdateManyWithoutFelhasznaloInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    idopont?: DateTimeFieldUpdateOperationsInput | Date | string
+    szolgal?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type rendelesUpdateWithoutFelhasznaloInput = {
+    products?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingType?: StringFieldUpdateOperationsInput | string
+    totalPrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type rendelesUncheckedUpdateWithoutFelhasznaloInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    products?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingType?: StringFieldUpdateOperationsInput | string
+    totalPrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type rendelesUncheckedUpdateManyWithoutFelhasznaloInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    products?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingType?: StringFieldUpdateOperationsInput | string
+    totalPrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

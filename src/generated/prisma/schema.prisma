@@ -24,6 +24,10 @@ model felhasznalok {
   emailVerified     Boolean   @default(false)
   verifyToken       String?   @db.VarChar(128)
   verifyTokenExpiry DateTime? @db.DateTime(0)
+
+  // Relációk
+  idopontok  idopont[]  @relation("felhasznalok_idopont")
+  rendelesek rendeles[] @relation("felhasznalok_rendeles")
 }
 
 model idopont {
@@ -31,6 +35,9 @@ model idopont {
   felhaszid Int      @db.UnsignedInt
   idopont   DateTime @db.DateTime(0)
   szolgal   String   @db.VarChar(50)
+
+  // Relációk
+  felhasznalo felhasznalok @relation("felhasznalok_idopont", fields: [felhaszid], references: [id], onDelete: Cascade)
 
   @@index([felhaszid], map: "FK_idopont_felhasznalok")
 }
@@ -50,6 +57,9 @@ model rendeles {
   shippingType String   @db.VarChar(20)
   totalPrice   Int
   createdAt    DateTime @default(now()) @db.DateTime(0)
+
+  // Relációk
+  felhasznalo felhasznalok @relation("felhasznalok_rendeles", fields: [felhaszid], references: [id], onDelete: Cascade)
 
   @@index([felhaszid], map: "FK_rendeles_felhasznalok")
 }
