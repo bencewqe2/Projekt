@@ -57,14 +57,40 @@
       </main>
     </div>
 
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="toast-notification"></div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="delete-confirm-modal">
+      <div class="delete-confirm-content">
+        <h3>Törlés megerősítése</h3>
+        <p id="deleteConfirmMessage">Biztosan törlöd a foglalást?</p>
+        <div class="delete-confirm-buttons">
+          <button id="btnConfirmDelete" class="btn-confirm">✓ Igen, törlöm</button>
+          <button id="btnCancelDelete" class="btn-cancel">✕ Mégsem</button>
+        </div>
+      </div>
+    </div>
+
     <script>
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toastNotification");
+        toast.textContent = message;
+        toast.className = `toast-notification toast-${type} show`;
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
       function showSection(id) {
         document.querySelectorAll(".account-section").forEach((s) => s.classList.remove("active"));
         document.getElementById(id).classList.add("active");
-
-        // Rendelések betöltése, amikor a rendelések szekciót megnyitják
         if (id === "orders") {
           loadOrders();
+        }
+
+        // Foglalások betöltése, amikor a foglalások szekciót megnyitják
+        if (id === "bookings") {
+          loadBookings();
         }
       }
 
@@ -112,26 +138,8 @@
 
       // Foglalás törlése
       async function deleteBooking(bookingId) {
-        if (!confirm("Biztosan szeretnéd törölni ezt a foglalást?")) {
-          return;
-        }
-
-        try {
-          const res = await fetch(`/api/booking/${bookingId}`, {
-            method: "DELETE",
-          });
-          const data = await res.json();
-
-          if (res.ok && data.ok) {
-            alert("Foglalás sikeresen törölve!");
-            loadBookings();
-          } else {
-            alert("Hiba: " + (data.error || "Ismeretlen hiba"));
-          }
-        } catch (err) {
-          console.error(err);
-          alert("Nem sikerült elérni a szervert.");
-        }
+        document.getElementById("deleteConfirmModal").style.display = "flex";
+        document.getElementById("deleteConfirmModal").dataset.bookingId = bookingId;
       }
 
       // Foglalások betöltése
@@ -178,6 +186,36 @@
 
       document.addEventListener("DOMContentLoaded", () => {
         loadBookings();
+
+        // Törlés megerősítés - Igen gomb
+        document.getElementById("btnConfirmDelete").addEventListener("click", async () => {
+          const modal = document.getElementById("deleteConfirmModal");
+          const bookingId = parseInt(modal.dataset.bookingId);
+          try {
+            const res = await fetch(`/api/booking/${bookingId}`, {
+              method: "DELETE",
+            });
+            const data = await res.json();
+
+            if (res.ok && data.ok) {
+              showToast("✓ Foglalás sikeresen törölve");
+              document.getElementById("deleteConfirmModal").style.display = "none";
+              loadBookings();
+            } else {
+              showToast("Hiba: " + (data.error || "Ismeretlen hiba"), "error");
+              document.getElementById("deleteConfirmModal").style.display = "none";
+            }
+          } catch (err) {
+            console.error(err);
+            showToast("Nem sikerült elérni a szervert", "error");
+            document.getElementById("deleteConfirmModal").style.display = "none";
+          }
+        });
+
+        // Törlés megerősítés - Mégsem gomb
+        document.getElementById("btnCancelDelete").addEventListener("click", () => {
+          document.getElementById("deleteConfirmModal").style.display = "none";
+        });
       });
     </script>
     <script src="/js/mobileNav.js"></script>

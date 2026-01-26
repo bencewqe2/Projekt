@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Panel – Beach Barbershop</title>
     <link rel="stylesheet" href="/css/fiok.css" />
-    <link rel="stylesheet" href="/css/index.css" />
   </head>
   <body>
     <video id="hatter_video" autoplay muted loop>
@@ -50,38 +49,53 @@
           <div id="usersContainer">
             <p style="text-align: center; color: #999">Betöltés...</p>
           </div>
-          <div
-            id="userPanel"
-            style="
-              display: none;
-              margin-top: 1rem;
-              background: rgba(17, 17, 17, 0.6);
-              padding: 1rem;
-              border-radius: 6px;
-              border: 1px solid rgba(255, 255, 255, 0.04);
-            ">
-            <h3>Felhasználó adatai</h3>
-            <div style="display: flex; flex-direction: column; gap: 0.6rem; max-width: 520px">
-              <label>Felhasználónév<br /><input id="up_felhnev" type="text" style="width: 100%" /></label>
-              <label>Email<br /><input id="up_email" type="email" style="width: 100%" /></label>
-              <label>Telefonszám<br /><input id="up_telefonszam" type="text" style="width: 100%" /></label>
-              <label
-                >Szerep<br /><select id="up_role">
-                  <option>USER</option>
-                  <option>BARBER</option>
-                  <option>ADMIN</option>
-                </select></label
-              >
-              <div style="display: flex; gap: 0.6rem">
-                <button id="btnSaveUser">Mentés</button>
-                <button id="btnChangePassword">Jelszó módosítása</button>
-                <button id="btnDeleteUser" class="danger">Törlés</button>
-                <button id="btnClosePanel">Bezár</button>
-              </div>
-            </div>
-          </div>
         </section>
       </main>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div id="userModal" class="user-modal">
+      <div class="user-modal-content">
+        <h3 id="userModalTitle">Felhasználó szerkesztése</h3>
+        <div class="user-form">
+          <label>Felhasználónév<br /><input id="up_felhnev" type="text" /></label>
+          <label>Email<br /><input id="up_email" type="email" /></label>
+          <label>Telefonszám<br /><input id="up_telefonszam" type="text" /></label>
+          <label
+            >Szerep<br /><select id="up_role">
+              <option>USER</option>
+              <option>BARBER</option>
+              <option>ADMIN</option>
+            </select></label
+          >
+          <label
+            >Jelszó (ha új jelszót szeretnél beállítani)<br /><input
+              id="up_password"
+              type="password"
+              placeholder="Hagyd üresen ha nem változik"
+          /></label>
+          <div class="user-modal-buttons">
+            <button id="btnSaveUser" class="btn-confirm">💾 Mentés</button>
+            <button id="btnDeleteUser" class="btn-danger">🗑️ Törlés</button>
+            <button id="btnClosePanel" class="btn-cancel">✕ Bezár</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="toast-notification"></div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="delete-confirm-modal">
+      <div class="delete-confirm-content">
+        <h3>Törlés megerősítése</h3>
+        <p id="deleteConfirmMessage">Biztosan törlöd a felhasználót?</p>
+        <div class="delete-confirm-buttons">
+          <button id="btnConfirmDelete" class="btn-confirm">✓ Igen, törlöm</button>
+          <button id="btnCancelDelete" class="btn-cancel">✕ Mégsem</button>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -162,7 +176,7 @@
           let html = '<div class="users-list">';
           window.usersData = json.users;
           json.users.forEach((u) => {
-            html += `<div class="user-item"><div class="user-header"><div><p style="margin:0;color:#3cbcc7;font-weight:bold;font-size:1.05rem;">${u.felhnev}</p><p style="margin:0.3rem 0 0 0;color:#999;font-size:0.9rem;">ID: ${u.id}</p></div><div style="text-align:right;"><p style="margin:0;color:#ddd;"><strong>Email:</strong> ${u.email}</p><p style="margin:0.3rem 0 0 0;color:#999;font-size:0.9rem;">Szerep: <span style="color:#3cbcc7;">${u.role}</span></p></div></div><div class="user-details"><p style="margin:0.5rem 0;"><strong>Telefon:</strong> ${u.telefonszam}</p></div><div class="user-actions"><button onclick="selectUser(${u.id})" class="action-btn">Szerkeszt</button><button onclick="changePassword(${u.id})" class="action-btn">Jelszó</button><button onclick="deleteUser(${u.id})" class="danger">Törlés</button></div></div>`;
+            html += `<div class="user-item"><div class="user-header"><div><p style="margin:0;color:#3cbcc7;font-weight:bold;font-size:1.05rem;">${u.felhnev}</p><p style="margin:0.3rem 0 0 0;color:#999;font-size:0.9rem;">ID: ${u.id}</p></div><div style="text-align:right;"><p style="margin:0;color:#ddd;"><strong>Email:</strong> ${u.email}</p><p style="margin:0.3rem 0 0 0;color:#999;font-size:0.9rem;">Szerep: <span style="color:#3cbcc7;">${u.role}</span></p></div></div><div class="user-details"><p style="margin:0.5rem 0;"><strong>Telefon:</strong> ${u.telefonszam}</p></div><div class="user-actions"><button onclick="selectUser(${u.id})" class="action-btn">Szerkeszt</button></div></div>`;
           });
           html += "</div>";
           container.innerHTML = html;
@@ -179,8 +193,9 @@
         document.getElementById("up_email").value = u.email || "";
         document.getElementById("up_telefonszam").value = u.telefonszam || "";
         document.getElementById("up_role").value = u.role || "USER";
-        document.getElementById("userPanel").style.display = "block";
-        document.getElementById("userPanel").dataset.userId = id;
+        document.getElementById("up_password").value = "";
+        document.getElementById("userModal").style.display = "flex";
+        document.getElementById("userModal").dataset.userId = id;
       }
 
       function editUser(id) {
@@ -191,6 +206,15 @@
         selectUser(id);
       }
 
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toastNotification");
+        toast.textContent = message;
+        toast.className = `toast-notification toast-${type} show`;
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
       function deleteUser(id) {
         if (!confirm("Biztosan törlöd a felhasználót?")) return;
         try {
@@ -198,12 +222,12 @@
           res.then(async (response) => {
             const j = await response.json();
             if (!response.ok) throw new Error(j.error || "Hiba");
-            alert("Felhasználó törölve");
+            showToast("✓ Felhasználó törölve");
             loadUsers();
           });
         } catch (err) {
           console.error(err);
-          alert("Hiba történt");
+          showToast("Hiba történt a törléskor", "error");
         }
       }
 
@@ -226,18 +250,24 @@
 
         // Bezárás gomb
         document.getElementById("btnClosePanel").addEventListener("click", () => {
-          document.getElementById("userPanel").style.display = "none";
+          document.getElementById("userModal").style.display = "none";
         });
 
         // Mentés gomb
         document.getElementById("btnSaveUser").addEventListener("click", async () => {
-          const panel = document.getElementById("userPanel");
-          const id = parseInt(panel.dataset.userId);
+          const modal = document.getElementById("userModal");
+          const id = parseInt(modal.dataset.userId);
           const form = new URLSearchParams();
           form.append("felhnev", document.getElementById("up_felhnev").value);
           form.append("email", document.getElementById("up_email").value);
           form.append("telefonszam", document.getElementById("up_telefonszam").value || "0");
           form.append("role", document.getElementById("up_role").value || "USER");
+
+          const password = document.getElementById("up_password").value;
+          if (password) {
+            form.append("password", password);
+          }
+
           try {
             const res = await fetch(`/api/admin/user/${id}/update`, {
               method: "POST",
@@ -246,55 +276,48 @@
             });
             const j = await res.json();
             if (!res.ok) throw new Error(j.error || "Hiba");
-            alert("Mentve");
-            document.getElementById("userPanel").style.display = "none";
+            showToast("✓ Felhasználó sikeresen mentve");
+            document.getElementById("userModal").style.display = "none";
             loadUsers();
           } catch (err) {
             console.error(err);
-            alert("Hiba történt");
-          }
-        });
-
-        // Jelszó módosítás gomb
-        document.getElementById("btnChangePassword").addEventListener("click", async () => {
-          const panel = document.getElementById("userPanel");
-          const id = parseInt(panel.dataset.userId);
-          const pw = prompt("Új jelszó:");
-          if (pw === null) return;
-          if (!confirm("Biztos?")) return;
-          try {
-            const form = new URLSearchParams();
-            form.append("password", pw);
-            const res = await fetch(`/api/admin/user/${id}/password`, {
-              method: "POST",
-              headers: { "Content-Type": "application/x-www-form-urlencoded" },
-              body: form,
-            });
-            const j = await res.json();
-            if (!res.ok) throw new Error(j.error || "Hiba");
-            alert("Jelszó módosítva");
-          } catch (err) {
-            console.error(err);
-            alert("Hiba történt");
+            showToast("Hiba történt a mentéskor", "error");
           }
         });
 
         // Törlés gomb
         document.getElementById("btnDeleteUser").addEventListener("click", async () => {
-          const panel = document.getElementById("userPanel");
-          const id = parseInt(panel.dataset.userId);
-          if (!confirm("Biztosan törlöd a felhasználót?")) return;
+          const modal = document.getElementById("userModal");
+          const id = parseInt(modal.dataset.userId);
+          document.getElementById("deleteConfirmModal").style.display = "flex";
+          document.getElementById("deleteConfirmModal").dataset.userId = id;
+        });
+
+        // Törlés megerősítés - Igen gomb
+        document.getElementById("btnConfirmDelete").addEventListener("click", async () => {
+          const modal = document.getElementById("deleteConfirmModal");
+          const id = parseInt(modal.dataset.userId);
+          console.log("Törlés kezdeményezése felhasználó ID-val:", id);
           try {
             const res = await fetch(`/api/admin/user/${id}`, { method: "DELETE" });
+            console.log("API válasz status:", res.status);
             const j = await res.json();
-            if (!res.ok) throw new Error(j.error || "Hiba");
-            alert("Felhasználó törölve");
-            document.getElementById("userPanel").style.display = "none";
+            console.log("API válasz JSON:", j);
+            if (!res.ok) throw new Error(j.error || "Hiba a szerveren");
+            showToast("✓ Felhasználó sikeresen törölve");
+            document.getElementById("userModal").style.display = "none";
+            document.getElementById("deleteConfirmModal").style.display = "none";
             loadUsers();
           } catch (err) {
-            console.error(err);
-            alert("Hiba történt");
+            console.error("Törlési hiba:", err);
+            showToast("Hiba történt a törléskor: " + err.message, "error");
+            document.getElementById("deleteConfirmModal").style.display = "none";
           }
+        });
+
+        // Törlés megerősítés - Mégsem gomb
+        document.getElementById("btnCancelDelete").addEventListener("click", () => {
+          document.getElementById("deleteConfirmModal").style.display = "none";
         });
       });
     </script>
