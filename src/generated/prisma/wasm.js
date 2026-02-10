@@ -115,6 +115,15 @@ exports.Prisma.BorbelyokScalarFieldEnum = {
   teleszam: 'teleszam'
 };
 
+exports.Prisma.RendelesScalarFieldEnum = {
+  id: 'id',
+  felhaszid: 'felhaszid',
+  products: 'products',
+  shippingType: 'shippingType',
+  totalPrice: 'totalPrice',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -141,11 +150,17 @@ exports.Prisma.borbelyokOrderByRelevanceFieldEnum = {
   email: 'email'
 };
 
+exports.Prisma.rendelesOrderByRelevanceFieldEnum = {
+  products: 'products',
+  shippingType: 'shippingType'
+};
+
 
 exports.Prisma.ModelName = {
   felhasznalok: 'felhasznalok',
   idopont: 'idopont',
-  borbelyok: 'borbelyok'
+  borbelyok: 'borbelyok',
+  rendeles: 'rendeles'
 };
 /**
  * Create the Client
@@ -186,7 +201,6 @@ const config = {
     "db"
   ],
   "activeProvider": "mysql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -195,13 +209,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel felhasznalok {\n  id          Int    @id @default(autoincrement()) @db.UnsignedInt\n  felhnev     String @default(\"0\") @db.VarChar(50)\n  email       String @default(\"0\") @db.VarChar(50)\n  hash        String @default(\"0\") @db.Char(72)\n  telefonszam String @default(\"0\") @db.VarChar(50)\n}\n\nmodel idopont {\n  id        Int      @id @default(autoincrement()) @db.UnsignedInt\n  felhaszid Int      @db.UnsignedInt\n  idopont   DateTime @db.DateTime(0)\n  szolgal   String   @db.VarChar(50)\n\n  @@index([felhaszid], map: \"FK_idopont_felhasznalok\")\n}\n\nmodel borbelyok {\n  id       Int    @id @default(autoincrement()) @db.UnsignedInt\n  Nev      String @default(\"\") @db.VarChar(50)\n  email    String @default(\"\") @db.VarChar(50)\n  teleszam Int?\n}\n",
-  "inlineSchemaHash": "892798e5acfb5ce0f9cec916cc15c7d7d4d3799647d9d580addc5182fa548e59",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel felhasznalok {\n  id          Int    @id @default(autoincrement()) @db.UnsignedInt\n  felhnev     String @default(\"0\") @db.VarChar(50)\n  email       String @default(\"0\") @db.VarChar(50)\n  hash        String @default(\"0\") @db.Char(72)\n  telefonszam String @default(\"0\") @db.VarChar(50)\n}\n\nmodel idopont {\n  id        Int      @id @default(autoincrement()) @db.UnsignedInt\n  felhaszid Int      @db.UnsignedInt\n  idopont   DateTime @db.DateTime(0)\n  szolgal   String   @db.VarChar(50)\n\n  @@index([felhaszid], map: \"FK_idopont_felhasznalok\")\n}\n\nmodel borbelyok {\n  id       Int    @id @default(autoincrement()) @db.UnsignedInt\n  Nev      String @default(\"\") @db.VarChar(50)\n  email    String @default(\"\") @db.VarChar(50)\n  teleszam Int?\n}\n\nmodel rendeles {\n  id           Int      @id @default(autoincrement()) @db.UnsignedInt\n  felhaszid    Int      @db.UnsignedInt\n  products     String   @db.LongText\n  shippingType String   @db.VarChar(20)\n  totalPrice   Int\n  createdAt    DateTime @default(now()) @db.DateTime(0)\n\n  @@index([felhaszid], map: \"FK_rendeles_felhasznalok\")\n}\n",
+  "inlineSchemaHash": "7650f996f38bede4a06b046f7a08e8f1b63ad7af724eae98b1078ec568666f69",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"felhasznalok\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"felhnev\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"telefonszam\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"idopont\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"felhaszid\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"idopont\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"szolgal\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"borbelyok\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"Nev\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"teleszam\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"felhasznalok\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"felhnev\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"hash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"telefonszam\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"idopont\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"felhaszid\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"idopont\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"szolgal\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"borbelyok\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"Nev\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"teleszam\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"rendeles\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"felhaszid\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"products\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shippingType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"totalPrice\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

@@ -280,6 +280,48 @@ app.post("/api/booking", urlencodedParser, async (req, res) => {
   }
 });
 
+// Foglalt időpontok lekérése egy adott dátumra
+app.get("/api/booked-times/:date", async (req, res) => {
+  const { date } = req.params;
+  if (!date) {
+    return res.status(400).json({ error: "Hiányzó dátum." });
+  }
+
+  try {
+    // Lekérjük az összes foglalást erre a dátumra
+    const [y, m, d] = String(date)
+      .split("-")
+      .map((v) => Number(v));
+
+    // Nap kezdete és vége UTC-ben
+    const dayStart = new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
+    const dayEnd = new Date(Date.UTC(y, m - 1, d, 23, 59, 59));
+
+    const booked = await db.idopont.findMany({
+      where: {
+        idopont: {
+          gte: dayStart,
+          lte: dayEnd,
+        },
+      },
+      select: {
+        idopont: true,
+      },
+    });
+
+    // Időpontok formázása HH:MM formátumba
+    const bookedTimes = booked.map((entry) => {
+      const time = new Date(entry.idopont);
+      return `${String(time.getUTCHours()).padStart(2, "0")}:${String(time.getUTCMinutes()).padStart(2, "0")}`;
+    });
+
+    return res.json({ bookedTimes });
+  } catch (err) {
+    console.error("Error fetching booked times:", err);
+    return res.status(500).json({ error: "Nem sikerült lekérni a foglalt időpontokat." });
+  }
+});
+
 // Foglalás törlése
 app.delete("/api/booking/:id", async (req, res) => {
   const session = req.session;

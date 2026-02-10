@@ -143,6 +143,15 @@ exports.Prisma.BorbelyokScalarFieldEnum = {
   teleszam: 'teleszam'
 };
 
+exports.Prisma.RendelesScalarFieldEnum = {
+  id: 'id',
+  felhaszid: 'felhaszid',
+  products: 'products',
+  shippingType: 'shippingType',
+  totalPrice: 'totalPrice',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -169,11 +178,17 @@ exports.Prisma.borbelyokOrderByRelevanceFieldEnum = {
   email: 'email'
 };
 
+exports.Prisma.rendelesOrderByRelevanceFieldEnum = {
+  products: 'products',
+  shippingType: 'shippingType'
+};
+
 
 exports.Prisma.ModelName = {
   felhasznalok: 'felhasznalok',
   idopont: 'idopont',
-  borbelyok: 'borbelyok'
+  borbelyok: 'borbelyok',
+  rendeles: 'rendeles'
 };
 
 /**

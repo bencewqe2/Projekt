@@ -44,33 +44,47 @@
         <h2>Foglalás</h2>
         <% if (user) { %>
         <form id="foglalas_urlap" action="/api/booking" method="post">
-          <label>
-            Dátum
-            <input type="date" name="date" required />
-          </label>
+          <!-- Step 1: Barber + Service Selection -->
+          <div id="step1" class="booking-step booking-step-1 active">
+            <h3>Foglalás</h3>
+            <label>
+              Borbély kiválasztása
+              <select name="barber" id="barber_select" required></select>
+            </label>
 
-          <label>
-            Idő
-            <input type="time" name="time" required />
-          </label>
+            <label>
+              Szolgáltatás
+              <select name="service" id="service_select" required>
+                <option value="">Válassz szolgáltatást</option>
+                <option value="haircut">Hajvágás</option>
+                <option value="beard">Szakállvágás</option>
+                <option value="combo">Haj + Szakáll</option>
+              </select>
+            </label>
 
-          <label>
-            Borbély kiválasztása
-            <select name="barber" id="barber_select"></select>
-          </label>
+            <button type="button" id="step1Btn" class="booking-next-btn">Tovább</button>
+          </div>
 
-          <label>
-            Szolgáltatás
-            <select name="service" required>
-              <option value="">Válassz szolgáltatást</option>
-              <option value="haircut">Hajvágás</option>
-              <option value="beard">Szakállvágás</option>
-              <option value="shave">Borotválás</option>
-              <option value="combo">Csomag</option>
-            </select>
-          </label>
+          <!-- Step 2: Calendar Selection -->
+          <div id="step2" class="booking-step">
+            <button type="button" id="backBtn2" class="back-btn" title="Vissza">←</button>
+            <h3>Válassz egy dátumot</h3>
+            <div class="calendar-wrapper">
+              <div id="calendar" class="calendar" role="grid" aria-label="Naptár"></div>
+              <input type="hidden" name="date" id="selectedDate" required />
+            </div>
+          </div>
 
-          <button type="submit">Foglalás küldése</button>
+          <!-- Step 3: Time Slots Selection -->
+          <div id="step3" class="booking-step">
+            <button type="button" id="backBtn3" class="back-btn" title="Vissza">←</button>
+            <h3 id="selectedDateDisplay"></h3>
+            <label>Elérhető időpontok</label>
+            <div id="timeSlots" class="time-slots"></div>
+            <input type="hidden" name="time" id="selectedTime" required />
+
+            <button type="submit" class="booking-submit-btn">Foglalás küldése</button>
+          </div>
         </form>
         <% } else { %>
         <p>Kérlek <a href="/bejelentkezes">jelentkezz be</a>, hogy foglalhass időpontot.</p>
@@ -212,6 +226,260 @@
             if (dropdown) dropdown.setAttribute("aria-hidden", "true");
           });
         }
+
+        // Naptár eltávolítva: nincs több JS logika a naptárhoz
+
+        // --- Lépcsőzetes foglalás UI ---
+        const step1 = document.getElementById("step1");
+        const step2 = document.getElementById("step2");
+        const step3 = document.getElementById("step3");
+        const step1Btn = document.getElementById("step1Btn");
+        const serviceSelect = document.getElementById("service_select");
+        const calendarEl = document.getElementById("calendar");
+        const selectedDateInputEl = document.getElementById("selectedDate");
+        const selectedDateDisplay = document.getElementById("selectedDateDisplay");
+        const timeSlots = document.getElementById("timeSlots");
+        const selectedTimeInputEl = document.getElementById("selectedTime");
+
+        // Step 1 -> Step 2 gomb
+        step1Btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          console.log("Step1 gomb kattintva");
+          console.log("barberSelect.value:", barberSelect.value);
+          console.log("serviceSelect.value:", serviceSelect.value);
+          
+          if (!barberSelect.value || !serviceSelect.value) {
+            console.log("Validáció sikertelen - borbély vagy szolgáltatás hiányzik");
+            showPopup("Kérlek válassz borbélyt és szolgáltatást!", "error", true);
+            return;
+          }
+          
+          console.log("Validáció ok - Step 2-re ugrás");
+          console.log("Step1 classList előtte:", step1.classList);
+          step1.classList.remove("active");
+          console.log("Step1 classList után - 'active' eltávolítva:", step1.classList);
+          console.log("Step1 element display:", window.getComputedStyle(step1).display);
+          step2.classList.add("active");
+          console.log("Step2 classList: 'active' hozzáadva", step2.classList);
+          console.log("Step2 element display:", window.getComputedStyle(step2).display);
+          step2.scrollIntoView({ behavior: "smooth" });
+          renderCalendar();
+        });
+
+        // Vissza gomb Step 2-ből
+        const backBtn2 = document.getElementById("backBtn2");
+        if (backBtn2) {
+          backBtn2.addEventListener("click", (e) => {
+            e.preventDefault();
+            step2.classList.remove("active");
+            step1.classList.add("active");
+            step1.scrollIntoView({ behavior: "smooth" });
+          });
+        }
+
+        // Vissza gomb Step 3-ből
+        const backBtn3 = document.getElementById("backBtn3");
+        if (backBtn3) {
+          backBtn3.addEventListener("click", (e) => {
+            e.preventDefault();
+            step3.classList.remove("active");
+            step2.classList.add("active");
+            step2.scrollIntoView({ behavior: "smooth" });
+          });
+        }
+
+        // Naptár renderelés
+        function renderCalendar() {
+          calendarEl.innerHTML = "";
+          const today = new Date();
+          const month = today.getMonth();
+          const year = today.getFullYear();
+
+          const daysOfWeek = ["H", "K", "Sze", "Cs", "P", "Szo", "V"];
+          const weekdays = document.createElement("div");
+          weekdays.className = "cal-weekdays";
+          daysOfWeek.forEach((d) => {
+            const el = document.createElement("div");
+            el.className = "cal-weekday";
+            el.textContent = d;
+            weekdays.appendChild(el);
+          });
+          calendarEl.appendChild(weekdays);
+
+          const grid = document.createElement("div");
+          grid.className = "cal-grid";
+
+          const first = new Date(year, month, 1);
+          const last = new Date(year, month + 1, 0);
+          const startOffset = first.getDay() === 0 ? 6 : first.getDay() - 1;
+
+          // leading empties
+          for (let i = 0; i < startOffset; i++) {
+            const empty = document.createElement("div");
+            empty.className = "cal-cell cal-empty";
+            grid.appendChild(empty);
+          }
+
+          // days
+          for (let d = 1; d <= last.getDate(); d++) {
+            // ISO formátumban építjük fel a dátumot (YYYY-MM-DD)
+            const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+            
+            // Csak az nap ellenőrzéshez hozunk létre Date objektumot (összehasonlításhoz)
+            const cellDate = new Date(year, month, d);
+
+            const cell = document.createElement("div");
+            cell.className = "cal-cell";
+
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "cal-day";
+            btn.setAttribute("data-date", iso);
+            btn.textContent = d;
+
+            // past dates disabled
+            const todayNoTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            if (cellDate < todayNoTime) {
+              btn.classList.add("cal-disabled");
+              btn.disabled = true;
+            }
+
+            // weekends disabled
+            const dow = cellDate.getDay();
+            if (dow === 0 || dow === 6) {
+              btn.classList.add("cal-disabled");
+              btn.disabled = true;
+              btn.title = "Hétvége";
+            }
+
+            btn.addEventListener("click", () => {
+              const prev = calendarEl.querySelectorAll(".cal-day.selected");
+              prev.forEach((p) => p.classList.remove("selected"));
+              btn.classList.add("selected");
+              selectedDateInputEl.value = iso;
+              showTimeSlots(iso);
+            });
+
+            cell.appendChild(btn);
+            grid.appendChild(cell);
+          }
+
+          // fill last row
+          const remainder = grid.children.length % 7;
+          if (remainder !== 0) {
+            for (let t = remainder; t < 7; t++) {
+              const empty = document.createElement("div");
+              empty.className = "cal-cell cal-empty";
+              grid.appendChild(empty);
+            }
+          }
+
+          calendarEl.appendChild(grid);
+        }
+
+        // Időpontok megjelenítése
+        function showTimeSlots(dateIso) {
+          // ISO dátumból (YYYY-MM-DD) kiolvassuk az év, hó, nap értékeket
+          const [y, m, d] = dateIso.split("-").map(Number);
+          const dayOfWeek = new Date(y, m - 1, d).getDay(); // 0 = vasárnap, 1 = hétfő, ..., 6 = szombat
+          
+          let timeSlots = [];
+          
+          // Szombat = 6, vasárnap = 0, azok nem nyitva vannak
+          if (dayOfWeek === 0) {
+            // Vasárnap - zárva
+            renderTimeSlots([], dateIso);
+            return;
+          } else if (dayOfWeek === 6) {
+            // Szombat: 9:00 - 15:00
+            timeSlots = generateTimeSlots(9, 15);
+          } else {
+            // Hétfő - Péntek: 9:00 - 20:00
+            timeSlots = generateTimeSlots(9, 20);
+          }
+          
+          // Lekérjük a foglalt időpontokat
+          fetchBookedTimes(dateIso, timeSlots);
+        }
+
+        // Foglalt időpontok lekérése és szűrése
+        async function fetchBookedTimes(dateIso, availableSlots) {
+          try {
+            const res = await fetch(`/api/booked-times/${dateIso}`);
+            const data = await res.json().catch(() => ({}));
+            
+            if (res.ok && Array.isArray(data.bookedTimes)) {
+              const bookedSet = new Set(data.bookedTimes);
+              // Szűrjük ki a foglalt időpontokat
+              const filteredSlots = availableSlots.filter((slot) => {
+                const slotTime = slot.split("-")[0]; // "9:00-9:30" -> "9:00"
+                return !bookedSet.has(slotTime);
+              });
+              renderTimeSlots(filteredSlots, dateIso);
+            } else {
+              renderTimeSlots(availableSlots, dateIso);
+            }
+          } catch (err) {
+            console.error("Error fetching booked times:", err);
+            // Ha valami hiba van, megjelenítjük az összes elérhető időpontot
+            renderTimeSlots(availableSlots, dateIso);
+          }
+        }
+
+        // Időpontok generálása 30 percenként
+        function generateTimeSlots(startHour, endHour) {
+          const slots = [];
+          for (let h = startHour; h < endHour; h++) {
+            for (let m = 0; m < 60; m += 30) {
+              const start = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+              const nextMin = m + 30;
+              const nextHour = nextMin === 60 ? h + 1 : h;
+              const nextM = nextMin === 60 ? 0 : nextMin;
+              const end = `${String(nextHour).padStart(2, "0")}:${String(nextM).padStart(2, "0")}`;
+              slots.push(`${start}-${end}`);
+            }
+          }
+          return slots;
+        }
+
+        function renderTimeSlots(times, dateIso) {
+          timeSlots.innerHTML = "";
+          selectedTimeInputEl.value = "";
+          
+          // ISO dátumból (YYYY-MM-DD) formázása magyar nyelvűre
+          const [y, m, d] = dateIso.split("-").map(Number);
+          const dateObj = new Date(y, m - 1, d);
+          const formatted = dateObj.toLocaleDateString("hu-HU", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+          selectedDateDisplay.textContent = formatted;
+
+          if (!times || times.length === 0) {
+            timeSlots.innerHTML = "<p>Nincs elérhető időpont erre a napra (vasárnap zárva).</p>";
+            step3.classList.remove("active");
+            return;
+          }
+
+          times.forEach((t) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "time-btn";
+            btn.textContent = t; // megjelenítés: "9:00-9:30"
+            btn.addEventListener("click", (e) => {
+              e.preventDefault();
+              const prev = timeSlots.querySelectorAll(".time-btn.selected");
+              prev.forEach((p) => p.classList.remove("selected"));
+              btn.classList.add("selected");
+              // Csak az első órát küldöm el: "9:00-9:30" -> "09:00"
+              const timeStart = t.split("-")[0];
+              selectedTimeInputEl.value = timeStart;
+            });
+            timeSlots.appendChild(btn);
+          });
+
+          step2.classList.remove("active");
+          step3.classList.add("active");
+          step3.scrollIntoView({ behavior: "smooth" });
+        }
+
       });
     </script>
   </body>
