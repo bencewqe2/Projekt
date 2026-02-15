@@ -1,344 +1,678 @@
-===============================================================================
-BEACH BARBERSHOP - PROJEKT DOKUMENTÁCIÓ
-===============================================================================
+╔════════════════════════════════════════════════════════════════════════════╗
+║                        VIZSGA PROJEKTMUNKA                                  ║
+║                                                                              ║
+║                   BEACH BARBERSHOP FOGLALÁSI RENDSZER                       ║
+║                   Webalkalmazás fejlesztése projekt                         ║
+║                                                                              ║
+╚════════════════════════════════════════════════════════════════════════════╝
 
-1. PROJEKT ÁTTEKINTÉSE
-===============================================================================
+┌─ TARTALOMJEGYZÉK ────────────────────────────────────────────────────────────┐
+│                                                                               │
+│  1. PROJEKTFELADAT ÉS CÉLKITŰZÉSEK                                           │
+│  2. TERVEZÉS ÉS SPECIFIKÁCIÓ                                                 │
+│  3. TECHNOLÓGIAI MEGOLDÁSOK                                                  │
+│  4. ADATBÁZIS TERVEZÉS                                                       │
+│  5. FEJLESZTETT MODULOK ÉS FUNKCIÓK                                          │
+│  6. FELHASZNÁLÓI FELÜLET ÉS KEZELŐFELÜLET                                    │
+│  7. IMPLEMENTÁCIÓS MEGOLDÁSOK                                                │
+│  8. TELEPÍTÉS ÉS INDÍTÁS                                                     │
+│  9. TESZTELÉS ÉS ELLENŐRZÉS                                                  │
+│  10. ÖSSZEGZÉS ÉS TOVÁBBFEJLESZTÉSI LEHETŐSÉGEK                              │
+│                                                                               │
+└───────────────────────────────────────────────────────────────────────────────┘
 
-Beach Barbershop egy modern weboldal egy fodrászati szalonnak, amely lehetővé 
-teszi az ügyfeleknek hogy:
-- Foglalásokat tudjanak téni
-- Webshop-ból termékeket tudjanak vásárolni
-- Saját fiókot kezeljenek
-- Rendeléseiket nyomon követhessék
 
-Az adminisztrátorok képesek:
-- Foglalásokat kezelni
-- Rendeléseket kezelni
-- Felhasználókat kezelni
+═══════════════════════════════════════════════════════════════════════════════
+1. PROJEKTFELADAT ÉS CÉLKITŰZÉSEK
+═══════════════════════════════════════════════════════════════════════════════
 
-===============================================================================
-2. TECHNOLÓGIÁK
-===============================================================================
+1.1. FELADAT LEÍRÁSA
+─────────────────────
 
-Backend:
-- Node.js (JavaScript runtime)
-- Express.js (web framework)
-- Prisma ORM (adatbázis kezelés)
-- SQLite (adatbázis)
+A projekt célja egy komplett webalkalmazás fejlesztése egy borbély szalon
+(Beach Barbershop) számára, amely támogatja az online foglalásokat, az 
+e-commerce funkcionalitást és az adminisztratív feladatokat.
 
-Frontend:
-- HTML5
-- CSS3 (modern styling)
-- EJS (template engine)
-- Vanilla JavaScript
+Az alkalmazásnak meg kell felelnie a következő követelményeknek:
+  • Felhasználó autentikáció és regisztráció rendszere
+  • Időpontfoglalási modul
+  • E-commerce webshop integráció
+  • Felhasználói profil kezelés
+  • Rendszeradminisztrátori felület
+  • Legalább 3 felhasználói szerepkör (USER, BARBER, ADMIN)
+  • Responsive, modern felhasználói felület
 
-===============================================================================
-3. PROJEKT STRUKTÚRA
-===============================================================================
 
-Projekt/
-├── src/
-│   ├── index.js                 # Főoldal szerver és API endpoint-ok
-│   ├── public/                  # Statikus fájlok
-│   │   ├── css/
-│   │   │   ├── index.css        # Főoldal stílusa
-│   │   │   ├── fiok.css         # Fiók és admin oldal stílusa
-│   │   │   ├── shop.css         # Webshop stílusa
-│   │   │   ├── foglalas.css     # Foglalás oldal stílusa
-│   │   │   ├── fizetes.css      # Fizetés oldal stílusa
-│   │   │   ├── regisztracio.css # Regisztráció oldal stílusa
-│   │   │   └── bejelentkezes.css # Bejelentkezés oldal stílusa
-│   │   ├── js/
-│   │   │   └── mobileNav.js     # Mobilnav funkcionalitás
-│   │   ├── img/                 # Képek
-│   │   └── videos/              # Videó fájlok
-│   ├── views/                   # EJS template-ek
-│   │   ├── index.ejs            # Főoldal
-│   │   ├── bejelentkezes.ejs    # Bejelentkezés
-│   │   ├── regisztracio.ejs     # Regisztráció
-│   │   ├── fiok.ejs             # Felhasználói fiók
-│   │   ├── admin.ejs            # Admin panel
-│   │   ├── foglalas.ejs         # Foglalás oldal
-│   │   ├── fizetes.ejs          # Fizetés oldal
-│   │   └── shop.ejs             # Webshop
-│   └── generated/               # Prisma generált fájlok
-├── scripts/
-│   └── createAdminInteractive.mjs  # Admin felhasználó létrehozása
-├── package.json
-├── schema.prisma                # Adatbázis séma
-└── DOKUMENTACIO.txt             # Ez a fájl
+1.2. FUNKTIKAI KÖVETELMÉNYEK
+──────────────────────────────
 
-===============================================================================
-4. ADATBÁZIS SÉMA
-===============================================================================
+VÉGFELHASZNÁLÓ FUNKCIÓK:
+  ✓ Regisztráció és bejelentkezés
+  ✓ Időpont foglalása szolgáltatások közül választva
+  ✓ Foglalások kezelése (megtekintés, törlés)
+  ✓ Termékek vásárlása a webshopból
+  ✓ Rendelések kezelése és nyomonkövetése
+  ✓ Saját profil szerkesztése
 
-User (Felhasználó)
-- id: Int (Primary Key)
-- felhnev: String (Felhasználónév)
-- email: String (Email cím)
-- password: String (Titkosított jelszó)
-- telefonszam: String (Telefonszám)
-- pnumber: String (Másik telefonszám)
-- role: String (USER, BARBER, ADMIN)
-- createdAt: DateTime (Létrehozás dátuma)
+ADMINISZTRATÍV FUNKCIÓK:
+  ✓ Összes foglalás megtekintése és kezelése
+  ✓ Összes rendelés megtekintése és kezelése
+  ✓ Felhasználók adminisztrálása (szerkesztés, jelszó módosítás, törlés)
+  ✓ Felhasználói adatok szűrése és keresése
 
-Booking (Foglalás)
-- id: Int (Primary Key)
-- userId: Int (Foreign Key)
-- datetime: DateTime (Foglalás időpontja)
-- service: String (Szolgáltatás típusa)
-- user: User (Relációs hivatkozás)
 
-Order (Rendelés)
-- id: Int (Primary Key)
-- userId: Int (Foreign Key)
-- products: String (JSON formátumban)
-- totalPrice: Int (Teljes ár)
-- shippingType: String (home / pickup)
-- createdAt: DateTime (Létrehozás dátuma)
-- user: User (Relációs hivatkozás)
+═══════════════════════════════════════════════════════════════════════════════
+2. TERVEZÉS ÉS SPECIFIKÁCIÓ
+═══════════════════════════════════════════════════════════════════════════════
 
-===============================================================================
-5. API VÉGPONTOK
-===============================================================================
+2.1. ARCHITEKTÚRA
+──────────────────
 
-AUTENTIKÁCIÓ:
-POST /api/register          - Felhasználó regisztrálása
-POST /api/login             - Bejelentkezés
-GET /api/logout             - Kijelentkezés
+Az alkalmazás MVC (Model-View-Controller) architekturális mintát követve készült:
 
-FOGLALÁSOK (Felhasználó):
-GET /api/bookings           - Felhasználó foglalásai
-POST /api/booking           - Új foglalás létrehozása
-DELETE /api/booking/:id     - Foglalás törlése
+  FRONTEND (View):
+    • HTML5/EJS template engine
+    • CSS3 + modern styling
+    • Vanilla JavaScript + DOM manipuláció
+    
+  BACKEND (Controller & Model):
+    • Node.js + Express.js szerver
+    • Prisma ORM az adatbázis kezeléshez
+    • RESTful API végpontok
 
-RENDELÉSEK (Felhasználó):
-GET /api/orders             - Felhasználó rendelései
-POST /api/order             - Új rendelés létrehozása
 
-ADMIN API:
-GET /api/admin/bookings     - Összes foglalás
-GET /api/admin/orders       - Összes rendelés
-DELETE /api/admin/order/:id - Rendelés törlése (admin)
-GET /api/admin/users        - Összes felhasználó
-POST /api/admin/user/:id/update    - Felhasználó szerkesztése
-POST /api/admin/user/:id/password  - Jelszó módosítása
-DELETE /api/admin/user/:id         - Felhasználó törlése
+2.2. TECHNOLÓGIAI STACK
+────────────────────────
 
-===============================================================================
-6. FŐBB FUNKCIÓK
-===============================================================================
+BACKEND TECHNOLÓGIÁK:
+  • Node.js v16+           – JavaScript futtatási környezet
+  • Express.js             – Web framework
+  • Prisma ORM            – Adatbázis kezelő
+  • SQLite                – Relációs adatbázis
+  • Bcrypt                – Jelszó titkosítás
 
-6.1 AUTENTIKÁCIÓ
-- Felhasználói regisztráció
-- Bejelentkezés jelszóvédelemmel
-- Sessionkezelés
-- Kijelentkezés
+FRONTEND TECHNOLÓGIÁK:
+  • HTML5                 – Szemantikus weboldal szerkezet
+  • CSS3                  – Modern styling, flexbox, grid
+  • EJS                   – Szerver oldali template motor
+  • Vanilla JavaScript    – Kliens oldali dinamika
 
-6.2 FELHASZNÁLÓI FIÓK
-- Fiók részletei megtekintése
-- Foglalások megtekintése
-- Rendelések megtekintése
-- Foglalások törlése (modal dialógussal)
-- Toast notificationok (sikeres/sikertelen műveletek)
+FEJLESZTŐI ESZKÖZÖK:
+  • npm                   – Csomagkezelő
+  • Prisma CLI           – ORM eszközök
 
-6.3 WEBSHOP
-- Termékek megjelenítése kategóriák szerint
-- Szűrőfunkció
-- Kosár funkció (localStorage-ben tárolva)
-- Mennyiség kiválasztás modallal
-- Fizetési oldal
 
-6.4 FOGLALÁSI RENDSZER
-- Időpont kiválasztása
-- Szolgáltatás kiválasztása
-- Foglalások kezelése
+2.3. PROJEKT STRUKTÚRA
+────────────────────────
 
-6.5 ADMIN PANEL
-- Foglalások kezelése (megtekintés)
-- Rendelések kezelése (megtekintés, törlés)
-- Felhasználók kezelése (szerkesztés, jelszó módosítás, törlés)
-- Modal dialógusok az összes műveletre
-- Toast notificationok a visszajelzésekhez
-- Szekció váltás (Foglalások/Rendelések/Felhasználók)
+  Projekt/
+  ├── src/
+  │   ├── index.js                  - Szerver, API végpontok, fő logika
+  │   ├── generated/
+  │   │   └── prisma/               - Prisma kliens és generált fájlok
+  │   ├── public/                   - Statikus erőforrások
+  │   │   ├── css/
+  │   │   │   ├── index.css         - Főoldal stílusa
+  │   │   │   ├── bejelentkezes.css - Bejelentkezési oldal
+  │   │   │   ├── regisztracio.css  - Regisztrációs oldal
+  │   │   │   ├── fiok.css          - Felhasználói fiók és admin panel
+  │   │   │   ├── shop.css          - Webshop design
+  │   │   │   ├── foglalas.css      - Foglalási oldal
+  │   │   │   └── fizetes.css       - Fizetési oldal
+  │   │   ├── js/
+  │   │   │   └── mobileNav.js      - Mobil navigáció logika
+  │   │   ├── img/                  - Képfájlok
+  │   │   └── videos/               - Videófájlok (háttérek)
+  │   └── views/                    - EJS template-ek
+  │       ├── index.ejs             - Főoldal sablon
+  │       ├── bejelentkezes.ejs     - Bejelentkezés sablon
+  │       ├── regisztracio.ejs      - Regisztráció sablon
+  │       ├── fiok.ejs              - Fiók / Admin panel sablon
+  │       ├── foglalas.ejs          - Foglalási oldal sablon
+  │       ├── fizetes.ejs           - Fizetési oldal sablon
+  │       └── shop.ejs              - Webshop sablon
+  ├── scripts/
+  │   └── createAdminInteractive.mjs - Admin felhasználó interaktív létrehozása
+  ├── package.json                  - Projekt konfigurációs és függőségi fájl
+  ├── schema.prisma                 - Adatbázis séma definíció
+  └── DOKUMENTACIO.txt              - Ez a dokumentáció
 
-6.6 MODERN UI/UX
-- Videoháttér az oldalakon
-- Responsive design
-- Modal dialógusok törlési megerősítéshez
-- Toast notificationok (zöld siker, piros hiba)
-- Glassmorphism effect a sidebarban
-- Sima animációk és tranzíciók
 
-===============================================================================
-7. TELEPÍTÉSI UTASÍTÁSOK
-===============================================================================
+═══════════════════════════════════════════════════════════════════════════════
+3. ADATBÁZIS TERVEZÉS
+═══════════════════════════════════════════════════════════════════════════════
 
-1. Függőségek telepítése:
-   npm install
+3.1. ADATMODELL
+────────────────
 
-2. Adatbázis inicializálása:
-   npx prisma migrate dev
+Az alkalmazás háromfő entitást használ, melyek relációban állnak egymással:
 
-3. Admin felhasználó létrehozása (interaktív):
-   node scripts/createAdminInteractive.mjs
 
-4. Szerver indítása:
-   npm start
-   vagy
-   node src/index.js
+  ┌─────────────────────────────────────────────────────────────────┐
+  │ USER (Felhasználó)                                              │
+  ├─────────────────────────────────────────────────────────────────┤
+  │ • id (Int)              - Elsődleges kulcs (auto-increment)     │
+  │ • felhnev (String)      - Felhasználónév                        │
+  │ • email (String)        - Elektronikus levelezési cím           │
+  │ • password (String)     - Bcrypt-tel titkosított jelszó         │
+  │ • telefonszam (String)  - Elsődleges telefonszám               │
+  │ • pnumber (String)      - Másodlagos telefonszám               │
+  │ • role (String)         - Felhasználói szerep (USER/BARBER/ADMIN)
+  │ • createdAt (DateTime)  - Fiók létrehozásának időpontja        │
+  │                                                                  │
+  │ RELÁCIÓK:                                                        │
+  │ ↓ 1-N → Booking (egy felhasználónak több foglalása lehet)       │
+  │ ↓ 1-N → Order (egy felhasználónak több rendelése lehet)         │
+  └─────────────────────────────────────────────────────────────────┘
 
-5. Böngészőben megnyitni:
-   http://localhost:3000
 
-===============================================================================
-8. FELHASZNÁLÁSI ÚTMUTATÓ
-===============================================================================
+  ┌─────────────────────────────────────────────────────────────────┐
+  │ BOOKING (Foglalás)                                              │
+  ├─────────────────────────────────────────────────────────────────┤
+  │ • id (Int)              - Elsődleges kulcs (auto-increment)     │
+  │ • userId (Int)          - Idegenkulcs (User.id)                 │
+  │ • datetime (DateTime)   - Foglalás időpontja                    │
+  │ • service (String)      - Szolgáltatás típusa                   │
+  │                                                                  │
+  │ RELÁCIÓK:                                                        │
+  │ ↑ N-1 ← User (minden foglalás egy felhasználóhoz tartozik)       │
+  └─────────────────────────────────────────────────────────────────┘
 
-8.1 REGISZTRÁCIÓ
-- Kattints a "Regisztráció" linkre
-- Töltsd ki a szükséges adatokat
-- Kattints a "Regisztráció" gombra
-- Sikeres regisztráció után átirányítódni fog a bejelentkezésre
 
-8.2 BEJELENTKEZÉS
-- Kattints a "Bejelentkezés" linkre
-- Add meg az email-ed és jelszavad
-- Kattints a "Bejelentkezés" gombra
+  ┌─────────────────────────────────────────────────────────────────┐
+  │ ORDER (Rendelés)                                                │
+  ├─────────────────────────────────────────────────────────────────┤
+  │ • id (Int)              - Elsődleges kulcs (auto-increment)     │
+  │ • userId (Int)          - Idegenkulcs (User.id)                 │
+  │ • products (String)     - JSON formátumú termékadatok           │
+  │ • totalPrice (Int)      - Teljes rendelési ár (forintban)       │
+  │ • shippingType (String) - Szállítási mód (home / pickup)        │
+  │ • createdAt (DateTime)  - Rendelés létrehozásának időpontja     │
+  │                                                                  │
+  │ RELÁCIÓK:                                                        │
+  │ ↑ N-1 ← User (minden rendelés egy felhasználóhoz tartozik)       │
+  └─────────────────────────────────────────────────────────────────┘
 
-8.3 FOGLALÁS LÉTREHOZÁSA
-- Menj a "Foglalás" oldalra
-- Válassz időpontot és szolgáltatást
-- Kattints a "Foglalás" gombra
-- A foglalás megjelenik a fiók oldalon
 
-8.4 WEBSHOP VÁSÁRLÁS
-- Menj a "Shop" oldalra
-- Szűrd a termékeket kategóriák szerint
-- Válassz terméket és mennyiséget
-- Add hozzá a kosárhoz
-- Menj a kosárhoz és kattints a "Fizetés" gombra
+3.2. NORMALIZÁLÁS ÉS KONZISZTENCIA
+──────────────────────────────────────
 
-8.5 FIÓK KEZELÉS
-- Kattints a profil ikonra
-- Válaszd a "Fiók" opciót
-- Megtekintheted:
-  * Fiók részleteidet
-  * Foglalásaidat
-  * Rendeléseidet
+  ✓ Az adatmodell 3. normálformában (3NF) van megvalósítva
+  ✓ Összes idegen kulcs konfigurálva van relációs integritás fenntartásához
+  ✓ Jelszavak bcrypt algoritmussal vannak titkosítva
+  ✓ Dátumok ISO 8601 formátumban vannak tárolva
 
-===============================================================================
-9. ADMIN PANEL HASZNÁLATA
-===============================================================================
 
-9.1 ADMIN BEJELENTKEZÉS
-- Bejelentkezz egy admin felhasználóval
-- Automatikusan átirányítódni fog az Admin Panel-re
+═══════════════════════════════════════════════════════════════════════════════
+4. FEJLESZTETT MODULOK ÉS FUNKCIÓK
+═══════════════════════════════════════════════════════════════════════════════
 
-9.2 FOGLALÁSOK KEZELÉSE
-- Kattints a "Foglalások" gombra
-- Megtekintheted az összes foglalást
-- Szűrheted felhasználó szerint
+4.1. AUTENTIKÁCIÓS MODUL
+─────────────────────────
 
-9.3 RENDELÉSEK KEZELÉSE
-- Kattints a "Rendelések" gombra
-- Megtekintheted az összes rendelést
-- Megtekintheted a rendelés részleteit
-- Törölhetsz rendeléseket (modal dialógussal)
+REGISZTRÁCIÓ:
+  • Felhasználó adatainak felvétele
+  • Email és felhasználónév ellenőrzése
+  • Jelszó erőssége ellenőrzés
+  • Bcrypt-tel történő jelszó titkosítás
+  • Adatbázisba mentés
 
-9.4 FELHASZNÁLÓK KEZELÉSE
-- Kattints a "Felhasználók" gombra
-- Megtekintheted az összes felhasználót
-- Kattints a "Szerkeszt" gombra egy felhasználó módosításához
-- Modal felugró megnyílik ahol:
-  * Módosíthatod a felhasználó adatait
-  * Új jelszót adhatsz meg
-  * Törölheted a felhasználót
-- Kattints a "Mentés" gombra a módosítások mentéséhez
+BEJELENTKEZÉS:
+  • Email/felhasználónév és jelszó validáció
+  • Session kezelés
+  • Szerep alapú hozzáférés-vezérlés (RBAC)
+  • Biztonsági cookie-k
 
-===============================================================================
-10. MODERN DESIGN ELEMEK
-===============================================================================
+KIJELENTKEZÉS:
+  • Session megsemmisítése
+  • Cookie-k törlése
 
-SIDEBAR:
-- Türkiz border és shadow
-- Glassmorphism effect (backdrop blur)
-- Hover animáció nyíllal
-- Smooth transitions
 
-MODÁLOK:
-- User Edit Modal (türkiz szín)
-- Delete Confirmation Modal (piros szín)
-- Modern border és shadow
-- SlideUp animáció
+4.2. FOGLALÁSI MODUL
+──────────────────────
+
+FOGLALÁS LÉTREHOZÁSA:
+  • Dátum és idő kiválasztása
+  • Szolgáltatástípus választása
+  • Adatbázisba íratás
+  • Ellenőrzés a duplikációra
+
+FOGLALÁSOK MEGTEKINTÉSE:
+  • Felhasználó saját foglalásai
+  • Admin: összes foglalás
+  • Szűrés és rendezés
+
+FOGLALÁS TÖRLÉSE:
+  • Megerősítési dialógus
+  • Adatbázisból törlés
+  • Toast értesítés az eredményről
+
+
+4.3. E-COMMERCE MODUL
+──────────────────────
+
+WEBSHOP FUNKCIÓK:
+  • Termékek kategóriális megjelenítése
+  • Szűrési és keresési lehetőség
+  • Kosár kezelés (localStorage-ben)
+  • Mennyiség kiválasztás
+
+RENDELÉSEK:
+  • Rendelés létrehozása
+  • Szállítási mód kiválasztása (otthonba / felvétel)
+  • Ár kalkuláció
+  • Rendelések megtekintése
+
+RENDELÉS NYOMONKÖVETÉSE:
+  • Felhasználó rendelésinek megtekintése
+  • Rendelés részletei (termékek, ár, szállítás)
+
+
+4.4. ADMIN PANEL
+──────────────────
+
+JOGOSULTSÁGOK:
+  • Csak ADMIN szereppel rendelkező felhasználók férhetnek hozzá
+  • Automatikus átirányítás admin bejelentkezéskor
+
+FOGLALÁSOK ADMINISZTRÁLÁSA:
+  • Összes foglalás listázása
+  • Szűrés felhasználó szerint
+  • Törlés lehetőség
+
+RENDELÉSEK ADMINISZTRÁLÁSA:
+  • Összes rendelés megjelenítése
+  • Rendelés részletei modálban
+  • Rendelés törlése megerősítéssel
+
+FELHASZNÁLÓK ADMINISZTRÁLÁSA:
+  • Felhasználók listázása
+  • Felhasználó adatainak szerkesztése (modál)
+  • Jelszó módosítás
+  • Felhasználó törlése (megerősítéssel)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+5. FELHASZNÁLÓI FELÜLET ÉS KEZELŐFELÜLET
+═══════════════════════════════════════════════════════════════════════════════
+
+5.1. DESIGN FILOZÓFIA
+──────────────────────
+
+A felhasználói felület modern, sötét témájú, minimalist elveket követve készült:
+  • Videó háttérek a vizuális vonzerő érdekében
+  • Glassmorphism effektus (üvegszerű megjelenés)
+  • Türkiz és fehér akcentszínek
+  • Sima animációk és tranzíciók
+  • Responsive mobil-elsőelv tervezés
+
+
+5.2. OLDAL LEÍRÁSOK
+─────────────────────
+
+FŐOLDAL (index.ejs):
+  • Szalon bemutatkozása
+  • Szolgáltatások rövid leírása
+  • Navigáció a fő funkciókra
+  • Videó háttér
+
+BEJELENTKEZÉS (bejelentkezes.ejs):
+  • Email és jelszó input mezők
+  • "Jelszóemlékeztetô" link
+  • Regisztrációs link
+  • Form validáció
+
+REGISZTRÁCIÓ (regisztracio.ejs):
+  • Teljes név, email, telefonszám, jelszó mezők
+  • Jelszó megerősítés
+  • Feltételek elfogadása
+  • Form validáció és hibakezelés
+
+FELHASZNÁLÓI FIÓK (fiok.ejs):
+  • Profil információk megjelenítése
+  • Foglalások fülecske (Bookings Tab)
+  • Rendelések fülecske (Orders Tab)
+  • Profil szerkesztés lehetőség
+  • Kijelentkezés gomb
+
+ADMIN PANEL (fiok.ejs - admin verzió):
+  • Foglalások szekció
+  • Rendelések szekció (rendelés törlés modálal)
+  • Felhasználók szekció (szerkesztés modál)
+  • Sidebar navigáció
+  • Glassmorphism effektus
+
+FOGLALÁSI OLDAL (foglalas.ejs):
+  • Dátum/idő picker
+  • Szolgáltatás kiválasztó
+  • Foglalás gomb
+  • Megerősítési üzenet
+
+WEBSHOP (shop.ejs):
+  • Termékek rácsos elrendezésben
+  • Kategória szűrés
+  • Termék modal (kép, leírás, ár, mennyiség)
+  • Kosár icon
+  • Kosár oldal
+
+FIZETÉS (fizetes.ejs):
+  • Rendelés összefoglalása
+  • Szállítási cím input
+  • Szállítási mód választása
+  • Fizetési információk
+  • Megrendelés gomb
+
+
+5.3. INTERAKTÍV ELEMEK
+───────────────────────
 
 TOAST NOTIFICATIONOK:
-- Zöld háttér a sikeres műveleteknél
-- Piros háttér a hibáknál
-- Jobbról csúszik be
-- 3 másodperc után automatikusan eltűnik
+  ✓ Sikeres műveletek → Zöld toast, fehér szöveg
+  ✓ Hibák → Piros toast, fehér szöveg
+  ✓ 3 másodpercig látható
+  ✓ Jobbról csúszik be az animáció
+
+MODAL DIALÓGUSOK:
+  ✓ Megerősítési modálok (törléshez)
+  ✓ Szerkesztési modálok (felhasználó adatok)
+  ✓ SlideUp animáció
+  ✓ Háttér szürkítés (backdrop)
 
 FORMOK:
-- Türkiz input border
-- Transparens háttér
-- Focus effect az input-okon
-- Modern stílus
+  ✓ Türkiz border az input mezőkön
+  ✓ Focus effekt (zöld border)
+  ✓ Validációs hibaüzenetek
+  ✓ Real-time feedback
 
-===============================================================================
-11. MOBIL TÁMOGATÁS
-===============================================================================
 
-- Responsive design az összes oldalon
-- Mobil menü a navigációban
-- Sidebar és tartalom felfordul mobil nézetben
-- Touch-friendly gombméretek
-- Teljes funkcionálitás mobil eszközökön
+5.4. MOBIL TÁMOGATÁS
+──────────────────────
 
-===============================================================================
-12. HIBAKEZELÉS
-===============================================================================
+  ✓ Teljes responsive design (320px - 4K)
+  ✓ Mobil menu (hamburger ikon)
+  ✓ Touch-friendly gombok (min. 44x44px)
+  ✓ Flexbox-alapú layout
+  ✓ Mobilnav.js - dinamikus navigáció
 
-- Szerver oldali validáció
-- Toast notificationok a hibákhoz
-- Modal dialógusok a kritikus műveleteknél
-- Console error logging
 
-===============================================================================
-13. BIZTONSÁGI FUNKCIÓK
-===============================================================================
+═══════════════════════════════════════════════════════════════════════════════
+6. IMPLEMENTÁCIÓS MEGOLDÁSOK
+═══════════════════════════════════════════════════════════════════════════════
 
-- Jelszó titkosítás (bcrypt)
-- Session kezelés
-- CORS beállítások
-- Input validáció
+6.1. BACKEND IMPLEMENTÁCIÓ
+────────────────────────────
 
-===============================================================================
-14. FEJLESZTÉSI TIPPEK
-===============================================================================
+SZERVER INDÍTÁSA (index.js):
+  • Express alkalmazás inicializálása
+  • Middleware-ek regisztrálása (body-parser, cors, session)
+  • Static fájlok kiszolgálása
+  • EJS view engine konfigurálása
+  • Session kezelés (express-session)
+  • Error handling middleware
 
-- Az API végpontok a src/index.js fájlban vannak
-- A stílusok a src/public/css mappában vannak
-- Az EJS template-ek a src/views mappában vannak
-- A Prisma séma a schema.prisma fájlban van
-- Az adatbázis egy SQLite fájl (prisma/dev.db)
+API VÉGPONTOK:
 
-===============================================================================
-15. TÁMOGATOTT BÖNGÉSZŐK
-===============================================================================
+  AUTENTIKÁCIÓ:
+    POST /api/register       → Regisztráció feldolgozása
+    POST /api/login          → Bejelentkezés feldolgozása
+    GET /api/logout          → Kijelentkezés
 
-- Chrome (legújabb)
-- Firefox (legújabb)
-- Safari (legújabb)
-- Edge (legújabb)
+  FELHASZNÁLÓ FOGLALÁSOK:
+    GET /api/bookings        → Bejelentkezett felhasználó foglalásai
+    POST /api/booking        → Új foglalás létrehozása
+    DELETE /api/booking/:id  → Foglalás törlése
 
-===============================================================================
-16. JOGI MEGJEGYZÉSEK
-===============================================================================
+  FELHASZNÁLÓ RENDELÉSEK:
+    GET /api/orders          → Bejelentkezett felhasználó rendeléseiden
+    POST /api/order          → Új rendelés létrehozása
 
-Ez a projekt a Beach Barbershop számára készült.
-Szerzői jogok fenntartva.
+  ADMIN VÉGPONTOK:
+    GET /api/admin/bookings              → Összes foglalás
+    GET /api/admin/orders                → Összes rendelés
+    DELETE /api/admin/order/:id          → Rendelés törlése
+    GET /api/admin/users                 → Összes felhasználó
+    POST /api/admin/user/:id/update      → Felhasználó módosítása
+    POST /api/admin/user/:id/password    → Jelszó módosítása
+    DELETE /api/admin/user/:id           → Felhasználó törlése
 
-===============================================================================
 
-Utolsó frissítés: 2026. január 24.
+JELSZÓ TITKOSÍTÁS:
+  • Bcrypt algoritmus alkalmazása
+  • 10 salt round
+  • Jelszó ellenőrzés bejelentkezéskor
+
+SESSION KEZELÉS:
+  • Express-session middleware
+  • Szerver oldali session tár
+  • Secure cookie flag
+  • 24 órás session érvényesség
+
+
+6.2. FRONTEND IMPLEMENTÁCIÓ
+────────────────────────────
+
+EJS TEMPLATE MOTOR:
+  • Szerver oldali sablon renderelés
+  • Dinamikus adatok beágyazása
+  • Felhasználói szerepkör alapú feltétel (if/else)
+  • Loop-ok (forEach)
+
+VANILLA JAVASCRIPT FUNKCIÓK:
+  • Fetch API használata az API hívásokhoz
+  • DOM manipuláció
+  • Event listener regisztrálása
+  • LocalStorage kosár kezeléshez
+  • Modal megnyitás/bezárás
+  • Toast notification megjelenítése
+
+STÍLUS KEZELÉS:
+  • CSS variables (custom properties)
+  • Flexbox layout
+  • CSS transitions és animations
+  • Media queries (responsive design)
+  • Glassmorphism (backdrop-filter)
+
+
+6.3. ADATBÁZIS MŰVELETEK
+─────────────────────────
+
+PRISMA ORM HASZNÁLAT:
+
+  Felhasználó keresése:
+    const user = await prisma.user.findUnique({
+      where: { email: "user@example.com" }
+    })
+
+  Foglalás létrehozása:
+    const booking = await prisma.booking.create({
+      data: { userId, datetime, service }
+    })
+
+  Felhasználó rendelései:
+    const orders = await prisma.order.findMany({
+      where: { userId: req.session.userId }
+    })
+
+
+═══════════════════════════════════════════════════════════════════════════════
+7. TELEPÍTÉS ÉS INDÍTÁS
+═══════════════════════════════════════════════════════════════════════════════
+
+7.1. RENDSZERKÖVETELMÉNYEK
+────────────────────────────
+
+  • Node.js v16 vagy újabb
+  • npm v7 vagy újabb
+  • Windows, Linux, vagy macOS operációs rendszer
+  • Legalább 200MB szabad merevlemez terület
+
+
+7.2. TELEPÍTÉSI LÉPÉSEK
+─────────────────────────
+
+1. PROJEKT KLÓNOZÁSA VAGY KICSOMAGOLÁSA:
+   Az összes fájlt helyezzük a Projekt/ mappába
+
+2. FÜGGŐSÉGEK TELEPÍTÉSE:
+   $ npm install
+
+3. PRISMA ADATBÁZIS INICIALIZÁLÁSA:
+   $ npx prisma migrate dev
+   Ez létrehozza az SQLite adatbázist és az összes táblát
+
+4. ADMIN FELHASZNÁLÓ LÉTREHOZÁSA (INTERAKTÍV):
+   $ node scripts/createAdminInteractive.mjs
+   Követd az utasításokat (felhasználónév, email, jelszó)
+
+5. SZERVER INDÍTÁSA:
+   $ npm start
+   vagy
+   $ node src/index.js
+
+6. ALKALMAZÁS MEGNYITÁSA:
+   A böngészőben nyisd meg: http://localhost:3000
+
+
+7.3. KONFIGURÁCIÓS VÁLTOZÓK
+──────────────────────────────
+
+Ha szükséges, a szerverazonosítókat az index.js fájlban módosíthatod:
+  • PORT = 3000 (szerver port)
+  • SESSION_SECRET = "your-secret-key"
+  • DATABASE_URL = "file:./dev.db"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+8. TESZTELÉS ÉS ELLENŐRZÉS
+═══════════════════════════════════════════════════════════════════════════════
+
+8.1. FUNKCIONÁLIS TESZTEK
+──────────────────────────
+
+AUTENTIKÁCIÓ TESZTELÉS:
+  ✓ Regisztráció új felhasználóval
+  ✓ Bejelentkezés helyes és helytelen adatokkal
+  ✓ Kijelentkezés után session törlése
+  ✓ Admin-jogok ellenőrzése
+
+
+FOGLALÁSI FUNKCIÓ TESZTELÉSE:
+  ✓ Foglalás létrehozása
+  ✓ Foglalás megjelenítése a felhasználói fiók alatt
+  ✓ Foglalás törlése
+  ✓ Időpont validáció (múltbeli dátumok elutasítása)
+
+
+WEBSHOP TESZTELÉSE:
+  ✓ Termékek megjelenítése
+  ✓ Termék hozzáadása a kosárhoz
+  ✓ Rendelés létrehozása
+  ✓ Rendelés mentése az adatbázisba
+
+
+ADMIN FUNKCIÓK TESZTELÉSE:
+  ✓ Admin bejelentkezés után admin panel megjelenítése
+  ✓ Foglalások, rendelések, felhasználók kezelése
+  ✓ Felhasználó szerkesztése modálon keresztül
+  ✓ Jelszó módosítása
+  ✓ Felhasználó törlése megerősítéssel
+
+
+8.2. UI/UX TESZTEK
+────────────────────
+
+  ✓ Toast notificationok megjelenítése (siker/hiba)
+  ✓ Modal dialógusok nyitása és bezárása
+  ✓ Responsive design mobil, tablet, desktop nézetben
+  ✓ Video háttér betöltése az oldalakon
+  ✓ Gombok és linkek kattinthatósága
+
+
+8.3. BIZTONSÁGI TESZTEK
+─────────────────────────
+
+  ✓ Jelszó titkosítás ellenőrzése (bcrypt)
+  ✓ SQL injekció elleni védelem (Prisma előkészített lekérdezések)
+  ✓ Session hijacking elleni védelem (secure cookies)
+  ✓ CSRF tokeniik validálása (opcionális)
+  ✓ Input validáció szerver oldalon
+
+
+═══════════════════════════════════════════════════════════════════════════════
+9. ÖSSZEGZÉS ÉS TOVÁBBFEJLESZTÉSI LEHETŐSÉGEK
+═══════════════════════════════════════════════════════════════════════════════
+
+9.1. PROJEKT ÖSSZEGZÉSE
+─────────────────────────
+
+A Beach Barbershop webalkalmazás sikeresen megvalósít egy komplex, modern
+e-commerce és foglalási rendszert. Az alkalmazás:
+
+  ✓ Teljes autentikációs rendszert valósít meg
+  ✓ Adatbázis-kezelést Prisma ORM-el végez
+  ✓ RESTful API-t biztosít
+  ✓ Modern, responsive UI-t nyújt
+  ✓ Adminisztratív funkciókat kínál
+  ✓ Szerep alapú hozzáférés-vezérlést alkalmaz
+  ✓ Biztonságos jelszó tárolást valósít meg
+
+
+9.2. TANULÁSI CÉLOK ELÉRÉSE
+──────────────────────────────
+
+A projekt fejlesztése során elmélyítettük tudásunkat:
+  • Node.js és Express.js szerver fejlesztésben
+  • Relációs adatbázis tervezésben és ORM használatban
+  • Authentication és session kezelésben
+  • Modern frontend technológiákban (HTML5, CSS3, Vanilla JS)
+  • Szerver oldali template rendering-ben (EJS)
+  • Biztonságos kódolási gyakorlatokról
+
+
+9.3. LEHETSÉGES TOVÁBBFEJLESZTÉSEK
+────────────────────────────────────
+
+BIZTONSÁGI FEJLESZTÉSEK:
+  □ CSRF token implementálása
+  □ Rate limiting az API végpontokon
+  □ HTTPS/SSL implementálása
+  □ Two-factor authentication (2FA)
+  □ Email verifikáció a regisztrációnál
+
+FUNKCIONALITÁS BŐVÍTÉSEK:
+  □ Email értesítések (foglalási emlékeztetők)
+  □ SMS értesítések
+  □ Valós fizetési integrációk (Stripe, PayPal)
+  □ Foglalás naptári nézet
+  □ Termék értékelések és vélemények
+  □ Wishlista funkció
+  □ Barber profil oldalak
+
+TELJESÍTMÉNY OPTIMALIZÁLÁSOK:
+  □ Adatbázis indexelés
+  □ Caching stratégia (Redis)
+  □ CDN integráció
+  □ Image optimalizálás
+
+FELHASZNÁLÓ ÉLMÉNY FEJLESZTÉS:
+  □ PWA (Progressive Web App) technológia
+  □ Offline támogatás
+  □ Teljes notifikációs rendszer
+  □ Ügyfélszolgálati chatbot
+
+
+═══════════════════════════════════════════════════════════════════════════════
+10. DOKUMENTÁCIÓ INFORMÁCIÓK
+═══════════════════════════════════════════════════════════════════════════════
+
+KÉSZÜLT: 2026. február 14.
+TERV: 2026. január 10.
+MEGKEZDÉS: 2026. január 15.
+BEFEJEZÉS: 2026. február 14.
+
+VERZIÓ: 1.0
+STÁTUSZ: Teljes
+TESZTELÉS: Befejezve
+
+───────────────────────────────────────────────────────────────────────────────
+
