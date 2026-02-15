@@ -128,7 +128,14 @@
           }
           let html = '<div class="bookings-list">';
           json.bookings.forEach((b) => {
-            html += `<div class="booking-item"><div style="display:flex;justify-content:space-between;align-items:center;"><div><p><strong>Dátum:</strong> ${new Date(b.datetime).toLocaleString("hu-HU")}</p><p><strong>Szolgáltatás:</strong> ${b.service || "—"}</p></div><div><p><strong>Felhasználó:</strong> ${b.user ? b.user.felhnev : "ismeretlen"}</p><p>${b.user ? b.user.email : ""}</p></div></div></div>`;
+            html += `<div class="booking-item">
+              <div>
+                <p style="margin: 0.3rem 0;"><strong>Dátum:</strong> ${new Date(b.datetime).toLocaleString("hu-HU")}</p>
+                <p style="margin: 0.3rem 0;"><strong>Szolgáltatás:</strong> ${b.service || "—"}</p>
+                <p style="margin: 0.3rem 0;"><strong>Felhasználó:</strong> ${b.user ? b.user.felhnev : "ismeretlen"}</p>
+                <p style="margin: 0.3rem 0; color: #999; font-size: 0.85rem;">${b.user ? b.user.email : ""}</p>
+              </div>
+            </div>`;
           });
           html += "</div>";
           container.innerHTML = html;
@@ -160,7 +167,23 @@
                 return "<li>Nem értelmezhető</li>";
               }
             })();
-            html += `<div class="order-item"><div class="order-header"><span>#${o.id}</span><span>${new Date(o.createdAt).toLocaleString("hu-HU")}</span></div><div class="order-details"><p><strong>Felhasználó:</strong> ${o.user ? o.user.felhnev : "ismeretlen"} (${o.user ? o.user.email : ""})</p><p><strong>Szállítás:</strong> ${o.shippingType}</p><p><strong>Összeg:</strong> ${o.totalPrice} Ft</p><p><strong>Termékek:</strong></p><ul>${products}</ul></div><div class="order-actions"><button onclick="deleteOrder(${o.id})" class="danger">Törlés</button></div></div>`;
+            html += `<div class="order-item">
+              <div class="order-header">
+                <span>#${o.id}</span>
+                <span>${new Date(o.createdAt).toLocaleString("hu-HU")}</span>
+              </div>
+              <div class="order-details">
+                <p><strong>Felhasználó:</strong> ${o.user ? o.user.felhnev : "ismeretlen"}</p>
+                <p style="color: #999; font-size: 0.85rem; margin: 0.2rem 0;">${o.user ? o.user.email : ""}</p>
+                <p style="margin-top: 0.5rem;"><strong>Szállítás:</strong> ${o.shippingType}</p>
+                <p><strong>Összeg:</strong> ${o.totalPrice} Ft</p>
+                <p style="margin: 0.5rem 0;"><strong>Termékek:</strong></p>
+                <ul>${products}</ul>
+              </div>
+              <div style="margin-top: 0.5rem;">
+                <button onclick="deleteOrder(${o.id})" class="delete-btn">🗑️ Törlés</button>
+              </div>
+            </div>`;
           });
           html += "</div>";
           container.innerHTML = html;
@@ -184,7 +207,25 @@
           let html = '<div class="users-list">';
           window.usersData = json.users;
           json.users.forEach((u) => {
-            html += `<div class="user-item"><div class="user-header"><div><p style="margin:0;color:#3cbcc7;font-weight:bold;font-size:1.05rem;">${u.felhnev}</p><p style="margin:0.3rem 0 0 0;color:#999;font-size:0.9rem;">ID: ${u.id}</p></div><div style="text-align:right;"><p style="margin:0;color:#ddd;"><strong>Email:</strong> ${u.email}</p><p style="margin:0.3rem 0 0 0;color:#999;font-size:0.9rem;">Szerep: <span style="color:#3cbcc7;">${u.role}</span></p></div></div><div class="user-details"><p style="margin:0.5rem 0;"><strong>Telefon:</strong> ${u.telefonszam}</p></div><div class="user-actions"><button onclick="selectUser(${u.id})" class="action-btn">Szerkeszt</button></div></div>`;
+            html += `<div class="user-item">
+              <div class="user-header">
+                <div>
+                  <p style="margin:0;color:#3cbcc7;font-weight:bold;font-size:1rem;">${u.felhnev}</p>
+                  <p style="margin:0.3rem 0 0 0;color:#999;font-size:0.8rem;">ID: ${u.id}</p>
+                </div>
+                <div style="text-align:left;">
+                  <p style="margin:0;color:#ddd;font-size:0.9rem;"><strong>Email:</strong></p>
+                  <p style="margin:0.2rem 0;color:#aaa;font-size:0.85rem; word-break: break-word;">${u.email}</p>
+                  <p style="margin:0.5rem 0 0 0;font-size:0.8rem;">Szerep: <span style="color:#3cbcc7;">${u.role}</span></p>
+                </div>
+              </div>
+              <div class="user-details">
+                <p style="margin:0.4rem 0;"><strong>Telefon:</strong> ${u.telefonszam}</p>
+              </div>
+              <div class="user-actions">
+                <button onclick="selectUser(${u.id})" class="action-btn">✎ Szerkeszt</button>
+              </div>
+            </div>`;
           });
           html += "</div>";
           container.innerHTML = html;

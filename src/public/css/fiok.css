@@ -86,60 +86,54 @@ header nav a:hover {
   gap: 2rem;
 }
 
-/* ===== SIDEBAR ===== */
-.account-sidebar {
-  width: 260px;
-  background: rgba(0, 0, 0, 0.8);
+/* ===== TAB NAVIGATOR ===== */
+.account-tab-navigator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.2rem 2rem;
+  margin-bottom: 0.8rem;
+  background: rgba(0, 0, 0, 0.85);
   border-radius: 12px;
-  overflow: hidden;
-  height: fit-content;
-  align-self: flex-start;
   border: 1px solid rgba(60, 188, 199, 0.3);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
 }
 
-.account-sidebar button {
-  width: 100%;
-  padding: 1.2rem 1.5rem;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(60, 188, 199, 0.2);
-  color: #e0e0e0;
-  text-align: left;
-  font-size: 1rem;
+.tab-arrow-btn {
+  background: rgba(60, 188, 199, 0.2);
+  border: 1px solid #3cbcc7;
+  color: #3cbcc7;
+  padding: 0.8rem 1.2rem;
+  font-size: 1.3rem;
   cursor: pointer;
+  border-radius: 8px;
   transition: all 0.3s ease;
-  font-weight: 500;
-  position: relative;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.account-sidebar button:last-child {
-  border-bottom: none;
+.tab-arrow-btn:hover {
+  background: rgba(60, 188, 199, 0.4);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(60, 188, 199, 0.3);
 }
 
-.account-sidebar button::before {
-  content: "▸";
-  position: absolute;
-  left: 1.2rem;
+.tab-arrow-btn:active {
+  transform: scale(0.95);
+}
+
+.tab-title-display {
   color: #3cbcc7;
-  opacity: 0;
-  transition: all 0.3s ease;
   font-size: 1.2rem;
-}
-
-.account-sidebar button:hover {
-  background: rgba(60, 188, 199, 0.15);
-  color: #3cbcc7;
-  padding-left: 2.2rem;
-}
-
-.account-sidebar button:hover::before {
-  opacity: 1;
-}
-
-.account-sidebar button:active {
-  transform: scale(0.98);
+  font-weight: 600;
+  min-width: 200px;
+  text-align: center;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
 }
 
 /* ===== CONTENT ===== */
@@ -156,6 +150,18 @@ header nav a:hover {
 
 .account-section.active {
   display: block;
+  animation: fadeInSlide 0.3s ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .account-section p {
@@ -508,6 +514,29 @@ header nav a:hover {
   transform: scale(1.05);
 }
 
+.btn-cancel-all {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-cancel-all:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.4);
+}
+
+.btn-cancel-all:active {
+  transform: scale(0.98);
+}
+
 /* ===== TOAST NOTIFICATION ===== */
 .toast-notification {
   position: fixed;
@@ -747,5 +776,695 @@ header nav a:hover {
   .account-sidebar button {
     font-size: 0.8rem;
     padding: 0.5rem 0.8rem;
+  }
+}
+
+/* ===== BARBER CALENDAR STYLES ===== */
+.barber-calendar-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(34, 34, 34, 0.85);
+  border: 1px solid #3cbcc7;
+  border-radius: 8px;
+}
+
+.barber-calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.barber-calendar-nav button {
+  background: #3cbcc7;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.barber-calendar-nav button:hover {
+  background: #35a9b0;
+  transform: scale(1.05);
+}
+
+#barber-month-title {
+  color: #3cbcc7;
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 150px;
+  text-align: center;
+}
+
+.barber-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.barber-table th {
+  background: #3cbcc7;
+  color: white;
+  padding: 0.8rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.barber-table td {
+  border: 1px solid #555;
+  padding: 0.6rem;
+  text-align: center;
+  background: rgba(50, 50, 50, 0.5);
+  min-height: 50px;
+  position: relative;
+}
+
+.barber-table .day-btn {
+  background: #3cbcc7;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 100%;
+  min-height: 40px;
+}
+
+.barber-table .day-btn:hover {
+  background: #35a9b0;
+  transform: scale(1.05);
+}
+
+.barber-table .day-btn.blocked {
+  background: #e74c3c;
+}
+
+.barber-table .day-btn.blocked:hover {
+  background: #c0392b;
+}
+
+.barber-table .day-btn.blocked.selected {
+  background: #e74c3c !important;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.6);
+}
+
+.barber-table .day-btn.blocked.selected:hover {
+  background: #c0392b !important;
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
+}
+
+.barber-table .day-btn.partial-blocked {
+  background: #f39c12;
+}
+
+.barber-table .day-btn.partial-blocked:hover {
+  background: #d68910;
+}
+
+.barber-table .day-btn.today {
+  background: #27ae60;
+}
+
+.barber-table .day-btn.today:hover {
+  background: #229954;
+}
+
+.barber-table .day-btn.blocked.today {
+  background: #27ae60;
+}
+
+.barber-table .day-btn.blocked.today:hover {
+  background: #229954;
+}
+
+.barber-table .day-btn.selected {
+  background: #27ae60;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(39, 174, 96, 0.6);
+}
+
+.barber-table .day-btn.selected:hover {
+  background: #229954;
+  box-shadow: 0 0 15px rgba(39, 174, 96, 0.8);
+}
+
+.barber-table .disabled {
+  color: #666;
+  background: rgba(100, 100, 100, 0.3);
+  cursor: not-allowed;
+}
+
+.time-btn {
+  background: #555 !important;
+  color: white !important;
+  padding: 0.5rem !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+.time-btn:hover {
+  transform: scale(1.08) !important;
+}
+
+.time-btn.blocked {
+  background: #27ae60 !important;
+}
+
+.time-btn.blocked:hover {
+  background: #229954 !important;
+}
+
+/* ===== BARBER BLOCK BUTTONS ===== */
+.btn-block-day,
+.btn-block-hours {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.btn-block-day:hover,
+.btn-block-hours:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+.btn-block-day:active,
+.btn-block-hours:active {
+  transform: scale(0.95);
+}
+
+.btn-confirm {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.btn-confirm:hover {
+  background: #229954;
+  transform: scale(1.05);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #999;
+  border: 2px solid #999;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.btn-cancel:hover {
+  background: rgba(153, 153, 153, 0.1);
+  border-color: #ccc;
+}
+
+.btn-nav {
+  background: #3cbcc7;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-nav:hover {
+  background: #35a9b0;
+  transform: scale(1.05);
+}
+/* ===== MOBILOS OPTIMALIZÁCIÓ ===== */
+@media (max-width: 1024px) {
+  .account-wrapper {
+    gap: 1rem;
+  }
+
+  .account-tab-navigator {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .tab-title-display {
+    font-size: 1.1rem;
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 0.8rem 1rem;
+  }
+
+  header .logo {
+    font-size: 1.2rem;
+  }
+
+  .account-header {
+    font-size: 1.1rem;
+    padding: 0.8rem 1rem;
+    margin: 1rem auto 0.8rem;
+  }
+
+  .account-wrapper {
+    gap: 0.8rem;
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .account-tab-navigator {
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tab-arrow-btn {
+    padding: 0.6rem 1rem;
+    font-size: 1.1rem;
+  }
+
+  .tab-title-display {
+    font-size: 0.95rem;
+    min-width: 150px;
+  }
+
+  .account-content {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .account-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .account-section p {
+    font-size: 0.95rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .bookings-list,
+  .orders-list,
+  .users-list {
+    gap: 0.8rem;
+  }
+
+  .booking-item,
+  .order-item,
+  .user-item {
+    padding: 1rem;
+    border-radius: 6px;
+  }
+
+  .order-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .delete-btn,
+  .action-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  /* Barber naptár mobilra */
+  .barber-calendar-section {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .barber-calendar-nav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .barber-calendar-nav button {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.75rem;
+    flex: 0 0 auto;
+  }
+
+  #barber-month-title {
+    font-size: 1rem;
+    min-width: auto;
+    width: 100%;
+    order: 3;
+    text-align: center;
+  }
+
+  .barber-table {
+    font-size: 0.8rem;
+  }
+
+  .barber-table th {
+    padding: 0.4rem 0.2rem;
+    font-size: 0.7rem;
+  }
+
+  .barber-table td {
+    padding: 0.3rem;
+    min-height: 35px;
+  }
+
+  .barber-table .day-btn {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.75rem;
+    min-height: 30px;
+  }
+
+  .btn-block-day,
+  .btn-block-hours {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.75rem;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  /* Modal mobilra */
+  .user-modal-content,
+  #blockHoursModal {
+    width: 95% !important;
+    max-width: 100% !important;
+    max-height: 80vh !important;
+    padding: 1.5rem !important;
+    overflow-y: auto;
+  }
+
+  .user-form,
+  #blockHoursModal {
+    gap: 0.8rem;
+  }
+
+  .user-form label {
+    font-size: 0.9rem;
+  }
+
+  .user-form input,
+  .user-form select {
+    padding: 0.6rem 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .user-modal-buttons,
+  .delete-confirm-buttons {
+    flex-direction: column;
+  }
+
+  .user-modal-buttons button,
+  .delete-confirm-buttons button {
+    flex: 1;
+    min-width: auto;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Toast mobilra */
+  .toast-notification {
+    width: calc(100vw - 20px);
+    max-width: none;
+    left: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 0.6rem 0.8rem;
+  }
+
+  header .logo {
+    font-size: 1rem;
+  }
+
+  .account-header {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
+    text-align: center;
+  }
+
+  .account-wrapper {
+    padding: 0.3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .account-tab-navigator {
+    gap: 0.6rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .tab-arrow-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 1rem;
+  }
+
+  .tab-title-display {
+    font-size: 0.85rem;
+    min-width: 120px;
+  }
+
+  .account-content {
+    padding: 0.8rem;
+  }
+
+  .account-section h2 {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .account-section p {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .bookings-list,
+  .orders-list,
+  .users-list {
+    gap: 0.6rem;
+  }
+
+  .booking-item,
+  .order-item,
+  .user-item {
+    padding: 0.8rem;
+  }
+
+  .booking-item > div {
+    flex-direction: column;
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-id {
+    font-size: 0.85rem;
+  }
+
+  .order-date {
+    font-size: 0.75rem;
+  }
+
+  .order-details ul {
+    padding-left: 0.8rem;
+  }
+
+  .order-details li {
+    font-size: 0.8rem;
+    padding: 0.3rem 0;
+  }
+
+  .user-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-header > div {
+    width: 100%;
+    text-align: left;
+  }
+
+  .user-header > div:last-child {
+    text-align: left;
+  }
+
+  .delete-btn,
+  .action-btn {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.7rem;
+    margin-top: 0.5rem;
+  }
+
+  .user-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  /* Barber naptár nagyon kicsi képernőn */
+  .barber-calendar-section {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .barber-calendar-nav {
+    margin-bottom: 0.8rem;
+  }
+
+  .barber-calendar-nav button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  #barber-month-title {
+    font-size: 0.9rem;
+  }
+
+  .barber-table {
+    font-size: 0.65rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .barber-table th {
+    padding: 0.3rem 0.1rem;
+  }
+
+  .barber-table td {
+    padding: 0.2rem;
+    min-height: 30px;
+  }
+
+  .day-btn {
+    font-size: 0.6rem;
+  }
+
+  .btn-block-day,
+  .btn-block-hours {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.65rem;
+    min-width: 100px;
+  }
+
+  /* Időpontos gombok közös sorkizárás */
+  #barber-times-container {
+    margin-top: 1rem;
+  }
+
+  #barber-times-container h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .time-btn {
+    font-size: 0.65rem !important;
+    padding: 0.4rem !important;
+  }
+
+  /* Modal nagyon kicsi képernőn */
+  .user-modal-content,
+  #blockHoursModal {
+    width: 98% !important;
+    padding: 1rem !important;
+  }
+
+  .user-form label,
+  .user-form input,
+  .user-form select {
+    font-size: 0.85rem;
+  }
+
+  .user-modal-buttons button,
+  .delete-confirm-buttons button {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .delete-confirm-content {
+    padding: 1.2rem;
+  }
+
+  .delete-confirm-content h3 {
+    font-size: 1rem;
+  }
+
+  .delete-confirm-content p {
+    font-size: 0.85rem;
+  }
+
+  /* Toast nagyon kicsi képernőn */
+  .toast-notification {
+    font-size: 0.8rem;
+    padding: 0.8rem 1rem;
+    bottom: 10px;
+    width: calc(100vw - 20px);
+  }
+}
+
+@media (max-width: 360px) {
+  header .logo {
+    font-size: 0.9rem;
+  }
+
+  .account-tab-navigator {
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem;
+  }
+
+  .tab-arrow-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .tab-title-display {
+    font-size: 0.75rem;
+    min-width: 100px;
+  }
+
+  .account-content {
+    padding: 0.6rem;
+  }
+
+  .barber-table {
+    font-size: 0.6rem;
+  }
+
+  .day-btn,
+  .time-btn {
+    font-size: 0.55rem !important;
+  }
+
+  .btn-block-day,
+  .btn-block-hours {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.6rem;
   }
 }

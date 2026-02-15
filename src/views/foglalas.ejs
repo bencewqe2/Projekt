@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/foglalas.css" />
   </head>
   <body>
+    
     <video id="hatter_video" autoplay muted loop>
       <source src="/videos/video.mp4" type="video/mp4" />
       A böngésződ nem támogatja a videó elemet.
@@ -86,8 +87,6 @@
             <label for="barber-select">Borbély:</label>
             <select id="barber-select">
               <option value="">-- Válassz borbélyt --</option>
-              <option value="Aladár">Aladár</option>
-              <option value="Hedvig">Hedvig</option>
             </select>
           </div>
           <div class="form-group">
@@ -506,8 +505,29 @@
         }
       })();
 
+      // === INIT ===
+      async function loadBarbers() {
+        try {
+          const res = await fetch("/api/barbers");
+          const data = await res.json();
+          if (data.ok && data.barbers) {
+            data.barbers.forEach((barber) => {
+              const option = document.createElement("option");
+              option.value = barber;
+              option.textContent = barber;
+              barberSelect.appendChild(option);
+            });
+          }
+        } catch (err) {
+          console.error("Error loading barbers:", err);
+        }
+      }
+
       // Init
-      showStep(1);
+      (async () => {
+        await loadBarbers();
+        showStep(1);
+      })();
     </script>
     <script src="/js/mobileNav.js"></script>
   </body>
