@@ -14,11 +14,46 @@
 
     <header>
       <div class="logo">Beach Barbershop</div>
-      <nav>
-        <ul class="nav-list">
-          <li><a href="/">Főoldal</a></li>
 
-          <li class="profile-menu">
+      <!-- Hamburger menü gomb mobilra -->
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menü">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav id="mainNav">
+        <ul class="nav-list">
+          <!-- Mobil profil a slide-in tetején + almenü -->
+          <li class="profile-menu mobile-profile-top">
+            <div class="mobile-profile-header">
+              <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="mobile-profile-icon" alt="Profil" />
+              <% if (user) { %>
+              <span class="mobile-profile-toggle"><%= (user && user.role === 'ADMIN') ? 'Admin Panel' : 'Fiók' %> ▼</span>
+              <% } else { %>
+              <a href="/bejelentkezes">Bejelentkezés</a>
+              <% } %>
+            </div>
+            <% if (user) { %>
+            <ul class="mobile-profile-submenu">
+              <li><a href="/fiok">Fiók részletek</a></li>
+              <li><a href="/fiok#foglalasaim">Foglalásaim</a></li>
+              <li><a href="/fiok#rendeleseim">Rendeléseim</a></li>
+            </ul>
+            <% } %>
+          </li>
+
+          <li><a href="/">Főoldal</a></li>
+          <li><a href="/#services">Szolgáltatások</a></li>
+          <li><a href="/shop">Webshop</a></li>
+
+          <!-- KIJELENTKEZÉS (csak mobilon, menü végén) -->
+          <% if (user) { %>
+          <li class="mobile-logout"><a href="/api/logout">Kijelentkezés</a></li>
+          <% } %>
+
+          <!-- Desktop PROFIL IKON MENÜ -->
+          <li class="profile-menu desktop-profile">
             <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
             <ul class="dropdown" aria-hidden="true">
               <% if (user) { %>
@@ -40,38 +75,95 @@
     </header>
 
     <main class="container">
-      <section id="booking" class="booking-card">
+      <section class="booking-card">
         <h2>Foglalás</h2>
         <% if (user) { %>
-        <form id="foglalas_urlap" action="/api/booking" method="post">
-          <label>
-            Dátum
-            <input type="date" name="date" required />
-          </label>
-
-          <label>
-            Idő
-            <input type="time" name="time" required />
-          </label>
-
-          <label>
-            Borbély kiválasztása
-            <select name="barber" id="barber_select"></select>
-          </label>
-
-          <label>
-            Szolgáltatás
-            <select name="service" required>
-              <option value="">Válassz szolgáltatást</option>
-              <option value="haircut">Hajvágás</option>
-              <option value="beard">Szakállvágás</option>
-              <option value="shave">Borotválás</option>
-              <option value="combo">Csomag</option>
+        
+        <!-- STEP 1: Borbély és Szolgáltatás -->
+        <div id="step1" class="booking-step">
+          <h3>1. Válassz borbélyt és szolgáltatást</h3>
+          <div class="form-group">
+            <label for="barber-select">Borbély:</label>
+            <select id="barber-select">
+              <option value="">-- Válassz borbélyt --</option>
+              <option value="Aladár">Aladár</option>
+              <option value="Hedvig">Hedvig</option>
             </select>
-          </label>
+          </div>
+          <div class="form-group">
+            <label for="service-select">Szolgáltatás:</label>
+            <select id="service-select">
+              <option value="">-- Válassz szolgáltatást --</option>
+              <option value="haircut">Hajvágás - 4000 Ft</option>
+              <option value="beard">Szakállvágás - 3000 Ft</option>
+              <option value="combo">Haj + szakáll - 6500 Ft</option>
+            </select>
+          </div>
+          <button id="btn-to-calendar" class="btn-primary">Tovább</button>
+        </div>
 
-          <button type="submit">Foglalás küldése</button>
-        </form>
+        <!-- STEP 2: Naptár -->
+        <div id="step2" class="booking-step hidden">
+          <h3>2. Válassz napot</h3>
+          <div class="calendar-nav">
+            <button id="prev-month" class="btn-nav">◀ Előző</button>
+            <span id="month-title"></span>
+            <button id="next-month" class="btn-nav">Következő ▶</button>
+          </div>
+          <table id="calendar-table">
+            <thead>
+              <tr>
+                <th>H</th>
+                <th>K</th>
+                <th>Sz</th>
+                <th>Cs</th>
+                <th>P</th>
+                <th>Sz</th>
+                <th>V</th>
+              </tr>
+            </thead>
+            <tbody id="calendar-body"></tbody>
+          </table>
+          <button id="btn-back-to-step1" class="btn-secondary">Vissza</button>
+        </div>
+
+        <!-- STEP 3: Időpontok -->
+        <div id="step3" class="booking-step hidden">
+          <h3>3. Válassz időpontot</h3>
+          <p id="selected-date-text"></p>
+          <div id="times-container"></div>
+          <button id="btn-back-to-calendar" class="btn-secondary">Vissza</button>
+        </div>
+
+        <!-- STEP 4: Összegzés -->
+        <div id="step4" class="booking-step hidden">
+          <h3>4. Foglalás összegzése</h3>
+          <div class="summary-box">
+            <div class="summary-row">
+              <span class="summary-label">Borbély:</span>
+              <span id="summary-barber" class="summary-value"></span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Szolgáltatás:</span>
+              <span id="summary-service" class="summary-value"></span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Dátum:</span>
+              <span id="summary-date" class="summary-value"></span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Időpont:</span>
+              <span id="summary-time" class="summary-value"></span>
+            </div>
+            <div class="summary-row summary-price">
+              <span class="summary-label">Ár:</span>
+              <span id="summary-price" class="summary-value"></span>
+            </div>
+          </div>
+          <button id="btn-confirm-booking" class="btn-primary">Lefoglalás</button>
+          <button id="btn-back-to-times" class="btn-secondary">Vissza</button>
+        </div>
+
         <% } else { %>
         <p>Kérlek <a href="/bejelentkezes">jelentkezz be</a>, hogy foglalhass időpontot.</p>
         <% } %>
@@ -82,137 +174,340 @@
       <p>&copy; 2025 Beach Barbershop</p>
     </footer>
 
-    <!-- Popup overlay -->
-    <div id="popup" class="popup-overlay" aria-hidden="true">
-      <div id="popupBox" class="popup-box" role="dialog" aria-modal="true">
-        <div id="popupMsg">Üzenet</div>
-        <div class="popup-actions">
-          <button id="popupClose" class="popup-close">OK</button>
+    <!-- Popup -->
+    <div id="popup" class="popup-overlay">
+      <div id="popupBox" class="popup-box">
+        <div id="popupMsg"></div>
+        <button id="popupClose" class="btn-primary">OK</button>
+      </div>
+    </div>
+
+    <!-- Sikeres foglalás popup -->
+    <div id="successPopup" class="popup-overlay">
+      <div class="popup-box success-popup-box">
+        <div class="success-icon">✓</div>
+        <div class="success-title">Foglalás sikeres!</div>
+        <div class="success-message">Mit szeretnél csinálni?</div>
+        <div class="success-buttons">
+          <a href="/" class="btn-primary">Főoldal</a>
+          <a href="/shop" class="btn-secondary">Webshop</a>
         </div>
       </div>
     </div>
 
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const fogForm = document.getElementById("foglalas_urlap");
-        const barberSelect = document.getElementById("barber_select");
+      // === STATE ===
+      const state = {
+        barber: null,
+        service: null,
+        date: null,
+        time: null,
+        calendarMonth: new Date().getMonth(),
+        calendarYear: new Date().getFullYear()
+      };
 
-        const popupOverlay = document.getElementById("popup");
-        const popupBox = document.getElementById("popupBox");
-        const popupMsg = document.getElementById("popupMsg");
-        const popupClose = document.getElementById("popupClose");
-        let popupTimer = null;
+      const monthNames = ["Január", "Február", "Március", "Április", "Május", "Június",
+        "Július", "Augusztus", "Szeptember", "Október", "November", "December"];
 
-        function showPopup(msg, type = "success", autoHide = true) {
-          if (!popupOverlay || !popupBox || !popupMsg) return;
-          popupMsg.textContent = msg;
-          popupBox.classList.remove("success", "error");
-          popupBox.classList.add(type === "error" ? "error" : "success");
-          popupOverlay.classList.add("show");
-          popupOverlay.setAttribute("aria-hidden", "false");
-          if (popupTimer) clearTimeout(popupTimer);
-          if (autoHide) {
-            const duration = type === "error" ? 5000 : 3000;
-            popupTimer = setTimeout(hidePopup, duration);
+      const serviceNames = {
+        "haircut": "Hajvágás",
+        "beard": "Szakállvágás",
+        "combo": "Haj + szakáll"
+      };
+
+      const servicePrices = {
+        "haircut": 4000,
+        "beard": 3000,
+        "combo": 6500
+      };
+
+      // === ELEMENTS ===
+      const step1 = document.getElementById("step1");
+      const step2 = document.getElementById("step2");
+      const step3 = document.getElementById("step3");
+      const step4 = document.getElementById("step4");
+      const barberSelect = document.getElementById("barber-select");
+      const serviceSelect = document.getElementById("service-select");
+      const btnToCalendar = document.getElementById("btn-to-calendar");
+      const btnBackToStep1 = document.getElementById("btn-back-to-step1");
+      const btnBackToCalendar = document.getElementById("btn-back-to-calendar");
+      const btnBackToTimes = document.getElementById("btn-back-to-times");
+      const btnConfirmBooking = document.getElementById("btn-confirm-booking");
+      const prevMonthBtn = document.getElementById("prev-month");
+      const nextMonthBtn = document.getElementById("next-month");
+      const monthTitle = document.getElementById("month-title");
+      const calendarBody = document.getElementById("calendar-body");
+      const timesContainer = document.getElementById("times-container");
+      const selectedDateText = document.getElementById("selected-date-text");
+
+      // === SHOW STEP ===
+      function showStep(num) {
+        step1.classList.add("hidden");
+        step2.classList.add("hidden");
+        step3.classList.add("hidden");
+        step4.classList.add("hidden");
+        if (num === 1) step1.classList.remove("hidden");
+        if (num === 2) step2.classList.remove("hidden");
+        if (num === 3) step3.classList.remove("hidden");
+        if (num === 4) step4.classList.remove("hidden");
+      }
+
+      // === POPUP ===
+      function showPopup(msg, type) {
+        const popup = document.getElementById("popup");
+        const box = document.getElementById("popupBox");
+        const msgEl = document.getElementById("popupMsg");
+        msgEl.textContent = msg;
+        box.className = "popup-box " + (type === "error" ? "error" : "success");
+        popup.classList.add("show");
+      }
+
+      function hidePopup() {
+        document.getElementById("popup").classList.remove("show");
+      }
+
+      document.getElementById("popupClose").addEventListener("click", hidePopup);
+      document.getElementById("popup").addEventListener("click", (e) => {
+        if (e.target.id === "popup") hidePopup();
+      });
+
+      // === STEP 1 -> STEP 2 ===
+      btnToCalendar.addEventListener("click", async () => {
+        state.barber = barberSelect.value;
+        state.service = serviceSelect.value;
+        if (!state.barber) return showPopup("Válassz borbélyt!", "error");
+        if (!state.service) return showPopup("Válassz szolgáltatást!", "error");
+        showStep(2);
+        await renderCalendar();
+      });
+
+      btnBackToStep1.addEventListener("click", () => showStep(1));
+      btnBackToCalendar.addEventListener("click", async () => {
+        showStep(2);
+        await renderCalendar();
+      });
+
+      // === CALENDAR ===
+      prevMonthBtn.addEventListener("click", async () => {
+        state.calendarMonth--;
+        if (state.calendarMonth < 0) {
+          state.calendarMonth = 11;
+          state.calendarYear--;
+        }
+        await renderCalendar();
+      });
+
+      nextMonthBtn.addEventListener("click", async () => {
+        state.calendarMonth++;
+        if (state.calendarMonth > 11) {
+          state.calendarMonth = 0;
+          state.calendarYear++;
+        }
+        await renderCalendar();
+      });
+
+      async function renderCalendar() {
+        const year = state.calendarYear;
+        const month = state.calendarMonth;
+        monthTitle.textContent = `${monthNames[month]} ${year}`;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const startDay = firstDay === 0 ? 6 : firstDay - 1;
+
+        // Lekérjük a teli napokat és vasárnapokat
+        let fullDays = [];
+        let sundays = [];
+        try {
+          const res = await fetch(`/api/full-days/${year}/${month + 1}?barber=${encodeURIComponent(state.barber)}`);
+          const data = await res.json();
+          if (data.ok) {
+            fullDays = data.fullDays || [];
+            sundays = data.sundays || [];
           }
+        } catch (err) {
+          console.error("Error fetching full days:", err);
         }
 
-        function hidePopup() {
-          if (!popupOverlay) return;
-          popupOverlay.classList.remove("show");
-          popupOverlay.setAttribute("aria-hidden", "true");
-          if (popupTimer) {
-            clearTimeout(popupTimer);
-            popupTimer = null;
+        calendarBody.innerHTML = "";
+        let row = document.createElement("tr");
+        let cellCount = 0;
+
+        // Üres cellák
+        for (let i = 0; i < startDay; i++) {
+          row.appendChild(document.createElement("td"));
+          cellCount++;
+        }
+
+        // Napok
+        for (let d = 1; d <= daysInMonth; d++) {
+          if (cellCount === 7) {
+            calendarBody.appendChild(row);
+            row = document.createElement("tr");
+            cellCount = 0;
           }
-        }
 
-        if (popupClose) popupClose.addEventListener("click", hidePopup);
-        if (popupOverlay)
-          popupOverlay.addEventListener("click", (e) => {
-            if (e.target === popupOverlay) hidePopup();
-          });
+          const td = document.createElement("td");
+          const dateObj = new Date(year, month, d);
+          const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+          const isPast = dateObj < today;
+          const isFull = fullDays.includes(d);
+          const isSunday = sundays.includes(d);
 
-        async function loadBarbers() {
-          if (!barberSelect) return;
-          try {
-            const res = await fetch("/api/barbers");
-            const data = await res.json().catch(() => ({}));
-            if (res.ok && Array.isArray(data.barbers)) {
-              barberSelect.innerHTML = "";
-              const placeholder = document.createElement("option");
-              placeholder.value = "";
-              placeholder.textContent = "Válassz borbélyt";
-              placeholder.disabled = true;
-              placeholder.selected = true;
-              barberSelect.appendChild(placeholder);
-
-              data.barbers.forEach((name) => {
-                const opt = document.createElement("option");
-                opt.value = name;
-                opt.textContent = name;
-                barberSelect.appendChild(opt);
-              });
-            } else {
-              console.error("Barbers load failed", data);
+          if (isPast || isFull || isSunday) {
+            td.textContent = d;
+            td.className = "disabled";
+            if (isSunday && !isPast) {
+              td.title = "Zárva";
+            } else if (isFull && !isPast) {
+              td.title = "Nincs elérhető időpont";
             }
-          } catch (err) {
-            console.error("Failed to load barbers", err);
+          } else {
+            const btn = document.createElement("button");
+            btn.textContent = d;
+            btn.className = "day-btn";
+            btn.addEventListener("click", () => selectDate(dateStr));
+            td.appendChild(btn);
           }
+
+          row.appendChild(td);
+          cellCount++;
         }
 
-        loadBarbers();
-
-        if (fogForm) {
-          fogForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const formData = new URLSearchParams(new FormData(fogForm));
-
-            try {
-              const res = await fetch(fogForm.action || "/api/booking", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: formData.toString(),
-              });
-
-              const json = await res.json().catch(() => ({}));
-              if (res.ok && json.ok) {
-                showPopup("Foglalás sikeres!", "success");
-                fogForm.reset();
-              } else {
-                showPopup("Hiba: " + (json.error || "Ismeretlen hiba"), "error", true);
-              }
-            } catch (err) {
-              console.error(err);
-              showPopup("Nem sikerült elérni a szervert.", "error", true);
-            }
-          });
+        // Maradék cellák
+        while (cellCount < 7) {
+          row.appendChild(document.createElement("td"));
+          cellCount++;
         }
+        calendarBody.appendChild(row);
+      }
 
-        // Profil ikon -> lenyíló menü (megegyezik az index.ejs viselkedéssel)
-        const profileIcon = document.querySelector(".profile-icon");
-        const profileMenu = document.querySelector(".profile-menu");
+      // === SELECT DATE -> STEP 3 ===
+      async function selectDate(dateStr) {
+        state.date = dateStr;
+        selectedDateText.textContent = `Kiválasztott dátum: ${dateStr}`;
+        showStep(3);
+        await loadTimes(dateStr);
+      }
 
-        if (!profileIcon || !profileMenu) {
-          // nincs profil elem az oldalon
-        } else {
-          profileIcon.addEventListener("click", (e) => {
-            e.stopPropagation();
-            profileMenu.classList.toggle("open");
-            const dropdown = profileMenu.querySelector(".dropdown");
-            if (dropdown) {
-              const isOpen = profileMenu.classList.contains("open");
-              dropdown.setAttribute("aria-hidden", !isOpen);
-            }
+      async function loadTimes(dateStr) {
+        timesContainer.innerHTML = "<p>Betöltés...</p>";
+        try {
+          const res = await fetch(`/api/available-times/${dateStr}?barber=${encodeURIComponent(state.barber)}`);
+          const data = await res.json();
+          if (!res.ok || !data.ok) {
+            timesContainer.innerHTML = "<p>Hiba történt.</p>";
+            return;
+          }
+
+          const times = data.available || [];
+          if (times.length === 0) {
+            timesContainer.innerHTML = "<p>Nincs elérhető időpont.</p>";
+            return;
+          }
+
+          timesContainer.innerHTML = "";
+          times.forEach((t) => {
+            const btn = document.createElement("button");
+            btn.className = "time-btn";
+            btn.textContent = t;
+            btn.addEventListener("click", () => selectTime(t));
+            timesContainer.appendChild(btn);
           });
+        } catch (err) {
+          timesContainer.innerHTML = "<p>Hiba történt.</p>";
+        }
+      }
 
-          document.addEventListener("click", () => {
+      // === SELECT TIME -> STEP 4 (SUMMARY) ===
+      function selectTime(time) {
+        state.time = time;
+        
+        // Dátum formázása
+        const [year, month, day] = state.date.split("-");
+        const formattedDate = `${year}. ${monthNames[parseInt(month) - 1]} ${parseInt(day)}.`;
+        
+        // Összegzés kitöltése
+        document.getElementById("summary-barber").textContent = state.barber;
+        document.getElementById("summary-service").textContent = serviceNames[state.service] || state.service;
+        document.getElementById("summary-date").textContent = formattedDate;
+        document.getElementById("summary-time").textContent = time;
+        document.getElementById("summary-price").textContent = (servicePrices[state.service] || 0).toLocaleString("hu-HU") + " Ft";
+        
+        showStep(4);
+      }
+
+      // === CONFIRM BOOKING ===
+      btnConfirmBooking.addEventListener("click", async () => {
+        try {
+          const res = await fetch("/api/booking", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+              date: state.date,
+              time: state.time,
+              service: state.service,
+              barber: state.barber
+            })
+          });
+          const data = await res.json();
+          if (res.ok && data.ok) {
+            document.getElementById("successPopup").classList.add("show");
+          } else {
+            showPopup(data.error || "Hiba történt", "error");
+          }
+        } catch (err) {
+          showPopup("Szerverhiba", "error");
+        }
+      });
+
+      btnBackToTimes.addEventListener("click", () => showStep(3));
+
+      // === PROFILE MENU (desktop) ===
+      const profileMenu = document.querySelector(".desktop-profile");
+      const profileIcon = profileMenu ? profileMenu.querySelector(".profile-icon") : null;
+      if (profileIcon && profileMenu) {
+        profileIcon.addEventListener("click", (e) => {
+          e.stopPropagation();
+          profileMenu.classList.toggle("open");
+          const dropdown = profileMenu.querySelector(".dropdown");
+          if (dropdown) {
+            const isOpen = profileMenu.classList.contains("open");
+            dropdown.setAttribute("aria-hidden", !isOpen);
+          }
+        });
+        document.addEventListener("click", () => {
+          if (profileMenu) {
             profileMenu.classList.remove("open");
             const dropdown = profileMenu.querySelector(".dropdown");
             if (dropdown) dropdown.setAttribute("aria-hidden", "true");
+          }
+        });
+      }
+
+      // Mobil profil almenü toggle
+      (function() {
+        const mobileProfileHeader = document.querySelector(".mobile-profile-header");
+        const mobileProfileSubmenu = document.querySelector(".mobile-profile-submenu");
+        const mobileProfileToggle = document.querySelector(".mobile-profile-toggle");
+        
+        if (mobileProfileHeader && mobileProfileSubmenu) {
+          mobileProfileHeader.addEventListener("click", (e) => {
+            e.stopPropagation();
+            mobileProfileSubmenu.classList.toggle("open");
+            // Nyíl irány váltás
+            if (mobileProfileToggle) {
+              mobileProfileToggle.textContent = mobileProfileSubmenu.classList.contains("open") ? "Fiók ▲" : "Fiók ▼";
+            }
           });
         }
-      });
+      })();
+
+      // Init
+      showStep(1);
     </script>
     <script src="/js/mobileNav.js"></script>
   </body>

@@ -16,14 +16,61 @@
     <header>
       <div class="logo">Beach Barbershop</div>
 
-      <nav>
+      <!-- Mobil jobb oldali gombok -->
+      <div class="mobile-header-right">
+        <!-- KOSÁR IKON (mobilon a header-ben) -->
+        <div class="cart-menu mobile-cart">
+          <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="cart-icon" alt="Kosár" title="Kosár" />
+          <span class="cart-badge" id="cartBadgeMobile">0</span>
+          <ul class="cart-dropdown" aria-hidden="true" id="cartDropdownMobile">
+            <li class="cart-title">Kosár</li>
+            <li id="cartItemsMobile" style="max-height: 300px; overflow-y: auto;"></li>
+            <li class="cart-total"><strong>Összesen: <span id="cartSumMobile">0</span> Ft</strong></li>
+            <li style="padding: 0;"><a href="/fizetes" style="display: block; background: #27ae60; padding: 0.6rem 1rem; color: white; font-weight: bold;">💳 Fizetés</a></li>
+            <li><a href="/shop">Webshop</a></li>
+          </ul>
+        </div>
+
+        <!-- Hamburger menü gomb mobilra -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menü">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      <nav id="mainNav">
         <ul class="nav-list">
+          <!-- PROFIL (mobilon felül, ikonnal + almenü) -->
+          <li class="profile-menu mobile-profile-top">
+            <div class="mobile-profile-header">
+              <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="mobile-profile-icon" alt="Profil" />
+              <% if (user) { %>
+              <span class="mobile-profile-toggle"><%= (user && user.role === 'ADMIN') ? 'Admin Panel' : 'Fiók' %> ▼</span>
+              <% } else { %>
+              <a href="/bejelentkezes">Bejelentkezés</a>
+              <% } %>
+            </div>
+            <% if (user) { %>
+            <ul class="mobile-profile-submenu">
+              <li><a href="/fiok">Fiók részletek</a></li>
+              <li><a href="/fiok#foglalasaim">Foglalásaim</a></li>
+              <li><a href="/fiok#rendeleseim">Rendeléseim</a></li>
+            </ul>
+            <% } %>
+          </li>
+
           <li><a href="#services">Szolgáltatások</a></li>
           <li><a href="/foglalas">Foglalás</a></li>
           <li><a href="/shop">Webshop</a></li>
 
-          <!-- � KOSÁR IKON -->
-          <li class="cart-menu">
+          <!-- KIJELENTKEZÉS (csak mobilon, menü végén) -->
+          <% if (user) { %>
+          <li class="mobile-logout"><a href="/api/logout">Kijelentkezés</a></li>
+          <% } %>
+
+          <!-- KOSÁR IKON (desktopon) -->
+          <li class="cart-menu desktop-cart">
             <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="cart-icon" alt="Kosár" title="Kosár" />
             <span class="cart-badge" id="cartBadge">0</span>
 
@@ -36,8 +83,8 @@
             </ul>
           </li>
 
-          <!-- �🔽 PROFIL IKON MENÜ 🔽 -->
-          <li class="profile-menu">
+          <!-- PROFIL IKON MENÜ (desktopon) -->
+          <li class="profile-menu desktop-profile">
             <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
 
             <ul class="dropdown" aria-hidden="true">
@@ -55,7 +102,6 @@
               <% } %>
             </ul>
           </li>
-          <!-- 🔼 PROFIL IKON MENÜ 🔼 -->
         </ul>
       </nav>
     </header>
@@ -114,37 +160,54 @@
       // Kosár funkciók
       function updateCartDisplay() {
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        
+        // Desktop elemek
         const cartBadge = document.getElementById("cartBadge");
         const cartItems = document.getElementById("cartItems");
         const cartSum = document.getElementById("cartSum");
+        
+        // Mobil elemek
+        const cartBadgeMobile = document.getElementById("cartBadgeMobile");
+        const cartItemsMobile = document.getElementById("cartItemsMobile");
+        const cartSumMobile = document.getElementById("cartSumMobile");
 
         const itemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        cartBadge.textContent = itemCount;
+        
+        // Badge frissítés mindkét helyen
+        if (cartBadge) cartBadge.textContent = itemCount;
+        if (cartBadgeMobile) cartBadgeMobile.textContent = itemCount;
 
         let total = 0;
-        cartItems.innerHTML = "";
+        let itemsHtml = "";
 
         if (cart.length === 0) {
-          cartItems.innerHTML = '<li style="padding: 1rem; text-align: center; color: #999;">Üres kosár</li>';
+          itemsHtml = '<li style="padding: 1rem; text-align: center; color: #999;">Üres kosár</li>';
         } else {
           cart.forEach((item, index) => {
             const price = parseInt(item.price.replace(/\D/g, "")) || 0;
             const quantity = item.quantity || 1;
             const itemTotal = price * quantity;
             total += itemTotal;
-            const li = document.createElement("li");
-            li.innerHTML = `
-              <div style="padding: 0.5rem 1rem; border-bottom: 1px solid #555; color: #ccc; font-size: 0.9em;">
-                <div><strong>${item.name}</strong></div>
-                <div>${item.price} × ${quantity} = ${(itemTotal).toLocaleString("hu-HU")} Ft</div>
-                <button onclick="removeFromCart(${index})" style="background: #e74c3c; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.8em; margin-top: 0.3rem;">Eltávolít</button>
-              </div>
+            itemsHtml += `
+              <li>
+                <div style="padding: 0.5rem 1rem; border-bottom: 1px solid #555; color: #ccc; font-size: 0.9em;">
+                  <div><strong>${item.name}</strong></div>
+                  <div>${item.price} × ${quantity} = ${(itemTotal).toLocaleString("hu-HU")} Ft</div>
+                  <button onclick="removeFromCart(${index})" style="background: #e74c3c; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.8em; margin-top: 0.3rem;">Eltávolít</button>
+                </div>
+              </li>
             `;
-            cartItems.appendChild(li);
           });
         }
 
-        cartSum.textContent = total.toLocaleString("hu-HU");
+        // Tartalom frissítés mindkét helyen
+        if (cartItems) cartItems.innerHTML = itemsHtml;
+        if (cartItemsMobile) cartItemsMobile.innerHTML = itemsHtml;
+        
+        // Összeg frissítés mindkét helyen
+        const totalStr = total.toLocaleString("hu-HU");
+        if (cartSum) cartSum.textContent = totalStr;
+        if (cartSumMobile) cartSumMobile.textContent = totalStr;
       }
 
       function removeFromCart(index) {
@@ -160,21 +223,22 @@
         // Kosár megjelenítés frissítése
         updateCartDisplay();
 
-        // Kosár ikon klikk
-        const cartIcon = document.querySelector(".cart-icon");
-        const cartMenu = document.querySelector(".cart-menu");
-
-        if (cartIcon && cartMenu) {
-          cartIcon.addEventListener("click", (e) => {
-            e.stopPropagation();
-            cartMenu.classList.toggle("open");
-            const cartDropdown = cartMenu.querySelector(".cart-dropdown");
-            if (cartDropdown) {
-              const isOpen = cartMenu.classList.contains("open");
-              cartDropdown.setAttribute("aria-hidden", !isOpen);
-            }
-          });
-        }
+        // Kosár ikon klikk - mindkét kosárra (mobil és desktop)
+        const cartIcons = document.querySelectorAll(".cart-icon");
+        cartIcons.forEach(cartIcon => {
+          const cartMenu = cartIcon.closest(".cart-menu");
+          if (cartIcon && cartMenu) {
+            cartIcon.addEventListener("click", (e) => {
+              e.stopPropagation();
+              cartMenu.classList.toggle("open");
+              const cartDropdown = cartMenu.querySelector(".cart-dropdown");
+              if (cartDropdown) {
+                const isOpen = cartMenu.classList.contains("open");
+                cartDropdown.setAttribute("aria-hidden", !isOpen);
+              }
+            });
+          }
+        });
 
         // Foglalás űrlap (ha van) — elküldjük a szervernek és feldolgozzuk a választ
         const fogForm = document.getElementById("foglalas_urlap");
@@ -257,35 +321,50 @@
           });
         }
 
-        // Profil ikon -> lenyíló menü
-        const profileIcon = document.querySelector(".profile-icon");
-        const profileMenu = document.querySelector(".profile-menu");
+        // Profil ikon -> lenyíló menü (desktop)
+        const profileMenu = document.querySelector(".desktop-profile");
+        const profileIcon = profileMenu ? profileMenu.querySelector(".profile-icon") : null;
 
-        if (!profileIcon || !profileMenu) {
-          console.log("Profil ikon vagy profil menü hiányzik.");
-          return;
+        if (profileIcon && profileMenu) {
+          // Nyitás / zárás
+          profileIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            profileMenu.classList.toggle("open");
+            const dropdown = profileMenu.querySelector(".dropdown");
+            if (dropdown) {
+              const isOpen = profileMenu.classList.contains("open");
+              dropdown.setAttribute("aria-hidden", !isOpen);
+            }
+          });
         }
-
-        // Nyitás / zárás
-        profileIcon.addEventListener("click", (e) => {
-          e.stopPropagation();
-          profileMenu.classList.toggle("open");
-          const dropdown = profileMenu.querySelector(".dropdown");
-          if (dropdown) {
-            const isOpen = profileMenu.classList.contains("open");
-            dropdown.setAttribute("aria-hidden", !isOpen);
-          }
-        });
 
         // Klikk bárhova -> bezár
         document.addEventListener("click", () => {
-          profileMenu.classList.remove("open");
-          cartMenu?.classList.remove("open");
-          const dropdown = profileMenu.querySelector(".dropdown");
-          if (dropdown) dropdown.setAttribute("aria-hidden", "true");
-          const cartDropdown = document.querySelector(".cart-dropdown");
-          if (cartDropdown) cartDropdown.setAttribute("aria-hidden", "true");
+          if (profileMenu) {
+            profileMenu.classList.remove("open");
+            const dropdown = profileMenu.querySelector(".dropdown");
+            if (dropdown) dropdown.setAttribute("aria-hidden", "true");
+          }
+          // Minden kosár menü bezárása
+          document.querySelectorAll(".cart-menu").forEach(cm => cm.classList.remove("open"));
+          document.querySelectorAll(".cart-dropdown").forEach(cd => cd.setAttribute("aria-hidden", "true"));
         });
+
+        // Mobil profil almenü toggle
+        const mobileProfileHeader = document.querySelector(".mobile-profile-header");
+        const mobileProfileSubmenu = document.querySelector(".mobile-profile-submenu");
+        const mobileProfileToggle = document.querySelector(".mobile-profile-toggle");
+        
+        if (mobileProfileHeader && mobileProfileSubmenu) {
+          mobileProfileHeader.addEventListener("click", (e) => {
+            e.stopPropagation();
+            mobileProfileSubmenu.classList.toggle("open");
+            // Nyíl irány váltás
+            if (mobileProfileToggle) {
+              mobileProfileToggle.textContent = mobileProfileSubmenu.classList.contains("open") ? "Fiók ▲" : "Fiók ▼";
+            }
+          });
+        }
       });
     </script>
     <script src="/js/mobileNav.js"></script>

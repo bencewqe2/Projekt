@@ -17,7 +17,15 @@
 
     <header>
       <div class="logo">Beach Barbershop</div>
-      <nav>
+
+      <!-- Hamburger menü gomb mobilra -->
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menü">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav id="mainNav">
         <ul>
           <li><a href="/">Vissza a főoldalra</a></li>
         </ul>
@@ -216,6 +224,24 @@
         document.getElementById("btnCancelDelete").addEventListener("click", () => {
           document.getElementById("deleteConfirmModal").style.display = "none";
         });
+
+        // Hash alapú szekció váltás (pl. /fiok#foglalasaim)
+        function handleHash() {
+          const hash = window.location.hash;
+          if (hash === '#foglalasaim' || hash === '#bookings') {
+            showSection('bookings');
+          } else if (hash === '#rendeleseim' || hash === '#orders') {
+            showSection('orders');
+          } else if (hash === '#info') {
+            showSection('info');
+          }
+        }
+        
+        // Betöltéskor ellenőrizzük a hash-t
+        handleHash();
+        
+        // Hash változáskor is
+        window.addEventListener('hashchange', handleHash);
       });
     </script>
     <script src="/js/mobileNav.js"></script>

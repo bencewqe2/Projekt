@@ -316,3 +316,191 @@
     width: 100%;
   }
 }
+
+/* ==================== HAMBURGER MENÜ ==================== */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1100;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  background: #3cbcc7;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+  margin: 3px 0;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* ==================== MOBIL NÉZET FIZETÉS ==================== */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0.8rem 1rem;
+  }
+
+  body {
+    padding-top: 70px;
+  }
+
+  nav#mainNav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: rgba(17, 17, 17, 0.98);
+    transition: right 0.3s ease;
+    z-index: 1050;
+    padding-top: 80px;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+  }
+
+  nav#mainNav.active {
+    right: 0;
+  }
+
+  nav#mainNav ul.nav-list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  nav#mainNav ul.nav-list > li {
+    border-bottom: 1px solid rgba(60, 188, 199, 0.2);
+    pointer-events: auto;
+  }
+
+  nav#mainNav ul.nav-list > li > a {
+    display: block;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    pointer-events: auto;
+    position: relative;
+    z-index: 1051;
+  }
+
+  nav#mainNav .profile-menu,
+  nav#mainNav .cart-menu {
+    padding: 1rem 1.5rem;
+  }
+
+  /* Profil almenü a slide-in menü tetején */
+  .mobile-profile-top {
+    display: flex !important;
+    flex-direction: column;
+    padding: 0 !important;
+    border-bottom: 2px solid rgba(60, 188, 199, 0.4) !important;
+    background: rgba(60, 188, 199, 0.1);
+  }
+
+  .mobile-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+  }
+
+  .mobile-profile-top .mobile-profile-icon {
+    width: 22px;
+    height: 22px;
+    filter: invert(1);
+  }
+
+  .mobile-profile-toggle {
+    font-size: 1.1rem;
+    color: #3cbcc7;
+    pointer-events: auto;
+  }
+
+  .mobile-profile-header:hover .mobile-profile-toggle {
+    color: #5cd8e3;
+  }
+
+  /* Almenü (alapértelmezetten rejtett) */
+  .mobile-profile-submenu {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .mobile-profile-submenu.open {
+    display: block;
+  }
+
+  .mobile-profile-submenu li a {
+    display: block;
+    padding: 0.8rem 1.5rem 0.8rem 3rem;
+    font-size: 1rem;
+    color: #8ad4db;
+    text-decoration: none;
+  }
+
+  .mobile-profile-submenu li a:hover {
+    color: #3cbcc7;
+    background: rgba(60, 188, 199, 0.1);
+  }
+
+  /* Kijelentkezés a menü végén (csak mobilon) */
+  .mobile-logout {
+    display: block !important;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(60, 188, 199, 0.3);
+  }
+
+  .mobile-logout a {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: #e74c3c !important;
+    font-size: 1.1rem;
+    text-decoration: none;
+  }
+
+  .mobile-logout a:hover {
+    color: #ff6b6b !important;
+    background: rgba(231, 76, 60, 0.1);
+  }
+}
+
+@media (max-width: 480px) {
+  header .logo {
+    font-size: 1rem;
+  }
+}

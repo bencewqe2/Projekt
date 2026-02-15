@@ -17,13 +17,59 @@
     <header>
       <div class="logo">Beach Barbershop</div>
 
-      <nav>
+      <!-- Mobil header jobb oldali rész (kosár + hamburger) -->
+      <div class="mobile-header-right">
+        <!-- Mobil kosár ikon -->
+        <div class="cart-menu mobile-cart">
+          <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="cart-icon" alt="Kosár" title="Kosár" />
+          <span class="cart-badge" id="cartBadgeMobile">0</span>
+          <ul class="cart-dropdown" id="cartDropdownMobile">
+            <li class="cart-title">Kosár</li>
+            <li id="cartItemsMobile" style="max-height: 200px; overflow-y: auto;"></li>
+            <li class="cart-total"><strong>Összesen: <span id="cartSumMobile">0</span> Ft</strong></li>
+            <li><a href="/shop">Folytasd a vásárlást</a></li>
+          </ul>
+        </div>
+
+        <!-- Hamburger menü gomb mobilra -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menü">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      <nav id="mainNav">
         <ul class="nav-list">
+          <!-- Mobil profil a slide-in tetején + almenü -->
+          <li class="profile-menu mobile-profile-top">
+            <div class="mobile-profile-header">
+              <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="mobile-profile-icon" alt="Profil" />
+              <% if (user) { %>
+              <span class="mobile-profile-toggle"><%= (user && user.role === 'ADMIN') ? 'Admin Panel' : 'Fiók' %> ▼</span>
+              <% } else { %>
+              <a href="/bejelentkezes">Bejelentkezés</a>
+              <% } %>
+            </div>
+            <% if (user) { %>
+            <ul class="mobile-profile-submenu">
+              <li><a href="/fiok">Fiók részletek</a></li>
+              <li><a href="/fiok#foglalasaim">Foglalásaim</a></li>
+              <li><a href="/fiok#rendeleseim">Rendeléseim</a></li>
+            </ul>
+            <% } %>
+          </li>
+
           <li><a href="/">Főoldal</a></li>
           <li><a href="/shop">Webshop</a></li>
 
-          <!-- 🛒 KOSÁR IKON -->
-          <li class="cart-menu">
+          <!-- KIJELENTKEZÉS (csak mobilon, menü végén) -->
+          <% if (user) { %>
+          <li class="mobile-logout"><a href="/api/logout">Kijelentkezés</a></li>
+          <% } %>
+
+          <!-- Desktop KOSÁR IKON -->
+          <li class="cart-menu desktop-cart">
             <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="cart-icon" alt="Kosár" title="Kosár" />
             <span class="cart-badge" id="cartBadge">0</span>
 
@@ -35,8 +81,8 @@
             </ul>
           </li>
 
-          <!-- 🔽 PROFIL IKON MENÜ 🔽 -->
-          <li class="profile-menu">
+          <!-- Desktop PROFIL IKON MENÜ -->
+          <li class="profile-menu desktop-profile">
             <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
 
             <ul class="dropdown" aria-hidden="true">
@@ -54,7 +100,6 @@
               <% } %>
             </ul>
           </li>
-          <!-- 🔼 PROFIL IKON MENÜ 🔼 -->
         </ul>
       </nav>
     </header>
@@ -176,16 +221,28 @@
         const paymentSubtotal = document.getElementById("paymentSubtotal");
         const paymentShipping = document.getElementById("paymentShipping");
         const paymentTotal = document.getElementById("paymentTotal");
+        
+        // Desktop és mobil badge
         const cartBadge = document.getElementById("cartBadge");
+        const cartBadgeMobile = document.getElementById("cartBadgeMobile");
+        
+        // Desktop és mobil kosár tartalom
+        const cartItems = document.getElementById("cartItems");
+        const cartItemsMobile = document.getElementById("cartItemsMobile");
+        const cartSum = document.getElementById("cartSum");
+        const cartSumMobile = document.getElementById("cartSumMobile");
 
         const itemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        cartBadge.textContent = itemCount;
+        if (cartBadge) cartBadge.textContent = itemCount;
+        if (cartBadgeMobile) cartBadgeMobile.textContent = itemCount;
         paymentCartItems.innerHTML = "";
 
         let subtotal = 0;
+        let cartItemsHtml = "";
 
         if (cart.length === 0) {
           paymentCartItems.innerHTML = '<p style="color: #999; text-align: center; padding: 1rem;">A kosár üres</p>';
+          cartItemsHtml = '<li style="padding: 1rem; text-align: center; color: #999;">Üres kosár</li>';
         } else {
           cart.forEach((item) => {
             const price = parseInt(item.price.replace(/\D/g, "")) || 0;
@@ -200,8 +257,25 @@
               </div>
             `;
             paymentCartItems.appendChild(div);
+            
+            cartItemsHtml += `
+              <li>
+                <div style="padding: 0.5rem 1rem; border-bottom: 1px solid #555; color: #ccc; font-size: 0.9em;">
+                  <div><strong>${item.name}</strong></div>
+                  <div>${item.price} × ${quantity} = ${(itemTotal).toLocaleString("hu-HU")} Ft</div>
+                </div>
+              </li>
+            `;
           });
         }
+
+        // Kosár dropdown tartalom frissítés
+        if (cartItems) cartItems.innerHTML = cartItemsHtml;
+        if (cartItemsMobile) cartItemsMobile.innerHTML = cartItemsHtml;
+        
+        const subtotalStr = subtotal.toLocaleString("hu-HU");
+        if (cartSum) cartSum.textContent = subtotalStr;
+        if (cartSumMobile) cartSumMobile.textContent = subtotalStr;
 
         // Szállítási díj
         const shippingRadios = document.getElementsByName("shipping");
@@ -328,25 +402,26 @@
           });
         }
 
-        // Kosár ikon klikk
-        const cartIcon = document.querySelector(".cart-icon");
-        const cartMenu = document.querySelector(".cart-menu");
+        // Kosár ikon klikk - mindkét kosárra (mobil és desktop)
+        const cartIcons = document.querySelectorAll(".cart-icon");
+        cartIcons.forEach(cartIcon => {
+          const cartMenu = cartIcon.closest(".cart-menu");
+          if (cartIcon && cartMenu) {
+            cartIcon.addEventListener("click", (e) => {
+              e.stopPropagation();
+              cartMenu.classList.toggle("open");
+              const cartDropdown = cartMenu.querySelector(".cart-dropdown");
+              if (cartDropdown) {
+                const isOpen = cartMenu.classList.contains("open");
+                cartDropdown.setAttribute("aria-hidden", !isOpen);
+              }
+            });
+          }
+        });
 
-        if (cartIcon && cartMenu) {
-          cartIcon.addEventListener("click", (e) => {
-            e.stopPropagation();
-            cartMenu.classList.toggle("open");
-            const cartDropdown = cartMenu.querySelector(".cart-dropdown");
-            if (cartDropdown) {
-              const isOpen = cartMenu.classList.contains("open");
-              cartDropdown.setAttribute("aria-hidden", !isOpen);
-            }
-          });
-        }
-
-        // Profil ikon -> lenyíló menü
-        const profileIcon = document.querySelector(".profile-icon");
-        const profileMenu = document.querySelector(".profile-menu");
+        // Profil ikon -> lenyíló menü (desktop)
+        const profileMenu = document.querySelector(".desktop-profile");
+        const profileIcon = profileMenu ? profileMenu.querySelector(".profile-icon") : null;
 
         if (profileIcon && profileMenu) {
           profileIcon.addEventListener("click", (e) => {
@@ -362,12 +437,14 @@
 
         // Klikk bárhova -> bezár
         document.addEventListener("click", () => {
-          if (profileMenu) profileMenu.classList.remove("open");
-          if (cartMenu) cartMenu.classList.remove("open");
-          const dropdown = document.querySelector(".dropdown");
-          if (dropdown) dropdown.setAttribute("aria-hidden", "true");
-          const cartDropdown = document.querySelector(".cart-dropdown");
-          if (cartDropdown) cartDropdown.setAttribute("aria-hidden", "true");
+          if (profileMenu) {
+            profileMenu.classList.remove("open");
+            const dropdown = profileMenu.querySelector(".dropdown");
+            if (dropdown) dropdown.setAttribute("aria-hidden", "true");
+          }
+          // Minden kosár menü bezárása
+          document.querySelectorAll(".cart-menu").forEach(cm => cm.classList.remove("open"));
+          document.querySelectorAll(".cart-dropdown").forEach(cd => cd.setAttribute("aria-hidden", "true"));
         });
 
         // További: megjelenítés/eltüntetés a delivery formhoz
@@ -406,6 +483,22 @@
             // auto-hide after short delay (redirect happens elsewhere)
             setTimeout(() => { msg.classList.remove('visible'); msg.setAttribute('aria-hidden','true'); }, 2000);
           }
+        }
+
+        // Mobil profil almenü toggle
+        const mobileProfileHeader = document.querySelector(".mobile-profile-header");
+        const mobileProfileSubmenu = document.querySelector(".mobile-profile-submenu");
+        const mobileProfileToggle = document.querySelector(".mobile-profile-toggle");
+        
+        if (mobileProfileHeader && mobileProfileSubmenu) {
+          mobileProfileHeader.addEventListener("click", (e) => {
+            e.stopPropagation();
+            mobileProfileSubmenu.classList.toggle("open");
+            // Nyíl irány váltás
+            if (mobileProfileToggle) {
+              mobileProfileToggle.textContent = mobileProfileSubmenu.classList.contains("open") ? "Fiók ▲" : "Fiók ▼";
+            }
+          });
         }
       });
     </script>
