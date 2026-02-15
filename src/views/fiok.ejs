@@ -34,12 +34,13 @@
 
     <div class="account-header">Üdv, <%= user.felhnev %></div>
 
-    <div class="account-wrapper">
-      <aside class="account-sidebar">
-        <button onclick="showSection('info')">Fiók részletek</button>
-        <button onclick="showSection('bookings')">Foglalások</button>
-        <button onclick="showSection('orders')">Rendelések</button>
-      </aside>
+    <div class="account-wrapper" style="flex-direction: column; gap: 0;">
+      <!-- Tab Navigator -->
+      <div class="account-tab-navigator">
+        <button id="tab-prev-btn" class="tab-arrow-btn">◀</button>
+        <span id="tab-title-display" class="tab-title-display">Fiók részletek</span>
+        <button id="tab-next-btn" class="tab-arrow-btn">▶</button>
+      </div>
 
       <main class="account-content">
         <section id="info" class="account-section active">
@@ -62,11 +63,75 @@
             <p style="text-align: center; color: #999">Betöltés...</p>
           </div>
         </section>
+
+        <% if (user.role === 'BARBER') { %>
+        <!-- BARBER: Beérkezett foglalások -->
+        <section id="barberBookings" class="account-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="margin: 0;">Beérkezett foglalások</h2>
+            <button onclick="cancelAllBarberBookings()" class="btn-cancel-all" title="Összes foglalás lemondása">🗑️ Összes lemondása</button>
+          </div>
+          <div id="barberBookingsContainer">
+            <p style="text-align: center; color: #999">Betöltés...</p>
+          </div>
+        </section>
+
+        <!-- BARBER: Saját időpontok kezelése -->
+        <section id="barberCalendar" class="account-section">
+          <h2>Saját időpontok</h2>
+          <div class="barber-calendar-section">
+            <div class="barber-calendar-nav">
+              <button id="barber-prev-month" class="btn-nav">◀ Előző</button>
+              <span id="barber-month-title"></span>
+              <button id="barber-next-month" class="btn-nav">Következő ▶</button>
+            </div>
+            <table id="barber-calendar-table" class="barber-table">
+              <thead>
+                <tr>
+                  <th>H</th>
+                  <th>K</th>
+                  <th>Sz</th>
+                  <th>Cs</th>
+                  <th>P</th>
+                  <th>Sz</th>
+                  <th>V</th>
+                </tr>
+              </thead>
+              <tbody id="barber-calendar-body"></tbody>
+            </table>
+          </div>
+          <div id="barber-times-container" style="margin-top: 2rem;"></div>
+        </section>
+        <% } %>
       </main>
     </div>
 
     <!-- Toast Notification -->
     <div id="toastNotification" class="toast-notification"></div>
+
+    <!-- Block Confirmation Modal -->
+    <div id="blockConfirmModal" class="delete-confirm-modal">
+      <div class="delete-confirm-content">
+        <h3>Nap blokkolása</h3>
+        <p id="blockConfirmMessage">Biztosan le szeretnéd blokkolni ezt a napot?</p>
+        <div class="delete-confirm-buttons">
+          <button id="btnConfirmBlock" class="btn-confirm">✓ Igen, blokkolom</button>
+          <button id="btnCancelBlock" class="btn-cancel">✕ Mégsem</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cancel Booking Modal -->
+    <div id="cancelBookingModal" class="delete-confirm-modal">
+      <div class="delete-confirm-content">
+        <h3>Foglalás lemondása</h3>
+        <p id="cancelBookingMessage">Biztosan lemondod ezt a foglalást?</p>
+        <div class="delete-confirm-buttons">
+          <button id="btnConfirmCancel" class="btn-confirm">✓ Igen, lemondok</button>
+          <button id="btnCancelCancel" class="btn-cancel">✕ Mégsem</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="delete-confirm-modal">
@@ -81,6 +146,37 @@
     </div>
 
     <script>
+      // User role check
+      const userRole = "<%= user.role || 'USER' %>";
+      const isBarber = userRole === 'BARBER';
+
+      // Tab System
+      const tabLists = {
+        USER: [
+          { id: 'info', label: 'Fiók részletek' },
+          { id: 'bookings', label: 'Foglalásaim' },
+          { id: 'orders', label: 'Rendeléseim' }
+        ],
+        BARBER: [
+          { id: 'info', label: 'Fiók részletek' },
+          { id: 'barberBookings', label: 'Beérkezett foglalások' },
+          { id: 'barberCalendar', label: 'Saját időpontok' }
+        ]
+      };
+      const tabs = tabLists[userRole] || tabLists['USER'];
+      let currentTabIndex = 0;
+
+      // Barber state
+      let barberState = {
+        calendarMonth: new Date().getMonth(),
+        calendarYear: new Date().getFullYear(),
+        selectedDate: null,
+        isSelectedDateBlocked: false
+      };
+
+      const monthNames = ["Január", "Február", "Március", "Április", "Május", "Június",
+        "Július", "Augusztus", "Szeptember", "Október", "November", "December"];
+
       function showToast(message, type = "success") {
         const toast = document.getElementById("toastNotification");
         toast.textContent = message;
@@ -89,20 +185,52 @@
           toast.classList.remove("show");
         }, 3000);
       }
+
       function showSection(id) {
+        // Find tab index
+        const tabIndex = tabs.findIndex(t => t.id === id);
+        if (tabIndex !== -1) {
+          currentTabIndex = tabIndex;
+        }
+        
+        // Update all sections - remove active class
         document.querySelectorAll(".account-section").forEach((s) => s.classList.remove("active"));
-        document.getElementById(id).classList.add("active");
-        if (id === "orders") {
+        
+        // Add active class to selected section
+        const section = document.getElementById(id);
+        if (section) {
+          section.classList.add("active");
+        }
+        
+        // Update tab title
+        const currentTab = tabs[currentTabIndex];
+        if (currentTab) {
+          document.getElementById("tab-title-display").textContent = currentTab.label;
+        }
+        
+        // Load data if needed
+        if (id === "orders" && !isBarber) {
           loadOrders();
         }
-
-        // Foglalások betöltése, amikor a foglalások szekciót megnyitják
-        if (id === "bookings") {
+        if (id === "bookings" && !isBarber) {
           loadBookings();
+        }
+        if (id === "barberBookings" && isBarber) {
+          loadBarberBookings();
+        }
+        if (id === "barberCalendar" && isBarber) {
+          renderBarberCalendar();
         }
       }
 
+      function navigateTab(direction) {
+        currentTabIndex = (currentTabIndex + direction + tabs.length) % tabs.length;
+        showSection(tabs[currentTabIndex].id);
+      }
+
+      // ===== NORMAL USER FUNCTIONS =====
       async function loadOrders() {
+        if (isBarber) return;
         try {
           const res = await fetch("/api/orders");
           const data = await res.json();
@@ -144,14 +272,13 @@
         }
       }
 
-      // Foglalás törlése
       async function deleteBooking(bookingId) {
         document.getElementById("deleteConfirmModal").style.display = "flex";
         document.getElementById("deleteConfirmModal").dataset.bookingId = bookingId;
       }
 
-      // Foglalások betöltése
       async function loadBookings() {
+        if (isBarber) return;
         try {
           const res = await fetch("/api/bookings");
           const data = await res.json();
@@ -165,9 +292,7 @@
 
           let html = '<div class="bookings-list">';
           data.bookings.forEach((booking) => {
-            // Az UTC-ben tárolt időpont helyi időzónára való konvertálása
             const dt = new Date(booking.datetime);
-            // Az offset-et eltávolítjuk, hogy az eredeti (helyi) időt kapjuk meg
             const offset = dt.getTimezoneOffset() * 60 * 1000;
             const localDate = new Date(dt.getTime() + offset);
 
@@ -192,56 +317,467 @@
         }
       }
 
-      document.addEventListener("DOMContentLoaded", () => {
-        loadBookings();
+      // ===== BARBER FUNCTIONS =====
+      async function loadBarberBookings() {
+        if (!isBarber) return;
+        try {
+          const res = await fetch("/api/barber/bookings");
+          const data = await res.json();
 
-        // Törlés megerősítés - Igen gomb
-        document.getElementById("btnConfirmDelete").addEventListener("click", async () => {
-          const modal = document.getElementById("deleteConfirmModal");
-          const bookingId = parseInt(modal.dataset.bookingId);
-          try {
-            const res = await fetch(`/api/booking/${bookingId}`, {
-              method: "DELETE",
-            });
-            const data = await res.json();
+          const container = document.getElementById("barberBookingsContainer");
 
-            if (res.ok && data.ok) {
-              showToast("✓ Foglalás sikeresen törölve");
-              document.getElementById("deleteConfirmModal").style.display = "none";
-              loadBookings();
-            } else {
-              showToast("Hiba: " + (data.error || "Ismeretlen hiba"), "error");
-              document.getElementById("deleteConfirmModal").style.display = "none";
+          if (!data.ok || data.bookings.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #999;">Nincsenek foglalásaid.</p>';
+            return;
+          }
+
+          let html = '<div class="bookings-list">';
+          data.bookings.forEach((booking) => {
+            const dt = new Date(booking.idopont);
+            const offset = dt.getTimezoneOffset() * 60 * 1000;
+            const localDate = new Date(dt.getTime() + offset);
+
+            const bookingDate = localDate.toLocaleDateString("hu-HU");
+            const bookingTime = localDate.toLocaleTimeString("hu-HU", { hour: "2-digit", minute: "2-digit" });
+            
+            html += `
+              <div class="booking-item">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div style="flex: 1;">
+                    <p><strong>Ügyfél:</strong> ${booking.felhasznalo?.felhnev || "Ismeretlen"}</p>
+                    <p><strong>Email:</strong> ${booking.felhasznalo?.email || "-"}</p>
+                    <p><strong>Telefon:</strong> ${booking.felhasznalo?.telefonszam || "-"}</p>
+                    <p><strong>Dátum:</strong> ${bookingDate} ${bookingTime}</p>
+                    <p><strong>Szolgáltatás:</strong> ${booking.szolgal || "Nem megadva"}</p>
+                  </div>
+                  <button onclick="cancelBarberBooking(${booking.id})" class="delete-btn">🗑️ Lemondás</button>
+                </div>
+              </div>
+            `;
+          });
+          html += "</div>";
+          container.innerHTML = html;
+        } catch (err) {
+          console.error(err);
+          document.getElementById("barberBookingsContainer").innerHTML =
+            '<p style="color: #e74c3c;">Hiba történt a foglalások betöltésekor.</p>';
+        }
+      }
+
+      async function cancelBarberBooking(bookingId) {
+        const modal = document.getElementById('cancelBookingModal');
+        modal.dataset.bookingId = bookingId;
+        modal.style.display = 'flex';
+      }
+
+      async function cancelAllBarberBookings() {
+        const modal = document.getElementById('cancelBookingModal');
+        modal.dataset.bookingId = 'all';
+        document.getElementById('cancelBookingMessage').textContent = 'Biztosan lemondod az ÖSSZES foglalást?';
+        modal.style.display = 'flex';
+      }
+
+      async function renderBarberCalendar() {
+        if (!isBarber) return;
+        const year = barberState.calendarYear;
+        const month = barberState.calendarMonth;
+        
+        document.getElementById("barber-month-title").textContent = `${monthNames[month]} ${year}`;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const startDay = firstDay === 0 ? 6 : firstDay - 1;
+
+        // Lekérjük a blokkolva napokat az adott borbélynak
+        let fullyBlockedDays = [];
+        let partialBlockedDays = [];
+        try {
+          const res = await fetch(`/api/barber/blocked-days/${year}/${month + 1}`);
+          const data = await res.json();
+          if (data.ok) {
+            fullyBlockedDays = data.fullyBlockedDays || [];
+            partialBlockedDays = data.partialBlockedDays || [];
+          }
+        } catch (err) {
+          console.error("Error fetching blocked days:", err);
+        }
+
+        const calendarBody = document.getElementById("barber-calendar-body");
+        calendarBody.innerHTML = "";
+        let row = document.createElement("tr");
+        let cellCount = 0;
+
+        // Üres cellák
+        for (let i = 0; i < startDay; i++) {
+          row.appendChild(document.createElement("td"));
+          cellCount++;
+        }
+
+        // Napok
+        for (let d = 1; d <= daysInMonth; d++) {
+          if (cellCount === 7) {
+            calendarBody.appendChild(row);
+            row = document.createElement("tr");
+            cellCount = 0;
+          }
+
+          const td = document.createElement("td");
+          const dateObj = new Date(year, month, d);
+          const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+          const isPast = dateObj < today;
+          const isFullyBlocked = fullyBlockedDays.includes(d);
+          const isPartiallyBlocked = partialBlockedDays.includes(d);
+          const dayOfWeek = dateObj.getDay(); // 0 = vasárnap, 6 = szombat
+          const isSunday = dayOfWeek === 0;
+          const isSelected = barberState.selectedDate === dateStr;
+
+          if (isPast || isSunday) {
+            td.textContent = d;
+            td.className = "disabled";
+            if (isSunday && !isPast) {
+              td.title = "Zárva";
             }
-          } catch (err) {
-            console.error(err);
-            showToast("Nem sikerült elérni a szervert", "error");
-            document.getElementById("deleteConfirmModal").style.display = "none";
+          } else if (isFullyBlocked) {
+            const btn = document.createElement("button");
+            btn.textContent = d;
+            btn.className = `day-btn blocked${isSelected ? ' selected' : ''}`;
+            btn.title = "Teljesen blokkolt nap";
+            btn.addEventListener("click", () => selectBarberDate(dateStr, true));
+            td.appendChild(btn);
+          } else if (isPartiallyBlocked) {
+            const btn = document.createElement("button");
+            btn.textContent = d;
+            btn.className = `day-btn partial-blocked${isSelected ? ' selected' : ''}`;
+            btn.title = "Részlegesen blokkolt nap";
+            btn.addEventListener("click", () => selectBarberDate(dateStr, false));
+            td.appendChild(btn);
+          } else {
+            const btn = document.createElement("button");
+            btn.textContent = d;
+            btn.className = `day-btn${isSelected ? ' selected' : ''}`;
+            btn.title = "Kattints az időpontok megtekintéséhez";
+            btn.addEventListener("click", () => selectBarberDate(dateStr, false));
+            td.appendChild(btn);
           }
-        });
 
-        // Törlés megerősítés - Mégsem gomb
-        document.getElementById("btnCancelDelete").addEventListener("click", () => {
-          document.getElementById("deleteConfirmModal").style.display = "none";
-        });
+          row.appendChild(td);
+          cellCount++;
+        }
 
-        // Hash alapú szekció váltás (pl. /fiok#foglalasaim)
-        function handleHash() {
-          const hash = window.location.hash;
-          if (hash === '#foglalasaim' || hash === '#bookings') {
-            showSection('bookings');
-          } else if (hash === '#rendeleseim' || hash === '#orders') {
-            showSection('orders');
-          } else if (hash === '#info') {
-            showSection('info');
+        // Maradék cellák
+        while (cellCount < 7) {
+          row.appendChild(document.createElement("td"));
+          cellCount++;
+        }
+        calendarBody.appendChild(row);
+      }
+
+      function selectBarberDate(dateStr, isBlocked = false) {
+        barberState.selectedDate = dateStr;
+        barberState.isSelectedDateBlocked = isBlocked;
+        // Re-render calendar to show selected day in green
+        const now = new Date();
+        renderBarberCalendar(now.getFullYear(), now.getMonth());
+        loadBarberTimes(dateStr);
+      }
+
+      async function loadBarberTimes(dateStr) {
+        const container = document.getElementById("barber-times-container");
+        try {
+          const res = await fetch(`/api/barber/times/${dateStr}`);
+          const data = await res.json();
+
+          if (!data.ok) {
+            container.innerHTML = "<p>Hiba történt.</p>";
+            return;
           }
+
+          const times = data.times || [];
+          const dateObj = new Date(dateStr);
+          const dayOfWeek = dateObj.getDay(); // 0 = vasárnap, 6 = szombat
+          
+          let html = `
+            <div style="margin-top: 1rem;">
+              <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1rem;">
+                <h4 style="margin: 0;">Kiválasztott dátum: ${dateStr}</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                  <button onclick="blockWholeDay('${dateStr}')" class="btn-block-day">📅 Egész nap</button>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.8rem;">
+          `;
+          
+          times.forEach((t) => {
+            const isBlocked = t.blocked;
+            const [hour] = t.time.split(':');
+            const hourNum = parseInt(hour);
+            
+            // Szombat 14:30-tól már zárva van
+            const isSaturday = dayOfWeek === 6;
+            const isSaturdayAfter1430 = isSaturday && hourNum >= 14;
+            
+            if (!isSaturdayAfter1430) {
+              html += `
+                <button 
+                  class="time-btn ${isBlocked ? 'blocked' : ''}" 
+                  onclick="toggleBarberTime('${dateStr}', '${t.time}')"
+                  style="background: ${isBlocked ? '#27ae60' : '#555'}; color: white; padding: 0.75rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+                  onmouseover="this.style.boxShadow='0 4px 8px rgba(60,188,199,0.5)'; this.style.background='${isBlocked ? '#229954' : '#666'}';"
+                  onmouseout="this.style.boxShadow='0 2px 4px rgba(0,0,0,0.2)'; this.style.background='${isBlocked ? '#27ae60' : '#555'}';"
+                  title="${isBlocked ? 'Blokkolt - ügyfeleknél nem látszik' : 'Szabad - ügyfelek foglalhatnak'}"
+                >
+                  ${t.time} ${isBlocked ? '✓' : ''}
+                </button>
+              `;
+            }
+          });
+          html += "</div></div>";
+          container.innerHTML = html;
+        } catch (err) {
+          container.innerHTML = "<p>Hiba történt.</p>";
+        }
+      }
+
+      function blockWholeDay(dateStr) {
+        const modal = document.getElementById('blockConfirmModal');
+        const isBlocked = barberState.isSelectedDateBlocked;
+        
+        if (isBlocked) {
+          modal.querySelector('h3').textContent = 'Nap feloldása';
+          document.getElementById('blockConfirmMessage').textContent = `Biztosan feloldod ezt a napot (${dateStr})?`;
+          document.getElementById('btnConfirmBlock').textContent = '✓ Igen, feloldom';
+        } else {
+          modal.querySelector('h3').textContent = 'Nap blokkolása';
+          document.getElementById('blockConfirmMessage').textContent = `Biztosan le szeretnéd blokkolni az egész napot (${dateStr})?`;
+          document.getElementById('btnConfirmBlock').textContent = '✓ Igen, blokkolom';
         }
         
-        // Betöltéskor ellenőrizzük a hash-t
-        handleHash();
+        modal.dataset.dateStr = dateStr;
+        modal.style.display = 'flex';
+      }
+
+      function showBlockHoursModal(dateStr) {
+        const hours = [];
+        for (let h = 9; h < 17; h++) {
+          hours.push(h);
+        }
         
-        // Hash változáskor is
-        window.addEventListener('hashchange', handleHash);
+        const isMobile = window.innerWidth <= 768;
+        const columns = isMobile ? 3 : 4;
+        
+        let html = `<h4>Mely órákat szeretnéd blokkolni?</h4>
+          <div style="display: grid; grid-template-columns: repeat(${columns}, 1fr); gap: 0.5rem; margin-bottom: 1rem;">`;
+        
+        hours.forEach(h => {
+          html += `<label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.85rem;">
+            <input type="checkbox" class="hour-checkbox" value="${h}" data-date="${dateStr}">
+            <span>${String(h).padStart(2, '0')}:00</span>
+          </label>`;
+        });
+        
+        html += `</div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button onclick="blockSelectedHours('${dateStr}')" class="btn-confirm" style="flex: 1; min-width: 120px;">✓ Blokkolás</button>
+            <button onclick="document.getElementById('blockHoursModal').remove()" class="btn-cancel" style="flex: 1; min-width: 120px;">✕ Mégsem</button>
+          </div>`;
+        
+        const modal = document.createElement("div");
+        modal.id = "blockHoursModal";
+        modal.style.cssText = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(34, 34, 34, 0.98); padding: 1.5rem; border-radius: 8px; border: 2px solid #3cbcc7; z-index: 1000; width: 85%; max-width: 400px; max-height: 80vh; overflow-y: auto;";
+        modal.innerHTML = html;
+        document.body.appendChild(modal);
+      }
+
+      async function blockSelectedHours(dateStr) {
+        const checkboxes = document.querySelectorAll('.hour-checkbox[data-date="' + dateStr + '"]:checked');
+        for (const checkbox of checkboxes) {
+          const hour = checkbox.value;
+          await toggleBarberTime(dateStr, `${String(hour).padStart(2, '0')}:00`);
+        }
+        showToast("✓ Órák blokkolva");
+        document.getElementById("blockHoursModal").remove();
+        loadBarberTimes(dateStr);
+      }
+
+      async function toggleWholeDay(dateStr) {
+        try {
+          const res = await fetch("/api/barber/block-day", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date: dateStr })
+          });
+          const data = await res.json();
+          if (data.ok) {
+            showToast("✓ Nap blokkolva");
+            renderBarberCalendar();
+            loadBarberTimes(dateStr);
+          } else {
+            showToast(data.error || "Hiba", "error");
+          }
+        } catch (err) {
+          showToast("Szerverhiba", "error");
+        }
+      }
+
+      async function toggleBarberTime(dateStr, time) {
+        try {
+          const res = await fetch("/api/barber/toggle-time", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date: dateStr, time })
+          });
+          const data = await res.json();
+          if (data.ok) {
+            showToast(data.message || "Sikeresen módosítva");
+            loadBarberTimes(dateStr);
+          } else {
+            showToast(data.error || "Hiba", "error");
+          }
+        } catch (err) {
+          showToast("Szerverhiba", "error");
+        }
+      }
+
+      // ===== EVENT LISTENERS =====
+      document.addEventListener("DOMContentLoaded", () => {
+        // Initialize tab navigator
+        document.getElementById('tab-prev-btn').addEventListener('click', () => navigateTab(-1));
+        document.getElementById('tab-next-btn').addEventListener('click', () => navigateTab(1));
+
+        // Block day modal handlers
+        document.getElementById('btnConfirmBlock').addEventListener('click', async () => {
+          const dateStr = document.getElementById('blockConfirmModal').dataset.dateStr;
+          await toggleWholeDay(dateStr);
+          document.getElementById('blockConfirmModal').style.display = 'none';
+        });
+
+        document.getElementById('btnCancelBlock').addEventListener('click', () => {
+          document.getElementById('blockConfirmModal').style.display = 'none';
+        });
+
+        // Cancel booking modal handlers
+        document.getElementById('btnConfirmCancel').addEventListener('click', async () => {
+          const modal = document.getElementById('cancelBookingModal');
+          const bookingIdValue = modal.dataset.bookingId;
+          
+          if (bookingIdValue === 'all') {
+            // Összes foglalás lemondása
+            try {
+              const res = await fetch("/api/barber/bookings");
+              const data = await res.json();
+              
+              if (data.ok && data.bookings && data.bookings.length > 0) {
+                for (const booking of data.bookings) {
+                  await fetch(`/api/booking/${booking.id}`, { method: "DELETE" });
+                }
+                showToast("✓ Összes foglalás lemondva");
+              } else {
+                showToast("Nincsenek foglalások");
+              }
+            } catch (err) {
+              console.error(err);
+              showToast("Szerverhiba", "error");
+            }
+          } else {
+            // Egy foglalás lemondása
+            const bookingId = parseInt(bookingIdValue);
+            try {
+              const res = await fetch(`/api/booking/${bookingId}`, { method: "DELETE" });
+              const data = await res.json();
+              if (res.ok && data.ok) {
+                showToast("✓ Foglalás lemondva");
+              } else {
+                showToast("Hiba: " + (data.error || "Ismeretlen hiba"), "error");
+              }
+            } catch (err) {
+              console.error(err);
+              showToast("Szerverhiba", "error");
+            }
+          }
+          
+          document.getElementById('cancelBookingModal').style.display = 'none';
+          document.getElementById('cancelBookingMessage').textContent = 'Biztosan lemondod ezt a foglalást?';
+          loadBarberBookings();
+        });
+
+        document.getElementById('btnCancelCancel').addEventListener('click', () => {
+          document.getElementById('cancelBookingModal').style.display = 'none';
+        });
+
+        if (!isBarber) {
+          loadBookings();
+        } else {
+          loadBarberBookings();
+        }
+
+        // Barber calendar navigation
+        if (isBarber) {
+          document.getElementById("barber-prev-month").addEventListener("click", () => {
+            barberState.calendarMonth--;
+            if (barberState.calendarMonth < 0) {
+              barberState.calendarMonth = 11;
+              barberState.calendarYear--;
+            }
+            renderBarberCalendar();
+          });
+
+          document.getElementById("barber-next-month").addEventListener("click", () => {
+            barberState.calendarMonth++;
+            if (barberState.calendarMonth > 11) {
+              barberState.calendarMonth = 0;
+              barberState.calendarYear++;
+            }
+            renderBarberCalendar();
+          });
+        }
+
+        // Delete confirmation modal - Normal user
+        if (!isBarber) {
+          document.getElementById("btnConfirmDelete").addEventListener("click", async () => {
+            const modal = document.getElementById("deleteConfirmModal");
+            const bookingId = parseInt(modal.dataset.bookingId);
+            try {
+              const res = await fetch(`/api/booking/${bookingId}`, {
+                method: "DELETE",
+              });
+              const data = await res.json();
+
+              if (res.ok && data.ok) {
+                showToast("✓ Foglalás sikeresen törölve");
+                document.getElementById("deleteConfirmModal").style.display = "none";
+                loadBookings();
+              } else {
+                showToast("Hiba: " + (data.error || "Ismeretlen hiba"), "error");
+                document.getElementById("deleteConfirmModal").style.display = "none";
+              }
+            } catch (err) {
+              console.error(err);
+              showToast("Nem sikerült elérni a szervert", "error");
+              document.getElementById("deleteConfirmModal").style.display = "none";
+            }
+          });
+
+          document.getElementById("btnCancelDelete").addEventListener("click", () => {
+            document.getElementById("deleteConfirmModal").style.display = "none";
+          });
+
+          function handleHash() {
+            const hash = window.location.hash;
+            if (hash === '#foglalasaim' || hash === '#bookings') {
+              showSection('bookings');
+            } else if (hash === '#rendeleseim' || hash === '#orders') {
+              showSection('orders');
+            } else if (hash === '#info') {
+              showSection('info');
+            }
+          }
+          
+          handleHash();
+          window.addEventListener('hashchange', handleHash);
+        }
       });
     </script>
     <script src="/js/mobileNav.js"></script>

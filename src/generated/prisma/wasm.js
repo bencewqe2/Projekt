@@ -184,7 +184,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Felhasználó\\Desktop\\Projekt\\src\\generated\\prisma",
+      "value": "C:\\Users\\Theo\\Desktop\\Projekt\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -198,7 +198,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Felhasználó\\Desktop\\Projekt\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\Theo\\Desktop\\Projekt\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
