@@ -425,6 +425,149 @@ app.get("/verify", async (req, res) => {
   }
 });
 
+// Elérhető időpontok lekérése egy adott napra
+app.get("/api/available-times/:date", async (req, res) => {
+  try {
+    const { date } = req.params;
+    
+    // Validáció: YYYY-MM-DD format
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return res.status(400).json({ error: "Érvénytelen dátum formátum." });
+    }
+
+    // Nap típusának meghatározása
+    const dateObj = new Date(date);
+    const dayOfWeek = dateObj.getDay(); // 0 = vasárnap, 6 = szombat
+
+    // Vasárnap zárva
+    if (dayOfWeek === 0) {
+      return res.json({ ok: true, available: [], booked: [], closed: true });
+    }
+
+    // Időpontok generálása a nap típusa alapján
+    // Szombat: 9:00-15:00, Hétköznap: 9:00-20:00
+    const timeSlots = [];
+    const endHour = dayOfWeek === 6 ? 15 : 20;
+    for (let h = 9; h < endHour; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        const hour = String(h).padStart(2, "0");
+        const minute = String(m).padStart(2, "0");
+        timeSlots.push(`${hour}:${minute}`);
+      }
+    }
+
+    // Lekérdezzük a foglalt időpontokat az adott napra
+    const startOfDay = new Date(`${date}T00:00:00Z`);
+    const endOfDay = new Date(`${date}T23:59:59Z`);
+
+    // Borbély szűrés (query param)
+    const barber = req.query.barber;
+
+    const bookedSlots = await db.idopont.findMany({
+      where: {
+        idopont: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+      select: { idopont: true, szolgal: true },
+    });
+
+    // Az idopontokat szöveggé konvertáljuk (HH:mm) - csak az adott borbélynál
+    const bookedTimes = bookedSlots
+      .filter((b) => {
+        if (!barber) return true; // Ha nincs borbély megadva, minden foglalás számít
+        const bookedBarber = b.szolgal ? b.szolgal.split('|')[0] : null;
+        return bookedBarber === barber;
+      })
+      .map((b) => {
+        const dt = new Date(b.idopont);
+        const hour = String(dt.getUTCHours()).padStart(2, "0");
+        const minute = String(dt.getUTCMinutes()).padStart(2, "0");
+        return `${hour}:${minute}`;
+      });
+
+    // Szabad időpontok
+    const availableTimes = timeSlots.filter((t) => !bookedTimes.includes(t));
+
+    return res.json({ ok: true, available: availableTimes, booked: bookedTimes });
+  } catch (err) {
+    console.error("Error fetching available times:", err);
+    return res.status(500).json({ error: "Nem sikerült lekérni az elérhető időpontokat." });
+  }
+});
+
+// Teli napok lekérése egy hónapra (ahol már nincs szabad időpont)
+app.get("/api/full-days/:year/:month", async (req, res) => {
+  try {
+    const year = parseInt(req.params.year);
+    const month = parseInt(req.params.month); // 1-12
+
+    if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
+      return res.status(400).json({ error: "Érvénytelen év vagy hónap." });
+    }
+
+    // Hónap első és utolsó napja
+    const startOfMonth = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
+    const endOfMonth = new Date(Date.UTC(year, month, 0, 23, 59, 59));
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    // Slot számok napok szerint:
+    // Vasárnap: 0 (zárva), Szombat: 12 (9:00-15:00), Hétköznap: 22 (9:00-20:00)
+    function getSlotsForDay(dayOfWeek) {
+      if (dayOfWeek === 0) return 0; // Vasárnap
+      if (dayOfWeek === 6) return 12; // Szombat
+      return 22; // Hétköznap
+    }
+
+    // Borbély szűrés (query param)
+    const barber = req.query.barber;
+
+    // Lekérdezzük az összes foglalást ebben a hónapban
+    const bookings = await db.idopont.findMany({
+      where: {
+        idopont: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+      select: { idopont: true, szolgal: true },
+    });
+
+    // Számoljuk meg a foglalásokat napokra bontva - csak az adott borbélynál
+    const bookingsPerDay = {};
+    bookings.forEach((b) => {
+      // Borbély szűrés
+      if (barber) {
+        const bookedBarber = b.szolgal ? b.szolgal.split('|')[0] : null;
+        if (bookedBarber !== barber) return; // Más borbély foglalása, kihagyjuk
+      }
+      const dt = new Date(b.idopont);
+      const day = dt.getUTCDate();
+      bookingsPerDay[day] = (bookingsPerDay[day] || 0) + 1;
+    });
+
+    // Meghatározzuk a teli napokat és a vasárnapokat
+    const fullDays = [];
+    const sundays = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayOfWeek = new Date(year, month - 1, d).getDay();
+      const totalSlots = getSlotsForDay(dayOfWeek);
+      
+      if (dayOfWeek === 0) {
+        sundays.push(d); // Vasárnap - zárva
+      } else if ((bookingsPerDay[d] || 0) >= totalSlots) {
+        fullDays.push(d);
+      }
+    }
+
+    return res.json({ ok: true, fullDays, sundays });
+  } catch (err) {
+    console.error("Error fetching full days:", err);
+    return res.status(500).json({ error: "Nem sikerült lekérni a teli napokat." });
+  }
+});
+
 // Foglalás mentése — csak bejelentkezett felhasználó menthet
 app.post("/api/booking", urlencodedParser, async (req, res) => {
   const session = req.session;
@@ -432,16 +575,16 @@ app.post("/api/booking", urlencodedParser, async (req, res) => {
     return res.status(401).json({ error: "Kérjük, jelentkezz be a foglaláshoz." });
   }
 
-  const { date, time, service } = req.body || {};
+  const { date, time, service, barber } = req.body || {};
   if (!date || !time) {
     return res.status(400).json({ error: "Hiányzó dátum vagy idő." });
   }
 
-  // service lehet opcionális de ha üres, jelöljük meg
+  // service és barber lehet opcionális
   const chosenService = service && String(service).trim() ? String(service).trim() : null;
+  const chosenBarber = barber && String(barber).trim() ? String(barber).trim() : null;
 
   // Parse date + time and construct a Date in UTC to avoid timezone shifts
-  // (Date.UTC creates a timestamp corresponding to the selected local clock values)
   const [y, m, d] = String(date)
     .split("-")
     .map((v) => Number(v));
@@ -453,11 +596,21 @@ app.post("/api/booking", urlencodedParser, async (req, res) => {
     return res.status(400).json({ error: "Érvénytelen dátum/idő." });
   }
 
-  // Ellenőrzés: ne legyen már foglalás ugyanarra az időpontra
+  // Ellenőrzés: ne legyen már foglalás ugyanarra az időpontra az adott borbélynál
   try {
-    const existing = await db.idopont.findFirst({ where: { idopont: dt } });
-    if (existing) {
-      return res.status(409).json({ error: "Ezen az időponton már van foglalás. Válassz másik időpontot." });
+    const existingBookings = await db.idopont.findMany({ 
+      where: { idopont: dt },
+      select: { szolgal: true }
+    });
+    
+    // Ellenőrizzük, hogy az adott borbélynál van-e már foglalás
+    const hasConflict = existingBookings.some((b) => {
+      const bookedBarber = b.szolgal ? b.szolgal.split('|')[0] : null;
+      return bookedBarber === chosenBarber;
+    });
+    
+    if (hasConflict) {
+      return res.status(409).json({ error: "Ezen az időponton már van foglalás ennél a borbélynál. Válassz másik időpontot." });
     }
   } catch (err) {
     console.error("Error checking existing booking:", err);
@@ -465,11 +618,13 @@ app.post("/api/booking", urlencodedParser, async (req, res) => {
   }
 
   try {
+    // Tárolunk: "barber|service" formátumban a szolgal mezőben
+    const bookingData = chosenBarber ? `${chosenBarber}|${chosenService}` : chosenService;
     await db.idopont.create({
       data: {
         felhaszid: session.user.id,
         idopont: dt,
-        szolgal: chosenService,
+        szolgal: bookingData,
       },
     });
 

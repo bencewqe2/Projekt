@@ -11,12 +11,9 @@ body {
   min-height: 100vh;
   color: #f5f5f5;
   line-height: 1.6;
-  overflow-x: hidden;
-  position: relative;
-  z-index: 0;
 }
 
-/* 🎥 Videó háttér */
+/* Video háttér */
 #hatter_video {
   position: fixed;
   top: 0;
@@ -27,7 +24,6 @@ body {
   z-index: -2;
 }
 
-/* 🌫️ Áttetsző sötét réteg a szöveg olvashatóságához */
 body::before {
   content: "";
   position: fixed;
@@ -39,6 +35,7 @@ body::before {
   z-index: -1;
 }
 
+/* Header */
 header {
   display: flex;
   justify-content: space-between;
@@ -54,10 +51,11 @@ header .logo {
   color: #3cbcc7;
 }
 
-header nav ul {
+.nav-list {
   list-style: none;
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
+  align-items: center;
 }
 
 header nav a {
@@ -71,262 +69,7 @@ header nav a:hover {
   color: #3cbcc7;
 }
 
-.hero {
-  text-align: center;
-  padding: 5rem 2rem;
-}
-
-.hero h1 {
-  font-size: 3rem;
-  color: #3cbcc7;
-  margin-bottom: 1rem;
-}
-
-.hero p {
-  font-size: 1.2rem;
-  color: #ccc;
-}
-
-section {
-  padding: 4rem 2rem;
-  background: rgba(0, 0, 0, 0.65);
-  border-radius: 10px;
-  margin: 2rem auto;
-  max-width: 1000px;
-}
-
-h2 {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  color: #3cbcc7;
-}
-
-.service-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
-}
-
-.service {
-  background-color: rgba(34, 34, 34, 0.85);
-  padding: 2rem;
-  border-radius: 10px;
-  width: 200px;
-  text-align: center;
-  border: 1px solid #3cbcc7;
-  transition: transform 0.3s;
-}
-
-.service:hover {
-  transform: scale(1.05);
-}
-
-.service-nyitva {
-  background-color: rgba(34, 34, 34, 0.8);
-  padding: 1rem;
-  border-radius: 10px;
-  max-width: 500px;
-  border: 1px solid #3cbcc7;
-  margin: 0.5rem 0;
-}
-
-form {
-  max-width: 720px;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* Középre igazítás a foglaló űrlaphoz */
-#booking form {
-  align-items: flex-start;
-}
-
-#booking form label {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.4rem;
-  width: 100%;
-}
-
-#booking form select {
-  width: 100%;
-  max-width: 680px;
-}
-
-#booking button {
-  align-self: flex-start;
-  min-width: 160px;
-}
-
-/* Popup üzenet stílusok */
-
-/* Foglalás kártya - szélesebb */
-.booking-card {
-  background: rgba(0, 0, 0, 0.65);
-  padding: 6rem;
-  border-radius: 10px;
-  max-width: 920px;
-  margin: 2rem auto;
-  text-align: left;
-}
-.popup-overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 220ms ease;
-  z-index: 2000;
-}
-
-.popup-overlay.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.popup-box {
-  background: linear-gradient(180deg, #0f1720, #111827);
-  color: #e6f7f6;
-  border: 2px solid #3cbcc7;
-  padding: 1.2rem 1.4rem;
-  border-radius: 10px;
-  min-width: 260px;
-  max-width: 92%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  transform: translateY(18px) scale(0.98);
-  transition:
-    transform 240ms cubic-bezier(0.2, 0.9, 0.3, 1),
-    opacity 240ms;
-  opacity: 0;
-}
-
-.popup-overlay.show .popup-box {
-  transform: translateY(0) scale(1);
-  opacity: 1;
-}
-
-.popup-box.success {
-  border-color: #3cbcc7;
-}
-
-.popup-box.error {
-  border-color: #f87171;
-}
-
-.popup-actions {
-  display: flex;
-  gap: 0.6rem;
-  justify-content: center;
-  margin-top: 0.6rem;
-}
-
-.popup-close {
-  background: transparent;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0.45rem 0.8rem;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-input,
-select,
-button {
-  padding: 0.8rem;
-  border-radius: 5px;
-  border: none;
-  outline: none;
-}
-
-input,
-select {
-  background-color: #333;
-  color: #f5f5f5;
-}
-
-button {
-  background-color: #3cbcc7;
-  color: #111;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #3cbcc7;
-}
-
-footer {
-  text-align: center;
-  padding: 2rem;
-  background-color: rgba(17, 17, 17, 0.8);
-  border-top: 2px solid #3cbcc7;
-  color: #ccc;
-  margin-top: auto;
-}
-
-.container {
-  padding: 6rem 1rem;
-  max-width: 900px;
-  margin: 0 auto;
-  flex: 1 0 auto;
-}
-
-/* Mobile improvements */
-@media (max-width: 768px) {
-  #hatter_video {
-    display: none;
-  }
-  .hero {
-    padding: 2rem 1rem;
-  }
-  section {
-    padding: 1rem;
-    margin: 1rem;
-  }
-  .booking-card {
-    padding: 2rem;
-  }
-  form {
-    max-width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .booking-card {
-    padding: 1rem;
-  }
-}
-
-.plusz-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-.plusz-info div {
-  margin: 0.3rem 0;
-}
-
-/* NAV LISTA NE MUTASSON • JELET */
-.nav-list {
-  list-style: none;
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-/* PROFIL IKON */
+/* Profile menu */
 .profile-menu {
   position: relative;
   cursor: pointer;
@@ -338,10 +81,8 @@ footer {
   border-radius: 50%;
   border: 2px solid #3cbcc7;
   padding: 3px;
-  display: block;
 }
 
-/* LENYÍLÓ MENÜ */
 .dropdown {
   display: none;
   position: absolute;
@@ -361,13 +102,6 @@ footer {
   text-align: center;
 }
 
-.dropdown li.username {
-  color: #3cbcc7;
-  font-weight: 700;
-  padding-top: 0.4rem;
-  padding-bottom: 0.4rem;
-}
-
 .dropdown li a,
 .logout-btn {
   color: #fff;
@@ -377,7 +111,6 @@ footer {
   font-size: 1rem;
   cursor: pointer;
   width: 100%;
-  text-align: center;
   display: block;
 }
 
@@ -385,7 +118,659 @@ footer {
   background: rgba(60, 188, 199, 0.6);
 }
 
-/* AKTÍV ÁLLAPOT - LENYÍLVA */
 .profile-menu.open .dropdown {
   display: block;
+}
+
+/* Container */
+.container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+}
+
+/* Booking card */
+.booking-card {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2rem;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.booking-card h2 {
+  text-align: center;
+  color: #3cbcc7;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.booking-card h3 {
+  color: #f5f5f5;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+/* Hidden */
+.hidden {
+  display: none !important;
+}
+
+/* Form group */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: #3cbcc7;
+  font-weight: 600;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 0.7rem;
+  border: 2px solid rgba(60, 188, 199, 0.5);
+  border-radius: 5px;
+  background: #333;
+  color: #f5f5f5;
+  font-size: 1rem;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: #3cbcc7;
+}
+
+/* Buttons */
+.btn-primary {
+  display: block;
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  background: #3cbcc7;
+  color: #111;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover {
+  background: #2ea8b2;
+}
+
+.btn-secondary {
+  display: block;
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 1rem;
+  background: transparent;
+  color: #3cbcc7;
+  border: 2px solid #3cbcc7;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-secondary:hover {
+  background: rgba(60, 188, 199, 0.2);
+}
+
+/* Calendar navigation */
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.calendar-nav span {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #3cbcc7;
+}
+
+.btn-nav {
+  padding: 0.4rem 0.8rem;
+  background: rgba(60, 188, 199, 0.2);
+  color: #3cbcc7;
+  border: 1px solid #3cbcc7;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-nav:hover {
+  background: rgba(60, 188, 199, 0.4);
+}
+
+/* Calendar table */
+#calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+#calendar-table th {
+  padding: 0.5rem 0;
+  color: #3cbcc7;
+  font-size: 0.85rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(60, 188, 199, 0.3);
+}
+
+#calendar-table td {
+  text-align: center;
+  padding: 0.3rem;
+  height: 40px;
+}
+
+#calendar-table td.disabled {
+  color: #666;
+}
+
+.day-btn {
+  width: 100%;
+  height: 32px;
+  background: rgba(60, 60, 60, 0.8);
+  color: #f5f5f5;
+  border: 1px solid rgba(60, 188, 199, 0.3);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.day-btn:hover {
+  background: rgba(60, 188, 199, 0.3);
+  border-color: #3cbcc7;
+}
+
+/* Times */
+#selected-date-text {
+  color: #3cbcc7;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+#times-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.time-btn {
+  padding: 0.6rem;
+  background: rgba(60, 60, 60, 0.8);
+  color: #f5f5f5;
+  border: 1px solid rgba(60, 188, 199, 0.3);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-btn:hover {
+  background: rgba(60, 188, 199, 0.3);
+  border-color: #3cbcc7;
+}
+
+/* Summary box */
+.summary-box {
+  background: rgba(60, 188, 199, 0.1);
+  border: 1px solid rgba(60, 188, 199, 0.4);
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  color: #999;
+  font-size: 0.95rem;
+}
+
+.summary-value {
+  color: #3cbcc7;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.summary-price {
+  margin-top: 0.5rem;
+  padding-top: 0.8rem;
+  border-top: 2px solid rgba(60, 188, 199, 0.3);
+}
+
+.summary-price .summary-value {
+  color: #f0c040;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Popup */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 1000;
+}
+
+.popup-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.popup-box {
+  background: #1a1a1a;
+  border: 2px solid #3cbcc7;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  min-width: 250px;
+}
+
+.popup-box.error {
+  border-color: #e74c3c;
+}
+
+.popup-box.success {
+  border-color: #3cbcc7;
+}
+
+#popupMsg {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(17, 17, 17, 0.8);
+  border-top: 2px solid #3cbcc7;
+  color: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .booking-card {
+    padding: 1.5rem;
+  }
+
+  #times-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .btn-nav {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Sikeres foglalás popup */
+.success-popup-box {
+  text-align: center;
+  padding: 2rem;
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3cbcc7, #2aa5af);
+  color: #fff;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.success-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #3cbcc7;
+  margin-bottom: 0.5rem;
+}
+
+.success-message {
+  color: #ccc;
+  margin-bottom: 1.5rem;
+}
+
+.success-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.success-buttons a {
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.success-buttons .btn-primary {
+  background: linear-gradient(135deg, #3cbcc7, #2aa5af);
+  color: #111;
+}
+
+.success-buttons .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(60, 188, 199, 0.3);
+}
+
+.success-buttons .btn-secondary {
+  background: rgba(60, 188, 199, 0.15);
+  color: #3cbcc7;
+  border: 1px solid #3cbcc7;
+}
+
+.success-buttons .btn-secondary:hover {
+  background: rgba(60, 188, 199, 0.25);
+}
+
+/* ==================== HAMBURGER MENÜ ==================== */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1100;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  background: #3cbcc7;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+  margin: 3px 0;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Desktop nézetben ezek látszanak, mobilon nem */
+.desktop-profile {
+  display: flex;
+}
+
+/* Mobilon ezek látszanak, desktopon nem */
+.mobile-profile-top,
+.mobile-logout,
+.mobile-user-menu {
+  display: none !important;
+}
+
+/* ==================== MOBIL NÉZET FOGLALAS ==================== */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  /* Desktop profil elrejtése mobilon */
+  .desktop-profile {
+    display: none !important;
+  }
+
+  /* Profil almenü a slide-in menü tetején */
+  .mobile-profile-top {
+    display: flex !important;
+    flex-direction: column;
+    padding: 0 !important;
+    border-bottom: 2px solid rgba(60, 188, 199, 0.4) !important;
+    background: rgba(60, 188, 199, 0.1);
+  }
+
+  .mobile-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+  }
+
+  .mobile-profile-top .mobile-profile-icon {
+    width: 22px;
+    height: 22px;
+    filter: invert(1);
+  }
+
+  .mobile-profile-toggle {
+    font-size: 1.1rem;
+    color: #3cbcc7;
+    pointer-events: auto;
+  }
+
+  .mobile-profile-header:hover .mobile-profile-toggle {
+    color: #5cd8e3;
+  }
+
+  /* Almenü (alapértelmezetten rejtett) */
+  .mobile-profile-submenu {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .mobile-profile-submenu.open {
+    display: block;
+  }
+
+  .mobile-profile-submenu li a {
+    display: block;
+    padding: 0.8rem 1.5rem 0.8rem 3rem;
+    font-size: 1rem;
+    color: #8ad4db;
+    text-decoration: none;
+  }
+
+  .mobile-profile-submenu li a:hover {
+    color: #3cbcc7;
+    background: rgba(60, 188, 199, 0.1);
+  }
+
+  /* Kijelentkezés a menü végén (csak mobilon) */
+  .mobile-logout {
+    display: block !important;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(60, 188, 199, 0.3);
+  }
+
+  .mobile-logout a {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: #e74c3c !important;
+    font-size: 1.1rem;
+    text-decoration: none;
+  }
+
+  .mobile-logout a:hover {
+    color: #ff6b6b !important;
+    background: rgba(231, 76, 60, 0.1);
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0.8rem 1rem;
+  }
+
+  body {
+    padding-top: 70px;
+  }
+
+  nav#mainNav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: rgba(17, 17, 17, 0.98);
+    transition: right 0.3s ease;
+    z-index: 1050;
+    padding-top: 80px;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+  }
+
+  nav#mainNav.active {
+    right: 0;
+  }
+
+  nav#mainNav ul.nav-list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  nav#mainNav ul.nav-list > li {
+    border-bottom: 1px solid rgba(60, 188, 199, 0.2);
+    pointer-events: auto;
+  }
+
+  nav#mainNav ul.nav-list > li > a {
+    display: block;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    pointer-events: auto;
+    position: relative;
+    z-index: 1051;
+  }
+
+  nav#mainNav .profile-menu {
+    padding: 1rem 1.5rem;
+  }
+
+  .container {
+    padding: 1rem 0.5rem;
+  }
+
+  .booking-card {
+    padding: 1.5rem 1rem;
+    margin: 0.5rem;
+  }
+
+  .booking-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .booking-step h3 {
+    font-size: 1.1rem;
+  }
+
+  #calendar-table {
+    font-size: 0.85rem;
+  }
+
+  .day-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+
+  #times-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .time-btn {
+    padding: 0.6rem 0.3rem;
+    font-size: 0.85rem;
+  }
+
+  .summary-box {
+    padding: 1rem;
+  }
+
+  .success-popup-box {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .success-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .success-buttons a {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  header .logo {
+    font-size: 1rem;
+  }
+
+  .booking-card {
+    padding: 1rem;
+  }
+
+  #times-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .day-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
 }

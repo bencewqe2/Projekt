@@ -612,3 +612,140 @@ header nav a:hover {
   transition: all 0.3s ease;
   flex: 1;
 }
+
+/* ==================== HAMBURGER MENÜ ==================== */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1100;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  background: #3cbcc7;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+  margin: 3px 0;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* ==================== MOBIL NÉZET FIÓK ==================== */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0.8rem 1rem;
+  }
+
+  body {
+    padding-top: 70px;
+  }
+
+  nav#mainNav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: rgba(17, 17, 17, 0.98);
+    transition: right 0.3s ease;
+    z-index: 1050;
+    padding-top: 80px;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+  }
+
+  nav#mainNav.active {
+    right: 0;
+  }
+
+  nav#mainNav ul {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    pointer-events: auto;
+  }
+
+  nav#mainNav ul li {
+    border-bottom: 1px solid rgba(60, 188, 199, 0.2);
+    pointer-events: auto;
+  }
+
+  nav#mainNav ul li a {
+    display: block;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    pointer-events: auto;
+    position: relative;
+    z-index: 1051;
+  }
+
+  .account-header {
+    font-size: 1.3rem;
+    padding: 1rem;
+  }
+
+  .account-wrapper {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+
+  .account-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .account-sidebar button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .account-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  header .logo {
+    font-size: 1rem;
+  }
+
+  .account-sidebar button {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.8rem;
+  }
+}
