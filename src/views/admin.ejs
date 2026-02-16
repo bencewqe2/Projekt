@@ -30,12 +30,13 @@
 
     <div class="account-header">Admin: <%= user.felhnev %></div>
 
-    <div class="account-wrapper">
-      <aside class="account-sidebar">
-        <button onclick="showSection('bookings')">Foglalások</button>
-        <button onclick="showSection('orders')">Rendelések</button>
-        <button onclick="showSection('users')">Felhasználók</button>
-      </aside>
+    <div class="account-wrapper" style="flex-direction: column; gap: 0;">
+      <!-- Tab Navigator -->
+      <div class="account-tab-navigator">
+        <button id="tab-prev-btn" class="tab-arrow-btn">◀</button>
+        <span id="tab-title-display" class="tab-title-display">Foglalások</span>
+        <button id="tab-next-btn" class="tab-arrow-btn">▶</button>
+      </div>
 
       <main class="account-content">
         <section id="bookings" class="account-section active">
@@ -107,12 +108,45 @@
     </div>
 
     <script>
+      // Tab System
+      const tabs = [
+        { id: 'bookings', label: 'Foglalások' },
+        { id: 'orders', label: 'Rendelések' },
+        { id: 'users', label: 'Felhasználók' }
+      ];
+      let currentTabIndex = 0;
+
       function showSection(id) {
+        // Find tab index
+        const tabIndex = tabs.findIndex(t => t.id === id);
+        if (tabIndex !== -1) {
+          currentTabIndex = tabIndex;
+        }
+        
+        // Update all sections - remove active class
         document.querySelectorAll(".account-section").forEach((s) => s.classList.remove("active"));
-        document.getElementById(id).classList.add("active");
+        
+        // Add active class to selected section
+        const section = document.getElementById(id);
+        if (section) {
+          section.classList.add("active");
+        }
+        
+        // Update tab title
+        const currentTab = tabs[currentTabIndex];
+        if (currentTab) {
+          document.getElementById("tab-title-display").textContent = currentTab.label;
+        }
+        
+        // Load data if needed
         if (id === "bookings") loadBookings();
         if (id === "orders") loadOrders();
         if (id === "users") loadUsers();
+      }
+
+      function navigateTab(direction) {
+        currentTabIndex = (currentTabIndex + direction + tabs.length) % tabs.length;
+        showSection(tabs[currentTabIndex].id);
       }
 
       async function loadBookings() {
@@ -295,7 +329,12 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        loadBookings();
+        // Initialize tab navigator
+        document.getElementById('tab-prev-btn').addEventListener('click', () => navigateTab(-1));
+        document.getElementById('tab-next-btn').addEventListener('click', () => navigateTab(1));
+
+        // Initialize first tab
+        showSection('bookings');
 
         // Bezárás gomb
         document.getElementById("btnClosePanel").addEventListener("click", () => {

@@ -730,6 +730,44 @@ app.get("/api/barber/bookings", async (req, res) => {
   }
 });
 
+// Barber foglalás törlése
+app.delete("/api/barber/booking/:id", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "BARBER") {
+    return res.status(403).json({ error: "Csak borbélyok érhetik el ezt az endpoint-ot" });
+  }
+
+  const bookingId = req.params.id;
+  if (!bookingId) {
+    return res.status(400).json({ error: "Hiányzó foglalás ID." });
+  }
+
+  try {
+    const booking = await db.idopont.findUnique({
+      where: { id: parseInt(bookingId) },
+    });
+
+    if (!booking) {
+      return res.status(404).json({ error: "Foglalás nem található." });
+    }
+
+    // Ellenőrzés: csak a saját foglalásait lehet törölni (ahol a borbély neve szerepel)
+    const barberName = session.user.felhnev;
+    if (!booking.szolgal.includes(barberName)) {
+      return res.status(403).json({ error: "Nincs jogosultságod törölni ezt a foglalást." });
+    }
+
+    await db.idopont.delete({
+      where: { id: parseInt(bookingId) },
+    });
+
+    return res.json({ ok: true, message: "Foglalás sikeresen lemondva." });
+  } catch (err) {
+    console.error("Barber booking delete error:", err);
+    return res.status(500).json({ error: "Nem sikerült törölni a foglalást." });
+  }
+});
+
 // Barber által blokkolva napok
 app.get("/api/barber/blocked-days/:year/:month", async (req, res) => {
   const session = req.session;
