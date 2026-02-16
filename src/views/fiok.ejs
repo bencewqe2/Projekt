@@ -171,7 +171,8 @@
         calendarMonth: new Date().getMonth(),
         calendarYear: new Date().getFullYear(),
         selectedDate: null,
-        isSelectedDateBlocked: false
+        isSelectedDateBlocked: false,
+        timesScrollLeft: 0
       };
 
       const monthNames = ["Január", "Február", "Március", "Április", "Május", "Június",
@@ -476,16 +477,48 @@
       }
 
       function selectBarberDate(dateStr, isBlocked = false) {
+        // Mentse az oldal scroll pozícióját
+        const pageScrollY = window.scrollY;
+        
+        // Távolítsa el az összes anteriormente kijelölt napot
+        document.querySelectorAll('.day-btn.selected').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+        
         barberState.selectedDate = dateStr;
         barberState.isSelectedDateBlocked = isBlocked;
-        // Re-render calendar to show selected day in green
-        const now = new Date();
-        renderBarberCalendar(now.getFullYear(), now.getMonth());
+        
+        // Jelölje meg az új kijelölt napot
+        const dateObj = new Date(dateStr);
+        const dayNum = dateObj.getDate();
+        const allDayButtons = document.querySelectorAll('.day-btn');
+        allDayButtons.forEach(btn => {
+          const btnText = btn.textContent.trim();
+          if (btnText === String(dayNum) || btnText.startsWith(String(dayNum) + ' ')) {
+            btn.classList.add('selected');
+          }
+        });
+        
+        // Mentse az időpont konténer scroll pozícióját
+        const oldScrollContainer = document.getElementById("barber-times-scroll");
+        if (oldScrollContainer) {
+          barberState.timesScrollLeft = oldScrollContainer.scrollLeft;
+        }
+        
         loadBarberTimes(dateStr);
+        
+        // Helyreállítsa az oldal scroll pozícióját erőteljesebben
+        const restoreScroll = () => {
+          window.scrollTo(0, pageScrollY);
+        };
+        setTimeout(restoreScroll, 0);
+        setTimeout(restoreScroll, 50);
+        setTimeout(restoreScroll, 100);
       }
 
       async function loadBarberTimes(dateStr) {
         const container = document.getElementById("barber-times-container");
+        
         try {
           const res = await fetch(`/api/barber/times/${dateStr}`);
           const data = await res.json();
@@ -507,8 +540,22 @@
                   <button onclick="blockWholeDay('${dateStr}')" class="btn-block-day">📅 Egész nap</button>
                 </div>
               </div>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.8rem;">
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                <button id="scroll-left-btn" onclick="scrollTimesLeft()" style="background: rgba(60, 188, 199, 0.3); border: 1px solid #3cbcc7; color: #3cbcc7; padding: 0.5rem 0.75rem; font-size: 1.2rem; cursor: pointer; border-radius: 4px; transition: all 0.2s;">◀</button>
+                <div id="barber-times-scroll" style="flex: 1; display: flex; overflow-x: auto; gap: 0.8rem; scroll-behavior: smooth; padding: 0.5rem; border: 1px solid rgba(60, 188, 199, 0.3); border-radius: 8px; background: rgba(0, 0, 0, 0.4); scrollbar-width: none; -ms-overflow-style: none;">
           `;
+          
+          // Rejtett scrollbar CSS
+          if (!document.getElementById('hidden-scrollbar-style')) {
+            const style = document.createElement('style');
+            style.id = 'hidden-scrollbar-style';
+            style.textContent = `
+              #barber-times-scroll::-webkit-scrollbar {
+                display: none;
+              }
+            `;
+            document.head.appendChild(style);
+          }
           
           times.forEach((t) => {
             const isBlocked = t.blocked;
@@ -524,7 +571,7 @@
                 <button 
                   class="time-btn ${isBlocked ? 'blocked' : ''}" 
                   onclick="toggleBarberTime('${dateStr}', '${t.time}')"
-                  style="background: ${isBlocked ? '#27ae60' : '#555'}; color: white; padding: 0.75rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+                  style="background: ${isBlocked ? '#27ae60' : '#555'}; color: white; padding: 0.75rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2); white-space: nowrap; min-width: 110px; flex-shrink: 0;"
                   onmouseover="this.style.boxShadow='0 4px 8px rgba(60,188,199,0.5)'; this.style.background='${isBlocked ? '#229954' : '#666'}';"
                   onmouseout="this.style.boxShadow='0 2px 4px rgba(0,0,0,0.2)'; this.style.background='${isBlocked ? '#27ae60' : '#555'}';"
                   title="${isBlocked ? 'Blokkolt - ügyfeleknél nem látszik' : 'Szabad - ügyfelek foglalhatnak'}"
@@ -534,8 +581,35 @@
               `;
             }
           });
-          html += "</div></div>";
+          html += `
+                </div>
+                <button id="scroll-right-btn" onclick="scrollTimesRight()" style="background: rgba(60, 188, 199, 0.3); border: 1px solid #3cbcc7; color: #3cbcc7; padding: 0.5rem 0.75rem; font-size: 1.2rem; cursor: pointer; border-radius: 4px; transition: all 0.2s;">▶</button>
+              </div>
+              <div id="barber-times-progress" style="height: 4px; background: rgba(60, 188, 199, 0.2); border-radius: 2px; overflow: hidden; margin-bottom: 1rem;">
+                <div style="height: 100%; background: #3cbcc7; width: 0%; border-radius: 2px; transition: width 0.2s;"></div>
+              </div>
+            </div>`;
           container.innerHTML = html;
+          
+          // Helyreállítsa a scroll pozícióját és az event listener-t
+          setTimeout(() => {
+            const scrollContainer = document.getElementById("barber-times-scroll");
+            if (scrollContainer) {
+              scrollContainer.scrollLeft = barberState.timesScrollLeft;
+              
+              // Scroll event listener
+              scrollContainer.addEventListener("scroll", updateScrollProgress);
+              
+              // Egér görgő kezelése
+              scrollContainer.addEventListener("wheel", (e) => {
+                e.preventDefault();
+                scrollContainer.scrollLeft += e.deltaY > 0 ? 50 : -50;
+                updateScrollProgress();
+              }, { passive: false });
+              
+              updateScrollProgress();
+            }
+          }, 0);
         } catch (err) {
           container.innerHTML = "<p>Hiba történt.</p>";
         }
@@ -641,6 +715,37 @@
         }
       }
 
+      function scrollTimesLeft() {
+        const container = document.getElementById("barber-times-scroll");
+        if (container) {
+          container.scrollBy({ left: -150, behavior: 'smooth' });
+          updateScrollProgress();
+        }
+      }
+
+      function scrollTimesRight() {
+        const container = document.getElementById("barber-times-scroll");
+        if (container) {
+          container.scrollBy({ left: 150, behavior: 'smooth' });
+          updateScrollProgress();
+        }
+      }
+
+      function updateScrollProgress() {
+        const container = document.getElementById("barber-times-scroll");
+        if (!container) return;
+        
+        const scrollLeft = container.scrollLeft;
+        const scrollWidth = container.scrollWidth;
+        const clientWidth = container.clientWidth;
+        const progress = (scrollLeft / (scrollWidth - clientWidth)) * 100;
+        const progressBar = document.querySelector("#barber-times-progress div");
+        
+        if (progressBar) {
+          progressBar.style.width = Math.max(0, Math.min(100, progress)) + '%';
+        }
+      }
+
       // ===== EVENT LISTENERS =====
       document.addEventListener("DOMContentLoaded", () => {
         // Initialize tab navigator
@@ -671,7 +776,7 @@
               
               if (data.ok && data.bookings && data.bookings.length > 0) {
                 for (const booking of data.bookings) {
-                  await fetch(`/api/booking/${booking.id}`, { method: "DELETE" });
+                  await fetch(`/api/barber/booking/${booking.id}`, { method: "DELETE" });
                 }
                 showToast("✓ Összes foglalás lemondva");
               } else {
@@ -685,7 +790,7 @@
             // Egy foglalás lemondása
             const bookingId = parseInt(bookingIdValue);
             try {
-              const res = await fetch(`/api/booking/${bookingId}`, { method: "DELETE" });
+              const res = await fetch(`/api/barber/booking/${bookingId}`, { method: "DELETE" });
               const data = await res.json();
               if (res.ok && data.ok) {
                 showToast("✓ Foglalás lemondva");
