@@ -30,7 +30,7 @@
 
     <div class="account-header">Admin: <%= user.felhnev %></div>
 
-    <div class="account-wrapper" style="flex-direction: column; gap: 0;">
+    <div class="account-wrapper" style="flex-direction: column; gap: 0">
       <!-- Tab Navigator -->
       <div class="account-tab-navigator">
         <button id="tab-prev-btn" class="tab-arrow-btn">◀</button>
@@ -40,14 +40,40 @@
 
       <main class="account-content">
         <section id="bookings" class="account-section active">
-          <h2>Minden foglalás</h2>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 1rem;
+              gap: 0.5rem;
+              flex-wrap: wrap;
+            ">
+            <h2 style="margin: 0">Minden foglalás</h2>
+            <button onclick="deleteAllBookings()" class="btn-cancel-all" title="Összes foglalás törlése">
+              🗑️ Összes törlése
+            </button>
+          </div>
           <div id="bookingsContainer">
             <p style="text-align: center; color: #999">Betöltés...</p>
           </div>
         </section>
 
         <section id="orders" class="account-section">
-          <h2>Minden rendelés</h2>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 1rem;
+              gap: 0.5rem;
+              flex-wrap: wrap;
+            ">
+            <h2 style="margin: 0">Minden rendelés</h2>
+            <button onclick="deleteAllOrders()" class="btn-cancel-all" title="Összes rendelés törlése">
+              🗑️ Összes törlése
+            </button>
+          </div>
           <div id="ordersContainer">
             <p style="text-align: center; color: #999">Betöltés...</p>
           </div>
@@ -110,34 +136,34 @@
     <script>
       // Tab System
       const tabs = [
-        { id: 'bookings', label: 'Foglalások' },
-        { id: 'orders', label: 'Rendelések' },
-        { id: 'users', label: 'Felhasználók' }
+        { id: "bookings", label: "Foglalások" },
+        { id: "orders", label: "Rendelések" },
+        { id: "users", label: "Felhasználók" },
       ];
       let currentTabIndex = 0;
 
       function showSection(id) {
         // Find tab index
-        const tabIndex = tabs.findIndex(t => t.id === id);
+        const tabIndex = tabs.findIndex((t) => t.id === id);
         if (tabIndex !== -1) {
           currentTabIndex = tabIndex;
         }
-        
+
         // Update all sections - remove active class
         document.querySelectorAll(".account-section").forEach((s) => s.classList.remove("active"));
-        
+
         // Add active class to selected section
         const section = document.getElementById(id);
         if (section) {
           section.classList.add("active");
         }
-        
+
         // Update tab title
         const currentTab = tabs[currentTabIndex];
         if (currentTab) {
           document.getElementById("tab-title-display").textContent = currentTab.label;
         }
-        
+
         // Load data if needed
         if (id === "bookings") loadBookings();
         if (id === "orders") loadOrders();
@@ -168,6 +194,9 @@
                 <p style="margin: 0.3rem 0;"><strong>Szolgáltatás:</strong> ${b.service || "—"}</p>
                 <p style="margin: 0.3rem 0;"><strong>Felhasználó:</strong> ${b.user ? b.user.felhnev : "ismeretlen"}</p>
                 <p style="margin: 0.3rem 0; color: #999; font-size: 0.85rem;">${b.user ? b.user.email : ""}</p>
+              </div>
+              <div style="margin-top:0.5rem;">
+                <button onclick="deleteBooking(${b.id})" class="delete-btn">🗑️ Törlés</button>
               </div>
             </div>`;
           });
@@ -271,7 +300,10 @@
 
       function selectUser(id) {
         const u = (window.usersData || []).find((x) => x.id === id);
-        if (!u) return alert("Felhasználó nem található");
+        if (!u) {
+          showToast("Felhasználó nem található", "error");
+          return;
+        }
         document.getElementById("up_felhnev").value = u.felhnev || "";
         document.getElementById("up_email").value = u.email || "";
         document.getElementById("up_telefonszam").value = u.telefonszam || "";
@@ -298,43 +330,102 @@
         }, 3000);
       }
 
+      let pendingConfirmAction = null;
+
+      function openConfirm(message, action) {
+        const modal = document.getElementById("deleteConfirmModal");
+        const msgEl = document.getElementById("deleteConfirmMessage");
+        if (msgEl) {
+          msgEl.textContent = message;
+        }
+        pendingConfirmAction = action;
+        modal.style.display = "flex";
+      }
+
       function deleteUser(id) {
-        if (!confirm("Biztosan törlöd a felhasználót?")) return;
-        try {
-          const res = fetch(`/api/admin/user/${id}`, { method: "DELETE" });
-          res.then(async (response) => {
-            const j = await response.json();
-            if (!response.ok) throw new Error(j.error || "Hiba");
+        openConfirm("Biztosan törlöd a felhasználót?", async () => {
+          try {
+            const res = await fetch(`/api/admin/user/${id}`, { method: "DELETE" });
+            const j = await res.json();
+            if (!res.ok) throw new Error(j.error || "Hiba");
             showToast("✓ Felhasználó törölve");
             loadUsers();
-          });
-        } catch (err) {
-          console.error(err);
-          showToast("Hiba történt a törléskor", "error");
-        }
+          } catch (err) {
+            console.error(err);
+            showToast("Hiba történt a törléskor", "error");
+          }
+        });
+      }
+
+      async function deleteBooking(id) {
+        openConfirm("Biztosan törlöd ezt a foglalást?", async () => {
+          try {
+            const res = await fetch(`/api/admin/booking/${id}`, { method: "DELETE" });
+            const j = await res.json();
+            if (!res.ok) throw new Error(j.error || "Hiba");
+            showToast("✓ Foglalás törölve");
+            loadBookings();
+          } catch (err) {
+            console.error(err);
+            showToast("Hiba történt a foglalás törlésekor", "error");
+          }
+        });
+      }
+
+      async function deleteAllBookings() {
+        openConfirm("Biztosan TÖRLÖD az ÖSSZES foglalást?", async () => {
+          try {
+            const res = await fetch("/api/admin/bookings", { method: "DELETE" });
+            const j = await res.json();
+            if (!res.ok) throw new Error(j.error || "Hiba");
+            const count = typeof j.deleted === "number" ? j.deleted : "";
+            showToast(`✓ Összes foglalás törölve${count !== "" ? ` (${count} db)` : ""}`);
+            loadBookings();
+          } catch (err) {
+            console.error(err);
+            showToast("Hiba történt az összes foglalás törlésekor", "error");
+          }
+        });
       }
 
       async function deleteOrder(id) {
-        if (!confirm("Biztosan törlöd a rendelést?")) return;
-        try {
-          const res = await fetch(`/api/admin/order/${id}`, { method: "DELETE" });
-          const j = await res.json();
-          if (!res.ok) throw new Error(j.error || "Hiba");
-          alert("Rendelés törölve");
-          loadOrders();
-        } catch (err) {
-          console.error(err);
-          alert("Hiba történt");
-        }
+        openConfirm("Biztosan törlöd a rendelést?", async () => {
+          try {
+            const res = await fetch(`/api/admin/order/${id}`, { method: "DELETE" });
+            const j = await res.json();
+            if (!res.ok) throw new Error(j.error || "Hiba");
+            showToast("✓ Rendelés törölve");
+            loadOrders();
+          } catch (err) {
+            console.error(err);
+            showToast("Hiba történt a rendelés törlésekor", "error");
+          }
+        });
+      }
+
+      async function deleteAllOrders() {
+        openConfirm("Biztosan TÖRLÖD az ÖSSZES rendelést?", async () => {
+          try {
+            const res = await fetch("/api/admin/orders", { method: "DELETE" });
+            const j = await res.json();
+            if (!res.ok) throw new Error(j.error || "Hiba");
+            const count = typeof j.deleted === "number" ? j.deleted : "";
+            showToast(`✓ Összes rendelés törölve${count !== "" ? ` (${count} db)` : ""}`);
+            loadOrders();
+          } catch (err) {
+            console.error(err);
+            showToast("Hiba történt az összes rendelés törlésekor", "error");
+          }
+        });
       }
 
       document.addEventListener("DOMContentLoaded", () => {
         // Initialize tab navigator
-        document.getElementById('tab-prev-btn').addEventListener('click', () => navigateTab(-1));
-        document.getElementById('tab-next-btn').addEventListener('click', () => navigateTab(1));
+        document.getElementById("tab-prev-btn").addEventListener("click", () => navigateTab(-1));
+        document.getElementById("tab-next-btn").addEventListener("click", () => navigateTab(1));
 
         // Initialize first tab
-        showSection('bookings');
+        showSection("bookings");
 
         // Bezárás gomb
         document.getElementById("btnClosePanel").addEventListener("click", () => {
@@ -373,38 +464,40 @@
           }
         });
 
-        // Törlés gomb
+        // Törlés gomb a felhasználó szerkesztő modalban
         document.getElementById("btnDeleteUser").addEventListener("click", async () => {
           const modal = document.getElementById("userModal");
           const id = parseInt(modal.dataset.userId);
-          document.getElementById("deleteConfirmModal").style.display = "flex";
-          document.getElementById("deleteConfirmModal").dataset.userId = id;
+          openConfirm("Biztosan törlöd a felhasználót?", async () => {
+            try {
+              const res = await fetch(`/api/admin/user/${id}`, { method: "DELETE" });
+              const j = await res.json();
+              if (!res.ok) throw new Error(j.error || "Hiba a szerveren");
+              showToast("✓ Felhasználó sikeresen törölve");
+              document.getElementById("userModal").style.display = "none";
+              loadUsers();
+            } catch (err) {
+              console.error("Törlési hiba:", err);
+              showToast("Hiba történt a törléskor: " + err.message, "error");
+            }
+          });
         });
 
-        // Törlés megerősítés - Igen gomb
+        // Törlés megerősítés - Igen gomb (általános)
         document.getElementById("btnConfirmDelete").addEventListener("click", async () => {
-          const modal = document.getElementById("deleteConfirmModal");
-          const id = parseInt(modal.dataset.userId);
-          console.log("Törlés kezdeményezése felhasználó ID-val:", id);
           try {
-            const res = await fetch(`/api/admin/user/${id}`, { method: "DELETE" });
-            console.log("API válasz status:", res.status);
-            const j = await res.json();
-            console.log("API válasz JSON:", j);
-            if (!res.ok) throw new Error(j.error || "Hiba a szerveren");
-            showToast("✓ Felhasználó sikeresen törölve");
-            document.getElementById("userModal").style.display = "none";
-            document.getElementById("deleteConfirmModal").style.display = "none";
-            loadUsers();
-          } catch (err) {
-            console.error("Törlési hiba:", err);
-            showToast("Hiba történt a törléskor: " + err.message, "error");
+            if (typeof pendingConfirmAction === "function") {
+              await pendingConfirmAction();
+            }
+          } finally {
+            pendingConfirmAction = null;
             document.getElementById("deleteConfirmModal").style.display = "none";
           }
         });
 
         // Törlés megerősítés - Mégsem gomb
         document.getElementById("btnCancelDelete").addEventListener("click", () => {
+          pendingConfirmAction = null;
           document.getElementById("deleteConfirmModal").style.display = "none";
         });
       });

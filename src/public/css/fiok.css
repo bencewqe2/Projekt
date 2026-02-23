@@ -43,14 +43,20 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: rgba(17, 17, 17, 0.8);
-  border-bottom: 2px solid #3cbcc7;
+  position: relative;
+  z-index: 1000;
+  background-color: rgba(10, 10, 18, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 2px solid rgba(60, 188, 199, 0.5);
 }
 
 header .logo {
   font-size: 1.5rem;
   font-weight: bold;
   color: #3cbcc7;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 header nav ul {
@@ -75,7 +81,10 @@ header nav a:hover {
   max-width: 1100px;
   margin: 2rem auto 1.5rem;
   padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(15, 15, 25, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(60, 188, 199, 0.15);
   border-radius: 12px;
   text-align: right;
   font-size: 1.3rem;
@@ -144,7 +153,10 @@ header nav a:hover {
 .account-content {
   flex: 1;
   padding: 2.5rem;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(15, 15, 25, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(60, 188, 199, 0.15);
   border-radius: 12px;
 }
 
@@ -195,8 +207,10 @@ header nav a:hover {
 
 .order-item,
 .booking-item {
-  background: rgba(34, 34, 34, 0.85);
-  border: 1px solid #3cbcc7;
+  background: rgba(15, 15, 25, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(60, 188, 199, 0.3);
   border-radius: 8px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -268,8 +282,10 @@ header nav a:hover {
 }
 
 .user-item {
-  background: rgba(34, 34, 34, 0.85);
-  border: 1px solid #3cbcc7;
+  background: rgba(15, 15, 25, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(60, 188, 199, 0.3);
   border-radius: 8px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -876,14 +892,14 @@ header nav a:hover {
 }
 
 .barber-table .day-btn.blocked.selected {
-  background: #e74c3c !important;
+  background: #27ae60 !important;
   font-weight: 700;
-  box-shadow: 0 0 10px rgba(231, 76, 60, 0.6);
+  box-shadow: 0 0 10px rgba(39, 174, 96, 0.6);
 }
 
 .barber-table .day-btn.blocked.selected:hover {
-  background: #c0392b !important;
-  box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
+  background: #229954 !important;
+  box-shadow: 0 0 15px rgba(39, 174, 96, 0.8);
 }
 
 .barber-table .day-btn.partial-blocked {
@@ -928,7 +944,7 @@ header nav a:hover {
 }
 
 .time-btn {
-  background: #555 !important;
+  background: #27ae60 !important;
   color: white !important;
   padding: 0.5rem !important;
   border: none !important;
@@ -939,15 +955,16 @@ header nav a:hover {
 }
 
 .time-btn:hover {
+  background: #229954 !important;
   transform: scale(1.08) !important;
 }
 
 .time-btn.blocked {
-  background: #27ae60 !important;
+  background: #555 !important;
 }
 
 .time-btn.blocked:hover {
-  background: #229954 !important;
+  background: #666 !important;
 }
 
 /* ===== BARBER BLOCK BUTTONS ===== */

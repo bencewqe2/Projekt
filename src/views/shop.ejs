@@ -14,21 +14,35 @@
     </video>
 
     <header>
-      <div class="logo">Beach Barbershop</div>
+      <a href="/" class="logo">Beach Barbershop</a>
 
       <!-- Mobil header jobb oldali rész (kosár + hamburger) -->
       <div class="mobile-header-right">
         <!-- Mobil kosár ikon -->
         <div class="cart-menu mobile-cart">
-          <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="cart-icon" alt="Kosár" title="Kosár" />
-          <span class="cart-badge" id="cartBadgeMobile">0</span>
+          <div class="cart-icon-wrap">
+            <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadgeMobile">0</span>
+          </div>
           <ul class="cart-dropdown" id="cartDropdownMobile">
-            <li class="cart-title">Kosár</li>
-            <li id="cartItemsMobile" style="max-height: 200px; overflow-y: auto;"></li>
-            <li class="cart-total"><strong>Összesen: <span id="cartSumMobile">0</span> Ft</strong></li>
-            <li style="padding: 0; display: flex; gap: 0.3rem;">
-              <a href="/fizetes" style="flex: 1; display: block; background: #27ae60; padding: 0.6rem 1rem; color: white; font-weight: bold; text-align: center;">💳 Fizetés</a>
-              <button onclick="clearCart()" style="background: #e74c3c; color: white; border: none; padding: 0.6rem; cursor: pointer; font-weight: bold; border-radius: 4px;" title="Törlés">🗑️</button>
+            <li class="cart-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <span>Kosár</span>
+              <span class="cart-header-count" id="cartHeaderCountMobile">0 termék</span>
+            </li>
+            <li class="cart-items-wrap">
+              <div id="cartItemsMobile"></div>
+            </li>
+            <li class="cart-total-row">
+              <span>Összesen</span>
+              <span class="cart-total-amount"><span id="cartSumMobile">0</span> Ft</span>
+            </li>
+            <li class="cart-actions">
+              <a href="/fizetes" class="cart-btn-pay">💳 Fizetés</a>
+              <button onclick="clearCart()" class="cart-btn-clear" title="Kosár törlése">🗑️</button>
+            </li>
+            <li class="cart-continue">
+              <a href="/shop">Folytasd a vásárlást →</a>
             </li>
           </ul>
         </div>
@@ -73,24 +87,39 @@
 
           <!-- Desktop KOSÁR IKON -->
           <li class="cart-menu desktop-cart">
-            <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="cart-icon" alt="Kosár" title="Kosár" />
-            <span class="cart-badge" id="cartBadge">0</span>
+            <div class="cart-icon-wrap">
+              <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <span class="cart-badge" id="cartBadge">0</span>
+            </div>
 
             <ul class="cart-dropdown" aria-hidden="true" id="cartDropdown">
-              <li class="cart-title">Kosár</li>
-              <li id="cartItems" style="max-height: 250px; overflow-y: auto;"></li>
-              <li class="cart-total"><strong>Összesen: <span id="cartSum">0</span> Ft</strong></li>
-              <li style="padding: 0; display: flex; gap: 0.3rem;">
-                <a href="/fizetes" style="flex: 1; display: block; background: #27ae60; padding: 0.6rem 1rem; color: white; font-weight: bold; text-align: center;">💳 Fizetés</a>
-                <button onclick="clearCart()" style="background: #e74c3c; color: white; border: none; padding: 0.6rem 1rem; cursor: pointer; font-weight: bold; border-radius: 4px;" title="Kosár törlése">🗑️ Törlés</button>
+              <li class="cart-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                <span>Kosár</span>
+                <span class="cart-header-count" id="cartHeaderCount">0 termék</span>
               </li>
-              <li><a href="/shop">Folytasd a vásárlást</a></li>
+              <li class="cart-items-wrap">
+                <div id="cartItems"></div>
+              </li>
+              <li class="cart-total-row">
+                <span>Összesen</span>
+                <span class="cart-total-amount"><span id="cartSum">0</span> Ft</span>
+              </li>
+              <li class="cart-actions">
+                <a href="/fizetes" class="cart-btn-pay">💳 Fizetés</a>
+                <button onclick="clearCart()" class="cart-btn-clear" title="Kosár törlése">🗑️</button>
+              </li>
+              <li class="cart-continue">
+                <a href="/shop">Folytasd a vásárlást →</a>
+              </li>
             </ul>
           </li>
 
           <!-- Desktop PROFIL IKON MENÜ -->
           <li class="profile-menu desktop-profile">
-            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
+            <div class="profile-icon-wrap">
+              <svg class="profile-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
 
             <ul class="dropdown" aria-hidden="true">
               <% if (user) { %>
@@ -256,27 +285,30 @@
       function updateCartDisplay() {
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
         
-        // Desktop elemek
         const cartBadge = document.getElementById("cartBadge");
         const cartItems = document.getElementById("cartItems");
         const cartSum = document.getElementById("cartSum");
+        const cartHeaderCount = document.getElementById("cartHeaderCount");
         
-        // Mobil elemek
         const cartBadgeMobile = document.getElementById("cartBadgeMobile");
         const cartItemsMobile = document.getElementById("cartItemsMobile");
         const cartSumMobile = document.getElementById("cartSumMobile");
+        const cartHeaderCountMobile = document.getElementById("cartHeaderCountMobile");
 
         const itemCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
         
-        // Badge frissítés mindkét helyen
         if (cartBadge) cartBadge.textContent = itemCount;
         if (cartBadgeMobile) cartBadgeMobile.textContent = itemCount;
+        
+        const countLabel = itemCount === 0 ? "Üres" : `${itemCount} termék`;
+        if (cartHeaderCount) cartHeaderCount.textContent = countLabel;
+        if (cartHeaderCountMobile) cartHeaderCountMobile.textContent = countLabel;
 
         let total = 0;
         let itemsHtml = "";
 
         if (cart.length === 0) {
-          itemsHtml = '<li style="padding: 1rem; text-align: center; color: #999;">Üres kosár</li>';
+          itemsHtml = '<div class="cart-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>A kosár üres</span></div>';
         } else {
           cart.forEach((item, index) => {
             const price = parseInt(item.price.replace(/\D/g, "")) || 0;
@@ -284,22 +316,23 @@
             const itemTotal = price * quantity;
             total += itemTotal;
             itemsHtml += `
-              <li>
-                <div style="padding: 0.5rem 1rem; border-bottom: 1px solid #555; color: #ccc; font-size: 0.9em;">
-                  <div><strong>${item.name}</strong></div>
-                  <div>${item.price} × ${quantity} = ${(itemTotal).toLocaleString("hu-HU")} Ft</div>
-                  <button onclick="removeFromCart(${index})" style="background: #e74c3c; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.8em; margin-top: 0.3rem;">Eltávolít</button>
+              <div class="cart-item">
+                <div class="cart-item-info">
+                  <span class="cart-item-name">${item.name}</span>
+                  <span class="cart-item-meta">${quantity} × ${price.toLocaleString("hu-HU")} Ft</span>
                 </div>
-              </li>
+                <div class="cart-item-right">
+                  <span class="cart-item-total">${itemTotal.toLocaleString("hu-HU")} Ft</span>
+                  <button onclick="removeFromCart(${index})" class="cart-item-remove" title="Eltávolít">×</button>
+                </div>
+              </div>
             `;
           });
         }
 
-        // Tartalom frissítés mindkét helyen
         if (cartItems) cartItems.innerHTML = itemsHtml;
         if (cartItemsMobile) cartItemsMobile.innerHTML = itemsHtml;
         
-        // Összeg frissítés mindkét helyen
         const totalStr = total.toLocaleString("hu-HU");
         if (cartSum) cartSum.textContent = totalStr;
         if (cartSumMobile) cartSumMobile.textContent = totalStr;
@@ -313,10 +346,8 @@
       }
 
       function clearCart() {
-        if (confirm("Biztosan szeretnéd üríteni a kosárt?")) {
-          localStorage.setItem("cart", JSON.stringify([]));
-          updateCartDisplay();
-        }
+        localStorage.setItem("cart", JSON.stringify([]));
+        updateCartDisplay();
       }
 
       let currentProductData = null;
@@ -405,11 +436,11 @@
         updateCartDisplay();
 
         // Kosár ikon klikk - mindkét kosárra (mobil és desktop)
-        const cartIcons = document.querySelectorAll(".cart-icon");
-        cartIcons.forEach(cartIcon => {
-          const cartMenu = cartIcon.closest(".cart-menu");
-          if (cartIcon && cartMenu) {
-            cartIcon.addEventListener("click", (e) => {
+        const cartIconWraps = document.querySelectorAll(".cart-icon-wrap");
+        cartIconWraps.forEach(cartIconWrap => {
+          const cartMenu = cartIconWrap.closest(".cart-menu");
+          if (cartIconWrap && cartMenu) {
+            cartIconWrap.addEventListener("click", (e) => {
               e.stopPropagation();
               cartMenu.classList.toggle("open");
               const cartDropdown = cartMenu.querySelector(".cart-dropdown");
@@ -447,7 +478,7 @@
 
         // Profil ikon -> lenyíló menü (desktop)
         const profileMenu = document.querySelector(".desktop-profile");
-        const profileIcon = profileMenu ? profileMenu.querySelector(".profile-icon") : null;
+        const profileIcon = profileMenu ? profileMenu.querySelector(".profile-icon-wrap") : null;
 
         if (profileIcon && profileMenu) {
           // Nyitás / zárás

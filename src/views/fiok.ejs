@@ -16,7 +16,7 @@
     </video>
 
     <header>
-      <div class="logo">Beach Barbershop</div>
+      <a href="/" class="logo">Beach Barbershop</a>
 
       <!-- Hamburger menü gomb mobilra -->
       <button class="hamburger" id="hamburgerBtn" aria-label="Menü">
@@ -571,12 +571,12 @@
                 <button 
                   class="time-btn ${isBlocked ? 'blocked' : ''}" 
                   onclick="toggleBarberTime('${dateStr}', '${t.time}')"
-                  style="background: ${isBlocked ? '#27ae60' : '#555'}; color: white; padding: 0.75rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2); white-space: nowrap; min-width: 110px; flex-shrink: 0;"
-                  onmouseover="this.style.boxShadow='0 4px 8px rgba(60,188,199,0.5)'; this.style.background='${isBlocked ? '#229954' : '#666'}';"
-                  onmouseout="this.style.boxShadow='0 2px 4px rgba(0,0,0,0.2)'; this.style.background='${isBlocked ? '#27ae60' : '#555'}';"
+                  style="background: ${isBlocked ? '#555' : '#27ae60'}; color: white; padding: 0.75rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2); white-space: nowrap; min-width: 110px; flex-shrink: 0;"
+                  onmouseover="this.style.boxShadow='0 4px 8px rgba(60,188,199,0.5)'; this.style.background='${isBlocked ? '#666' : '#229954'}';"
+                  onmouseout="this.style.boxShadow='0 2px 4px rgba(0,0,0,0.2)'; this.style.background='${isBlocked ? '#555' : '#27ae60'}';"
                   title="${isBlocked ? 'Blokkolt - ügyfeleknél nem látszik' : 'Szabad - ügyfelek foglalhatnak'}"
                 >
-                  ${t.time} ${isBlocked ? '✓' : ''}
+                  ${t.time} ${isBlocked ? '✗' : '✓'}
                 </button>
               `;
             }
@@ -685,7 +685,7 @@
           });
           const data = await res.json();
           if (data.ok) {
-            showToast("✓ Nap blokkolva");
+            showToast("✓ " + (data.message || "Sikeresen módosítva"));
             renderBarberCalendar();
             loadBarberTimes(dateStr);
           } else {
@@ -706,6 +706,7 @@
           const data = await res.json();
           if (data.ok) {
             showToast(data.message || "Sikeresen módosítva");
+            await renderBarberCalendar();
             loadBarberTimes(dateStr);
           } else {
             showToast(data.error || "Hiba", "error");
