@@ -1,6 +1,118 @@
+/* ===== Header ===== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: relative;
+  z-index: 1000;
+  background-color: rgba(10, 10, 18, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 2px solid rgba(60, 188, 199, 0.5);
+}
+
+header .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #3cbcc7;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Profil ikon */
+.profile-menu {
+  position: relative;
+  cursor: pointer;
+}
+
+.profile-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(60, 188, 199, 0.08);
+  border: 1px solid rgba(60, 188, 199, 0.25);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.profile-icon-wrap:hover {
+  background: rgba(60, 188, 199, 0.18);
+  border-color: #3cbcc7;
+  box-shadow: 0 0 12px rgba(60, 188, 199, 0.25);
+}
+
+.profile-svg-icon {
+  stroke: #3cbcc7;
+  transition: stroke 0.25s;
+}
+
+/* Dropdown */
+.dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  background: rgba(10, 10, 18, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(60, 188, 199, 0.35);
+  border-radius: 10px;
+  list-style: none;
+  padding: 0.5rem 0;
+  width: 180px;
+  z-index: 1001;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes dropdownOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown li {
+  padding: 0.6rem 1rem;
+  text-align: center;
+}
+
+.dropdown li a,
+.logout-btn {
+  color: #fff;
+  text-decoration: none;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  display: block;
+}
+
+.dropdown li:hover {
+  background: rgba(60, 188, 199, 0.6);
+}
+
+.profile-menu.open .dropdown {
+  display: block;
+  animation: dropdownOpen 0.22s ease forwards;
+}
+
 .payment-container {
   padding: 4rem 2rem;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(15, 15, 25, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(60, 188, 199, 0.15);
   border-radius: 10px;
   margin: 2rem auto;
   max-width: 1000px;
@@ -20,10 +132,12 @@
 
 /* Kosár összegzés */
 .cart-summary {
-  background-color: rgba(34, 34, 34, 0.85);
+  background: rgba(15, 15, 25, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 2rem;
   border-radius: 10px;
-  border: 1px solid #3cbcc7;
+  border: 1px solid rgba(60, 188, 199, 0.3);
 }
 
 .cart-summary h2 {
@@ -61,10 +175,12 @@
 
 /* Szállítási opciók */
 .shipping-options {
-  background-color: rgba(34, 34, 34, 0.85);
+  background: rgba(15, 15, 25, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 2rem;
   border-radius: 10px;
-  border: 1px solid #3cbcc7;
+  border: 1px solid rgba(60, 188, 199, 0.3);
 }
 
 .shipping-options h2 {
@@ -234,6 +350,36 @@
   margin-bottom: 0.5rem;
 }
 
+/* Phone prefix selector in delivery form */
+.del-phone-group {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.del-phone-prefix {
+  flex-shrink: 0;
+  width: 105px;
+  padding: 0.6rem 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #0f0f0f;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.del-phone-prefix:focus {
+  outline: none;
+  border-color: #3cbcc7;
+}
+
+.del-phone-group input[type="tel"] {
+  flex: 1;
+  width: auto;
+  margin-top: 0;
+}
+
 .input-row {
   margin-bottom: 0.75rem;
   flex: 1 1 220px;
@@ -380,7 +526,9 @@
     width: 80%;
     max-width: 300px;
     height: 100vh;
-    background: rgba(17, 17, 17, 0.98);
+    background: rgba(10, 10, 18, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     transition: right 0.3s ease;
     z-index: 1050;
     padding-top: 80px;

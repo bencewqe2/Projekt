@@ -14,7 +14,7 @@
     </video>
 
     <header>
-      <div class="logo">Beach Barbershop</div>
+      <a href="/" class="logo">Beach Barbershop</a>
 
       <!-- Hamburger menü gomb mobilra -->
       <button class="hamburger" id="hamburgerBtn" aria-label="Menü">
@@ -55,7 +55,9 @@
 
           <!-- Desktop PROFIL IKON MENÜ -->
           <li class="profile-menu desktop-profile">
-            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="profile-icon" alt="Profil" />
+            <div class="profile-icon-wrap">
+              <svg class="profile-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
             <ul class="dropdown" aria-hidden="true">
               <% if (user) { %>
               <li style="padding: 0.6rem 1rem; color: #3cbcc7; font-weight: 700"><%= user.felhnev %></li>
@@ -241,6 +243,7 @@
 
       // === SHOW STEP ===
       function showStep(num) {
+        if (!step1 || !step2 || !step3 || !step4) return;
         step1.classList.add("hidden");
         step2.classList.add("hidden");
         step3.classList.add("hidden");
@@ -271,39 +274,50 @@
       });
 
       // === STEP 1 -> STEP 2 ===
-      btnToCalendar.addEventListener("click", async () => {
-        state.barber = barberSelect.value;
-        state.service = serviceSelect.value;
-        if (!state.barber) return showPopup("Válassz borbélyt!", "error");
-        if (!state.service) return showPopup("Válassz szolgáltatást!", "error");
-        showStep(2);
-        await renderCalendar();
-      });
+      if (btnToCalendar) {
+        btnToCalendar.addEventListener("click", async () => {
+          state.barber = barberSelect.value;
+          state.service = serviceSelect.value;
+          if (!state.barber) return showPopup("Válassz borbélyt!", "error");
+          if (!state.service) return showPopup("Válassz szolgáltatást!", "error");
+          showStep(2);
+          await renderCalendar();
+        });
+      }
 
-      btnBackToStep1.addEventListener("click", () => showStep(1));
-      btnBackToCalendar.addEventListener("click", async () => {
-        showStep(2);
-        await renderCalendar();
-      });
+      if (btnBackToStep1) {
+        btnBackToStep1.addEventListener("click", () => showStep(1));
+      }
+
+      if (btnBackToCalendar) {
+        btnBackToCalendar.addEventListener("click", async () => {
+          showStep(2);
+          await renderCalendar();
+        });
+      }
 
       // === CALENDAR ===
-      prevMonthBtn.addEventListener("click", async () => {
-        state.calendarMonth--;
-        if (state.calendarMonth < 0) {
-          state.calendarMonth = 11;
-          state.calendarYear--;
-        }
-        await renderCalendar();
-      });
+      if (prevMonthBtn) {
+        prevMonthBtn.addEventListener("click", async () => {
+          state.calendarMonth--;
+          if (state.calendarMonth < 0) {
+            state.calendarMonth = 11;
+            state.calendarYear--;
+          }
+          await renderCalendar();
+        });
+      }
 
-      nextMonthBtn.addEventListener("click", async () => {
-        state.calendarMonth++;
-        if (state.calendarMonth > 11) {
-          state.calendarMonth = 0;
-          state.calendarYear++;
-        }
-        await renderCalendar();
-      });
+      if (nextMonthBtn) {
+        nextMonthBtn.addEventListener("click", async () => {
+          state.calendarMonth++;
+          if (state.calendarMonth > 11) {
+            state.calendarMonth = 0;
+            state.calendarYear++;
+          }
+          await renderCalendar();
+        });
+      }
 
       async function renderCalendar() {
         const year = state.calendarYear;
@@ -440,34 +454,38 @@
       }
 
       // === CONFIRM BOOKING ===
-      btnConfirmBooking.addEventListener("click", async () => {
-        try {
-          const res = await fetch("/api/booking", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-              date: state.date,
-              time: state.time,
-              service: state.service,
-              barber: state.barber
-            })
-          });
-          const data = await res.json();
-          if (res.ok && data.ok) {
-            document.getElementById("successPopup").classList.add("show");
-          } else {
-            showPopup(data.error || "Hiba történt", "error");
+      if (btnConfirmBooking) {
+        btnConfirmBooking.addEventListener("click", async () => {
+          try {
+            const res = await fetch("/api/booking", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: new URLSearchParams({
+                date: state.date,
+                time: state.time,
+                service: state.service,
+                barber: state.barber
+              })
+            });
+            const data = await res.json();
+            if (res.ok && data.ok) {
+              document.getElementById("successPopup").classList.add("show");
+            } else {
+              showPopup(data.error || "Hiba történt", "error");
+            }
+          } catch (err) {
+            showPopup("Szerverhiba", "error");
           }
-        } catch (err) {
-          showPopup("Szerverhiba", "error");
-        }
-      });
+        });
+      }
 
-      btnBackToTimes.addEventListener("click", () => showStep(3));
+      if (btnBackToTimes) {
+        btnBackToTimes.addEventListener("click", () => showStep(3));
+      }
 
       // === PROFILE MENU (desktop) ===
       const profileMenu = document.querySelector(".desktop-profile");
-      const profileIcon = profileMenu ? profileMenu.querySelector(".profile-icon") : null;
+      const profileIcon = profileMenu ? profileMenu.querySelector(".profile-icon-wrap") : null;
       if (profileIcon && profileMenu) {
         profileIcon.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -525,8 +543,10 @@
 
       // Init
       (async () => {
-        await loadBarbers();
-        showStep(1);
+        if (barberSelect && step1) {
+          await loadBarbers();
+          showStep(1);
+        }
       })();
     </script>
     <script src="/js/mobileNav.js"></script>

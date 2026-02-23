@@ -7,80 +7,14 @@
     <link rel="stylesheet" href="/css/regisztracio.css" />
   </head>
   <body>
-    <!-- Videó háttér (seamless crossfade) -->
-    <style>
-      .bg-video-wrap {
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        overflow: hidden;
-      }
-      .bg-video {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0;
-        transition: opacity 0.6s linear;
-      }
-      .bg-video.active {
-        opacity: 1;
-      }
-    </style>
-
-    <div class="bg-video-wrap">
-      <video class="bg-video active" id="hatter_video_a" autoplay muted playsinline>
-        <source src="/videos/video.mp4" type="video/mp4" />
-      </video>
-      <video class="bg-video" id="hatter_video_b" autoplay muted playsinline>
-        <source src="/videos/video.mp4" type="video/mp4" />
-      </video>
-    </div>
-
-    <script>
-      (function () {
-        const fadeDuration = 0.6;
-        const preStart = 0.5;
-        let a = document.getElementById("hatter_video_a");
-        let b = document.getElementById("hatter_video_b");
-        let current = a,
-          next = b;
-        function ensurePlay(v) {
-          v.muted = true;
-          const p = v.play();
-          if (p && p.catch) p.catch(() => {});
-        }
-        ensurePlay(a);
-        function tick() {
-          if (!current.duration || isNaN(current.duration)) {
-            requestAnimationFrame(tick);
-            return;
-          }
-          if (current.duration - current.currentTime <= preStart) {
-            next.currentTime = 0;
-            ensurePlay(next);
-            next.classList.add("active");
-            current.classList.remove("active");
-            const old = current;
-            current = next;
-            next = old;
-            setTimeout(
-              () => {
-                next.pause();
-              },
-              (fadeDuration + 0.1) * 1000,
-            );
-          }
-          requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-      })();
-    </script>
+    <!-- 🌊 VIDEÓ HÁTTÉR -->
+    <video id="hatter_video" autoplay muted loop>
+      <source src="/videos/video.mp4" type="video/mp4" />
+      A böngésződ nem támogatja a videó elemet.
+    </video>
 
     <header>
-      <div class="logo">Beach Barbershop</div>
+      <a href="/" class="logo">Beach Barbershop</a>
 
       <!-- Hamburger menü gomb mobilra -->
       <button class="hamburger" id="hamburgerBtn" aria-label="Menü">
@@ -101,7 +35,21 @@
       <form id="regisztracio_urlap" action="/api/register" method="post">
         <input type="text" name="username" placeholder="Teljes név" required />
         <input type="email" name="email" placeholder="Email cim" required />
-        <input type="text" name="pnumber" placeholder="Telefonszám" required />
+        <div class="phone-group">
+          <select name="pnumber_prefix" class="phone-prefix">
+            <option value="+36">🇭🇺 +36</option>
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+49">🇩🇪 +49</option>
+            <option value="+33">🇫🇷 +33</option>
+            <option value="+40">🇷🇴 +40</option>
+            <option value="+43">🇦🇹 +43</option>
+            <option value="+421">🇸🇰 +421</option>
+            <option value="+420">🇨🇿 +420</option>
+            <option value="+48">🇵🇱 +48</option>
+          </select>
+          <input type="tel" name="pnumber" placeholder="Telefonszám" required />
+        </div>
         <input type="password" name="password" placeholder="Jelszó" required />
         <input type="password" placeholder="Jelszó megerősítése" required />
         <button type="submit">Regisztráció</button>
@@ -114,12 +62,6 @@
       <p>&copy; 2025 Beach Barbershop</p>
     </footer>
 
-    <script>
-      document.getElementById("bejelentkezes_urlap").addEventListener("submit", function (e) {
-        e.preventDefault();
-        alert("Bejelentkezés sikeres (demo)!");
-      });
-    </script>
     <script src="/js/mobileNav.js"></script>
   </body>
 </html>

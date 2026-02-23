@@ -181,6 +181,80 @@ app.get("/api/admin/orders", async (req, res) => {
   }
 });
 
+// Admin-only: delete a single order
+app.delete("/api/admin/order/:id", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Érvénytelen rendelés ID." });
+  }
+
+  try {
+    await db.rendeles.delete({ where: { id } });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Admin delete order error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
+// Admin-only: delete all orders
+app.delete("/api/admin/orders", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  try {
+    const result = await db.rendeles.deleteMany({});
+    return res.json({ ok: true, deleted: result.count });
+  } catch (err) {
+    console.error("Admin delete all orders error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
+// Admin-only: delete a single booking
+app.delete("/api/admin/booking/:id", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Érvénytelen foglalás ID." });
+  }
+
+  try {
+    await db.idopont.delete({ where: { id } });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Admin delete booking error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
+// Admin-only: delete all bookings
+app.delete("/api/admin/bookings", async (req, res) => {
+  const session = req.session;
+  if (!session || !session.user || session.user.role !== "ADMIN") {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  try {
+    const result = await db.idopont.deleteMany({});
+    return res.json({ ok: true, deleted: result.count });
+  } catch (err) {
+    console.error("Admin delete all bookings error:", err);
+    return res.status(500).json({ error: "Hiba történt." });
+  }
+});
+
 // Admin-only: list all users
 app.get("/api/admin/users", async (req, res) => {
   const session = req.session;
@@ -327,10 +401,11 @@ app.get("/api/logout", async (req, res) => {
 });
 
 app.post("/api/register", urlencodedParser, async (req, res) => {
-  const { username, email, password, pnumber } = req.body;
+  const { username, email, password, pnumber, pnumber_prefix } = req.body;
   if (!username || !email || !password) {
     return res.status(400).send("Hiányzó mezők");
   }
+  const fullPhone = pnumber ? `${pnumber_prefix || "+36"}${pnumber}` : null;
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -343,7 +418,7 @@ app.post("/api/register", urlencodedParser, async (req, res) => {
       felhnev: username,
       email: email,
       hash: hashedPassword,
-      telefonszam: pnumber,
+      telefonszam: fullPhone,
       role: "USER",
       emailVerified: false,
       verifyToken: token,
@@ -861,7 +936,7 @@ app.get("/api/barber/times/:date", async (req, res) => {
     // Lekérjük az adott nap foglalásait a borbélynak (UTC-vel)
     const barberName = session.user.felhnev;
     const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
-    const endOfDay = new Date(Date.UTC(year, month, day, 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(year, month - 1, day + 1, 0, 0, 0));
 
     const bookings = await db.idopont.findMany({
       where: {
@@ -973,7 +1048,7 @@ app.post("/api/barber/block-day", async (req, res) => {
 
     // Ellenőrizze, hogy a nap már blokkolt-e (UTC idővel)
     const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
-    const endOfDay = new Date(Date.UTC(year, month, day, 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(year, month - 1, day + 1, 0, 0, 0));
 
     const blockedCount = await db.idopont.count({
       where: {
@@ -985,8 +1060,11 @@ app.post("/api/barber/block-day", async (req, res) => {
       },
     });
 
-    if (blockedCount > 0) {
-      // Nap már blokkolt van - feloldása
+    const totalSlots = times.length;
+    const isFullyBlocked = blockedCount >= totalSlots;
+
+    if (isFullyBlocked) {
+      // Teljesen blokkolt nap - feloldása
       await db.idopont.deleteMany({
         where: {
           szolgal: { contains: `BARBER_BLOCKED|${barberName}` },
@@ -996,9 +1074,9 @@ app.post("/api/barber/block-day", async (req, res) => {
           },
         },
       });
-      return res.json({ ok: true, message: "Nap feloldva" });
+      return res.json({ ok: true, action: "unblocked", message: "Nap feloldva" });
     } else {
-      // Nap szabad - blokkoljuk
+      // Részlegesen vagy egyáltalán nem blokkolt - blokkoljuk az összes szabad slotot
       for (const { hour, minute } of times) {
         const dateTime = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));
 
@@ -1019,7 +1097,7 @@ app.post("/api/barber/block-day", async (req, res) => {
           });
         }
       }
-      return res.json({ ok: true, message: "Nap blokkolva" });
+      return res.json({ ok: true, action: "blocked", message: "Nap blokkolva" });
     }
   } catch (err) {
     console.error("Error blocking day:", err);
