@@ -1,4 +1,4 @@
-// Mobile navigation hamburger menu
+// Mobil navigáció hamburger menü
 document.addEventListener('DOMContentLoaded', function() {
   const hamburger = document.getElementById('hamburgerBtn');
   const nav = document.getElementById('mainNav');
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.body.classList.toggle('nav-open');
     });
 
-    // Close menu when clicking outside
+    // Menü bezárása, ha klikkunk kívül
     document.addEventListener('click', function(e) {
       if (!nav.contains(e.target) && !hamburger.contains(e.target)) {
         hamburger.classList.remove('active');
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    // Close menu when clicking a link
+    // Menü bezárása linke klikkeléskor
     nav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', function() {
         hamburger.classList.remove('active');

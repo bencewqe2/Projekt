@@ -24,7 +24,7 @@ body {
   z-index: -2;
 }
 
-/* 🌫️ Áttetsző sötét réteg a szöveg olvashatóságához */
+/* Áttetsző sötét réteg a szöveg olvashatóságához */
 body::before {
   content: "";
   position: fixed;
@@ -359,13 +359,13 @@ footer {
   background: rgba(60, 188, 199, 0.6);
 }
 
-/* AKTÍV ÁLLAPOT - LENYÍLVA */
+/* Aktív állapot - lenyító */
 .profile-menu.open .dropdown {
   display: block;
   animation: dropdownOpen 0.22s ease forwards;
 }
 
-/* ===== KOSÁR IKON ===== */
+/* Kosár ikon */
 .cart-menu {
   position: relative;
   cursor: pointer;
@@ -472,7 +472,7 @@ footer {
   border: 1px solid rgba(60, 188, 199, 0.25);
 }
 
-/* Items wrap */
+/* Ékek wrap */
 .cart-items-wrap {
   max-height: 260px;
   overflow-y: auto;
@@ -504,7 +504,7 @@ footer {
   opacity: 0.7;
 }
 
-/* Cart item row */
+/* Kosár tétel sor */
 .cart-item {
   display: flex;
   align-items: center;
@@ -582,7 +582,7 @@ footer {
   border-color: #e74c3c;
 }
 
-/* Total row */
+/* Összesen sor */
 .cart-total-row {
   display: flex;
   justify-content: space-between;
@@ -606,7 +606,7 @@ footer {
   font-weight: 700;
 }
 
-/* Action buttons */
+/* Művelés gombok */
 .cart-actions {
   display: flex;
   gap: 0.6rem;
@@ -658,7 +658,7 @@ footer {
   box-shadow: 0 4px 12px rgba(231, 76, 60, 0.35);
 }
 
-/* Continue shopping */
+/* Vásárlás folytatása */
 .cart-continue {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -680,7 +680,7 @@ footer {
   background: transparent;
 }
 
-/* AKTÍV ÁLLAPOT - KOSÁR LENYÍLVA */
+/* Aktív állapot - kosár lenyító */
 .cart-menu.open .cart-dropdown {
   display: block;
   animation: cartFadeIn 0.2s ease;
@@ -788,7 +788,7 @@ footer {
   }
 }
 
-/* Custom Alert Modal */
+/* Egyedi alert modal */
 .custom-alert-modal {
   position: fixed;
   top: 0;

@@ -49,7 +49,7 @@
               gap: 0.5rem;
               flex-wrap: wrap;
             ">
-            <h2 style="margin: 0">Minden foglalás</h2>
+            <h2 style="margin: 0">Foglalások</h2>
             <button onclick="deleteAllBookings()" class="btn-cancel-all" title="Összes foglalás törlése">
               🗑️ Összes törlése
             </button>
@@ -69,7 +69,7 @@
               gap: 0.5rem;
               flex-wrap: wrap;
             ">
-            <h2 style="margin: 0">Minden rendelés</h2>
+            <h2 style="margin: 0">Rendelések</h2>
             <button onclick="deleteAllOrders()" class="btn-cancel-all" title="Összes rendelés törlése">
               🗑️ Összes törlése
             </button>
@@ -80,7 +80,7 @@
         </section>
 
         <section id="users" class="account-section">
-          <h2>Felhasználók kezelése</h2>
+          <h2>Felhasználók</h2>
           <div id="usersContainer">
             <p style="text-align: center; color: #999">Betöltés...</p>
           </div>
@@ -108,7 +108,7 @@
               id="up_password"
               type="password"
               placeholder="Hagyd üresen ha nem változik"
-          /></label>
+            /></label>
           <div class="user-modal-buttons">
             <button id="btnSaveUser" class="btn-confirm">💾 Mentés</button>
             <button id="btnDeleteUser" class="btn-danger">🗑️ Törlés</button>
@@ -175,12 +175,15 @@
         showSection(tabs[currentTabIndex].id);
       }
 
+
+
       async function loadBookings() {
         const container = document.getElementById("bookingsContainer");
         container.innerHTML = '<p style="text-align:center;color:#999">Betöltés...</p>';
         try {
           const res = await fetch("/api/admin/bookings");
           const json = await res.json();
+          console.log("loadBookings:", json);
           if (!res.ok) throw new Error(json.error || "Hiba");
           if (!json.bookings || json.bookings.length === 0) {
             container.innerHTML = '<p style="text-align:center;color:#999">Nincs foglalás.</p>';
@@ -214,6 +217,7 @@
         try {
           const res = await fetch("/api/admin/orders");
           const json = await res.json();
+          console.log("loadOrders:", json);
           if (!res.ok) throw new Error(json.error || "Hiba");
           if (!json.orders || json.orders.length === 0) {
             container.innerHTML = '<p style="text-align:center;color:#999">Nincs rendelés.</p>';
@@ -262,6 +266,7 @@
         try {
           const res = await fetch("/api/admin/users");
           const json = await res.json();
+          console.log("loadUsers:", json);
           if (!res.ok) throw new Error(json.error || "Hiba");
           if (!json.users || json.users.length === 0) {
             container.innerHTML = '<p style="text-align:center;color:#999">Nincsenek felhasználók.</p>';
@@ -403,6 +408,7 @@
         });
       }
 
+
       async function deleteAllOrders() {
         openConfirm("Biztosan TÖRLÖD az ÖSSZES rendelést?", async () => {
           try {
@@ -418,6 +424,7 @@
           }
         });
       }
+      
 
       document.addEventListener("DOMContentLoaded", () => {
         // Initialize tab navigator
