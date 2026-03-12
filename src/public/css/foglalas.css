@@ -13,7 +13,7 @@ body {
   line-height: 1.6;
 }
 
-/* Video háttér */
+/* Videó háttér */
 #hatter_video {
   position: fixed;
   top: 0;
@@ -74,7 +74,7 @@ header nav a:hover {
   color: #3cbcc7;
 }
 
-/* Profile menu */
+/* Profil menü */
 .profile-menu {
   position: relative;
   cursor: pointer;
@@ -170,7 +170,7 @@ header nav a:hover {
   animation: dropdownOpen 0.22s ease forwards;
 }
 
-/* Container */
+/* Kontener */
 .container {
   flex: 1;
   display: flex;
@@ -179,7 +179,7 @@ header nav a:hover {
   padding: 2rem 1rem;
 }
 
-/* Booking card */
+/* Foglalásikártya */
 .booking-card {
   background: rgba(15, 15, 25, 0.45);
   backdrop-filter: blur(12px);
@@ -204,12 +204,12 @@ header nav a:hover {
   font-size: 1.1rem;
 }
 
-/* Hidden */
+/* Rejtett */
 .hidden {
   display: none !important;
 }
 
-/* Form group */
+/* Form csoport */
 .form-group {
   margin-bottom: 1rem;
 }
@@ -236,7 +236,7 @@ header nav a:hover {
   border-color: #3cbcc7;
 }
 
-/* Buttons */
+/* Gombok */
 .btn-primary {
   display: block;
   width: 100%;
@@ -275,7 +275,7 @@ header nav a:hover {
   background: rgba(60, 188, 199, 0.2);
 }
 
-/* Calendar navigation */
+/* Náptár navigáció */
 .calendar-nav {
   display: flex;
   align-items: center;
@@ -304,7 +304,7 @@ header nav a:hover {
   background: rgba(60, 188, 199, 0.4);
 }
 
-/* Calendar table */
+/* Náptár táblázat */
 #calendar-table {
   width: 100%;
   border-collapse: collapse;
@@ -347,7 +347,7 @@ header nav a:hover {
   border-color: #3cbcc7;
 }
 
-/* Times */
+/* Időpontok */
 #selected-date-text {
   color: #3cbcc7;
   margin-bottom: 1rem;
@@ -378,7 +378,7 @@ header nav a:hover {
   border-color: #3cbcc7;
 }
 
-/* Summary box */
+/* Összegzős doboz */
 .summary-box {
   background: rgba(60, 188, 199, 0.1);
   border: 1px solid rgba(60, 188, 199, 0.4);
@@ -462,7 +462,7 @@ header nav a:hover {
   font-size: 1rem;
 }
 
-/* Footer */
+/* Láblic */
 footer {
   text-align: center;
   padding: 1.5rem;
@@ -471,7 +471,7 @@ footer {
   color: #ccc;
 }
 
-/* Responsive */
+/* Reszponzív */
 @media (max-width: 480px) {
   .booking-card {
     padding: 1.5rem;

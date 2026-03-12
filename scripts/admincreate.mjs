@@ -81,7 +81,7 @@ async function main() {
     console.log(" felhasználónév:", user.felhnev);
     process.exit(0);
   } catch (err) {
-    console.error("Error creating admin:", err);
+    console.error("Admin létrehozása hiba:", err);
     process.exit(1);
   } finally {
     await db.$disconnect();

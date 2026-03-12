@@ -28,7 +28,7 @@ body {
   z-index: -2;
 }
 
-/* 🌫️ Overlay */
+/* Overlay */
 body::before {
   content: "";
   position: fixed;
@@ -364,7 +364,7 @@ header nav a:hover {
   transform: scale(0.95);
 }
 
-/* Mobile layout for account page */
+/* En dett látszik */
 @media (max-width: 768px) {
   .account-wrapper {
     flex-direction: column;
@@ -799,7 +799,7 @@ header nav a:hover {
   }
 }
 
-/* ===== BARBER CALENDAR STYLES ===== */
+/* Borbély naptár stílusok */
 .barber-calendar-section {
   margin-bottom: 2rem;
   padding: 1.5rem;
@@ -967,7 +967,7 @@ header nav a:hover {
   background: #666 !important;
 }
 
-/* ===== BARBER BLOCK BUTTONS ===== */
+/* Borbély blokk gombok */
 .btn-block-day,
 .btn-block-hours {
   background: #e74c3c;
@@ -1042,7 +1042,7 @@ header nav a:hover {
   background: #35a9b0;
   transform: scale(1.05);
 }
-/* ===== MOBILOS OPTIMALIZÁCIÓ ===== */
+/* Mobilos optimalizáció */
 @media (max-width: 1024px) {
   .account-wrapper {
     gap: 1rem;
@@ -1137,7 +1137,7 @@ header nav a:hover {
     font-size: 0.8rem;
   }
 
-  /* Barber naptár mobilra */
+  /* Borbély naptár mobilra */
   .barber-calendar-section {
     padding: 1rem;
     margin-bottom: 1.5rem;
@@ -1351,7 +1351,7 @@ header nav a:hover {
     justify-content: flex-start;
   }
 
-  /* Barber naptár nagyon kicsi képernőn */
+  /* Borbély naptár nagyon kicsi képernőn */
   .barber-calendar-section {
     padding: 0.8rem;
     margin-bottom: 1rem;

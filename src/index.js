@@ -1,4 +1,4 @@
-import express, { response } from "express";
+import express from "express";
 import { PrismaClient } from "./generated/prisma/client.js";
 import { getIronSession } from "iron-session";
 import bcrypt from "bcrypt";
@@ -55,32 +55,37 @@ app.get("/fiok", (req, res) => {
     return res.redirect("/bejelentkezes");
   }
 
-  // ha adnmin, akkor az admin felületre vigyen
-  if (req.session.user.role === "ADMIN") {
-    return res.render("admin", { user: req.session.user });
-  }
-
   res.render("fiok", {
     user: req.session.user,
   });
 });
 
-// Foglalás oldal
+app.get("/admin", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/bejelentkezes");
+  }
+
+  // Csak admin felhasználók érhetik el
+  if (req.session.user.role !== "ADMIN") {
+    return res.redirect("/fiok");
+  }
+
+  return res.render("admin", { user: req.session.user });
+});
+
 app.get("/foglalas", (req, res) => {
   res.render("foglalas", { user: req.session.user });
 });
 
-// Webshop oldal
 app.get("/shop", (req, res) => {
   res.render("shop", { user: req.session.user });
 });
 
-// Fizetés oldal
 app.get("/fizetes", (req, res) => {
   res.render("fizetes", { user: req.session.user });
 });
 
-// Lekérdezi a bejelentkezett felhasználó foglalásait
+// Bejelentkezett felhasználó foglalásainak lekérdezése
 app.get("/api/bookings", async (req, res) => {
   const session = req.session;
   if (!session || !session.user) {
@@ -96,12 +101,12 @@ app.get("/api/bookings", async (req, res) => {
     const bookings = rows.map((r) => ({ id: r.id, datetime: r.idopont, service: r.szolgal }));
     return res.json({ ok: true, bookings });
   } catch (err) {
-    console.error("Error fetching bookings:", err);
+    console.error("Hiba a foglalások lekérdezésekor:", err);
     return res.status(500).json({ error: "Nem sikerült lekérni a foglalásokat." });
   }
 });
 
-// Borbélyok listája - BARBER role-al rendelkező felhasználók — a foglalás űrlap lekéri
+// Borbélyek listájának lekérdezése
 app.get("/api/barbers", async (req, res) => {
   try {
     const rows = await db.felhasznalok.findMany({
@@ -112,12 +117,12 @@ app.get("/api/barbers", async (req, res) => {
     const names = rows.map((r) => r.felhnev);
     return res.json({ ok: true, barbers: names });
   } catch (err) {
-    console.error("Error fetching barbers:", err);
+    console.error("Hiba a borbélyek lekérdezésekor:", err);
     return res.status(500).json({ error: "Nem sikerült lekérni a borbélyokat." });
   }
 });
 
-// Rendelések lekérése
+// Rendelések lekérdezése
 app.get("/api/orders", async (req, res) => {
   const session = req.session;
   if (!session || !session.user) {
@@ -132,15 +137,15 @@ app.get("/api/orders", async (req, res) => {
 
     return res.json({ ok: true, orders: rows });
   } catch (err) {
-    console.error("Error fetching orders:", err);
+    console.error("Hiba a rendelések lekérdezésekor:", err);
     return res.status(500).json({ error: "Nem sikerült lekérni a rendeléseket." });
   }
 });
 
-// Admin-only: list all bookings with user info
+// Admin: összes foglalás felhasználó adatokkal
 app.get("/api/admin/bookings", async (req, res) => {
   const session = req.session;
-  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Hozzáférés megtagadva" });
 
   try {
     const rows = await db.idopont.findMany({ orderBy: { idopont: "asc" } });
@@ -157,15 +162,15 @@ app.get("/api/admin/bookings", async (req, res) => {
     }));
     return res.json({ ok: true, bookings });
   } catch (err) {
-    console.error("Admin bookings error:", err);
+    console.error("Admin foglalások hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Admin-only: list all orders with user info
+// Admin: összes rendelés felhasználó adatokkal
 app.get("/api/admin/orders", async (req, res) => {
   const session = req.session;
-  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Hozzáférés megtagadva" });
   try {
     const rows = await db.rendeles.findMany({ orderBy: { createdAt: "desc" } });
     const userIds = Array.from(new Set(rows.map((r) => r.felhaszid)));
@@ -176,16 +181,16 @@ app.get("/api/admin/orders", async (req, res) => {
     const orders = rows.map((r) => ({ ...r, user: userMap[r.felhaszid] || null }));
     return res.json({ ok: true, orders });
   } catch (err) {
-    console.error("Admin orders error:", err);
+    console.error("Admin rendelések hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Admin-only: delete a single order
+// Admin: egy rendelés törlése
 app.delete("/api/admin/order/:id", async (req, res) => {
   const session = req.session;
   if (!session || !session.user || session.user.role !== "ADMIN") {
-    return res.status(403).json({ error: "Forbidden" });
+    return res.status(403).json({ error: "Hozzáférés megtagadva" });
   }
 
   const id = parseInt(req.params.id);
@@ -197,32 +202,32 @@ app.delete("/api/admin/order/:id", async (req, res) => {
     await db.rendeles.delete({ where: { id } });
     return res.json({ ok: true });
   } catch (err) {
-    console.error("Admin delete order error:", err);
+    console.error("Admin rendelés törlése hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Admin-only: delete all orders
+// Admin: összes rendelés törlése
 app.delete("/api/admin/orders", async (req, res) => {
   const session = req.session;
   if (!session || !session.user || session.user.role !== "ADMIN") {
-    return res.status(403).json({ error: "Forbidden" });
+    return res.status(403).json({ error: "Hozzáférés megtagadva" });
   }
 
   try {
     const result = await db.rendeles.deleteMany({});
     return res.json({ ok: true, deleted: result.count });
   } catch (err) {
-    console.error("Admin delete all orders error:", err);
+    console.error("Admin összes rendelés törlése hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Admin-only: delete a single booking
+// Admin: egy foglalás törlése
 app.delete("/api/admin/booking/:id", async (req, res) => {
   const session = req.session;
   if (!session || !session.user || session.user.role !== "ADMIN") {
-    return res.status(403).json({ error: "Forbidden" });
+    return res.status(403).json({ error: "Hozzáférés megtagadva" });
   }
 
   const id = parseInt(req.params.id);
@@ -234,31 +239,31 @@ app.delete("/api/admin/booking/:id", async (req, res) => {
     await db.idopont.delete({ where: { id } });
     return res.json({ ok: true });
   } catch (err) {
-    console.error("Admin delete booking error:", err);
+    console.error("Admin foglalás törlése hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Admin-only: delete all bookings
+// Admin: összes foglalás törlése
 app.delete("/api/admin/bookings", async (req, res) => {
   const session = req.session;
   if (!session || !session.user || session.user.role !== "ADMIN") {
-    return res.status(403).json({ error: "Forbidden" });
+    return res.status(403).json({ error: "Hozzáférés megtagadva" });
   }
 
   try {
     const result = await db.idopont.deleteMany({});
     return res.json({ ok: true, deleted: result.count });
   } catch (err) {
-    console.error("Admin delete all bookings error:", err);
+    console.error("Admin összes foglalás törlése hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Admin-only: list all users
+// Admin: összes felhasználó listázása
 app.get("/api/admin/users", async (req, res) => {
   const session = req.session;
-  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Hozzáférés megtagadva" });
   try {
     const users = await db.felhasznalok.findMany({ orderBy: { id: "asc" } });
     const sanitized = users.map((u) => ({
@@ -271,15 +276,15 @@ app.get("/api/admin/users", async (req, res) => {
     }));
     return res.json({ ok: true, users: sanitized });
   } catch (err) {
-    console.error("Admin users error:", err);
+    console.error("Admin felhasználók hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Admin-only: update user basic fields
+// Admin: felhasználó adatainak módosítása
 app.post("/api/admin/user/:id/update", urlencodedParser, async (req, res) => {
   const session = req.session;
-  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Hozzáférés megtagadva" });
   const id = parseInt(req.params.id);
   const { felhnev, email, telefonszam, role, emailVerified } = req.body || {};
   try {
@@ -292,43 +297,43 @@ app.post("/api/admin/user/:id/update", urlencodedParser, async (req, res) => {
     const user = await db.felhasznalok.update({ where: { id }, data });
     return res.json({ ok: true, user: { id: user.id, felhnev: user.felhnev, email: user.email } });
   } catch (err) {
-    console.error("Admin update user error:", err);
+    console.error("Admin felhasználó módosítási hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Admin-only: change password
+// Admin: jelszó módosítása
 app.post("/api/admin/user/:id/password", urlencodedParser, async (req, res) => {
   const session = req.session;
-  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Hozzáférés megtagadva" });
   const id = parseInt(req.params.id);
   const { password } = req.body || {};
-  if (!password) return res.status(400).json({ error: "Missing password" });
+  if (!password) return res.status(400).json({ error: "Hiányzó jelszó" });
   try {
     const hash = await bcrypt.hash(String(password), 12);
     await db.felhasznalok.update({ where: { id }, data: { hash } });
     return res.json({ ok: true });
   } catch (err) {
-    console.error("Admin change password error:", err);
+    console.error("Admin jelszó módosítási hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Admin-only: delete user
+// Admin: felhasználó törlése
 app.delete("/api/admin/user/:id", async (req, res) => {
   const session = req.session;
-  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Forbidden" });
+  if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Hozzáférés megtagadva" });
   const id = parseInt(req.params.id);
   try {
     await db.felhasznalok.delete({ where: { id } });
     return res.json({ ok: true });
   } catch (err) {
-    console.error("Admin delete user error:", err);
+    console.error("Admin felhasználó törlési hiba:", err);
     return res.status(500).json({ error: "Hiba történt." });
   }
 });
 
-// Rendelés mentése
+// Rendelés mentése az adatbázisba
 app.post("/api/order", urlencodedParser, async (req, res) => {
   const session = req.session;
   if (!session || !session.user) {
@@ -353,16 +358,9 @@ app.post("/api/order", urlencodedParser, async (req, res) => {
 
     return res.json({ ok: true });
   } catch (err) {
-    console.error("Order save error:", err);
+    console.error("Rendelés mentési hiba:", err);
     return res.status(500).json({ error: "Nem sikerült menteni a rendelést." });
   }
-});
-
-app.get("/api/hashTest", async (req, res) => {
-  const hash = "$2a$12$09Hzf8/4jh/ODF6i84pXTe5uERYADJkAdtOT9DJiZa/6IcXOhOYGO"; // hash for "hello"
-
-  const isMatch = await bcrypt.compare("hello1", hash);
-  res.send(`Password match: ${isMatch}`);
 });
 
 app.post("/api/login", async (req, res) => {
@@ -376,7 +374,7 @@ app.post("/api/login", async (req, res) => {
   });
 
   if (!user) {
-    // Ne áruld el, hogy nem létezik a felhasználó
+    // Biztonsági oka: ne áruljuk el, hogy melyik adat nem helyes
     return res.status(401).json({ error: "Hibás felhasználónév vagy jelszó!" });
   }
 
@@ -385,12 +383,11 @@ app.post("/api/login", async (req, res) => {
     return res.status(401).json({ error: "Hibás felhasználónév vagy jelszó!" });
   }
 
-  // Sikeres belépés: mentsük a session-t (ne tegyünk bele érzékeny adatokat)
+  // Sikeres belépés: session mentése (só érzékeny adatok tárolása nélkül)
   const session = req.session;
   session.user = { id: user.id, felhnev: user.felhnev, email: user.email, pnumber: user.telefonszam, role: user.role };
   await session.save();
 
-  // Válasz JSON-nal, a kliens átirányít
   return res.json({ ok: true });
 });
 
@@ -409,9 +406,9 @@ app.post("/api/register", urlencodedParser, async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  // generate email verification token
+  // E-mail megerősítési token generálása (24 óra érvényes)
   const token = crypto.randomBytes(32).toString("hex");
-  const expiry = new Date(Date.now() + 24 * 3600 * 1000); // 24h
+  const expiry = new Date(Date.now() + 24 * 3600 * 1000);
 
   const user = await db.felhasznalok.create({
     data: {
@@ -426,18 +423,17 @@ app.post("/api/register", urlencodedParser, async (req, res) => {
     },
   });
 
-  // send verification email (fire-and-forget)
+  // Megerősítési e-mail küldése
   try {
     await sendVerificationEmail(user.email, user.felhnev, token);
   } catch (err) {
-    console.error("Failed to send verification email:", err);
+    console.error("Megerősítési e-mail küldési hiba:", err);
   }
 
-  // Redirect to login page with a message to check email
   res.redirect("/bejelentkezes");
 });
 
-// Email sender helper (uses SMTP configured via env)
+// E-mail küldés segédfüggvény (SMTP konfiguráció az .env fájlban)
 async function sendVerificationEmail(email, username, token) {
   const host = process.env.SMTP_HOST;
   const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
@@ -464,10 +460,10 @@ async function sendVerificationEmail(email, username, token) {
       <p>A link 24 óráig érvényes.</p>`,
   });
 
-  console.log("Verification email sent:", info.messageId);
+  console.log("Megerősítési e-mail elküldve:", info.messageId);
 }
 
-// Verify endpoint
+// E-mail megerősítési végpont
 app.get("/verify", async (req, res) => {
   const token = req.query.token;
   if (!token) return res.status(400).send("Hiányzó token.");
@@ -485,35 +481,34 @@ app.get("/verify", async (req, res) => {
       data: { emailVerified: true, verifyToken: null, verifyTokenExpiry: null },
     });
 
-    // redirect to login with a success message (could show a page instead)
     return res.redirect("/bejelentkezes");
   } catch (err) {
-    console.error("Verification error:", err);
+    console.error("Megerősítési hiba:", err);
     return res.status(500).send("Hiba történt a megerősítéskor.");
   }
 });
 
-// Elérhető időpontok lekérése egy adott napra
+// Elérhető időpontok lekérdezése egy adott napra
 app.get("/api/available-times/:date", async (req, res) => {
   try {
     const { date } = req.params;
 
-    // Validáció: YYYY-MM-DD format
+    // Formátum ellenőrzés: YYYY-MM-DD
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).json({ error: "Érvénytelen dátum formátum." });
     }
 
-    // Nap típusának meghatározása
+    // A nap típusának meghatározása
     const dateObj = new Date(date);
-    const dayOfWeek = dateObj.getDay(); // 0 = vasárnap, 6 = szombat
+    const dayOfWeek = dateObj.getDay();
 
-    // Vasárnap zárva
+    // Vasárnap zárva van
     if (dayOfWeek === 0) {
       return res.json({ ok: true, available: [], booked: [], closed: true });
     }
 
-    // Időpontok generálása a nap típusa alapján
-    // Szombat: 9:00-15:00, Hétköznap: 9:00-20:00
+    // Időpontok generálása
+    // Szombat: 9:00-15:00, Hétköznapok: 9:00-20:00
     const timeSlots = [];
     const endHour = dayOfWeek === 6 ? 15 : 20;
     for (let h = 9; h < endHour; h++) {
@@ -524,11 +519,9 @@ app.get("/api/available-times/:date", async (req, res) => {
       }
     }
 
-    // Lekérdezzük a foglalt időpontokat az adott napra
+    // Foglalt időpontok lekérdezése
     const startOfDay = new Date(`${date}T00:00:00Z`);
     const endOfDay = new Date(`${date}T23:59:59Z`);
-
-    // Borbély szűrés (query param)
     const barber = req.query.barber;
 
     const bookedSlots = await db.idopont.findMany({
@@ -541,17 +534,14 @@ app.get("/api/available-times/:date", async (req, res) => {
       select: { idopont: true, szolgal: true },
     });
 
-    // Az idopontokat szöveggé konvertáljuk (HH:mm) - csak az adott borbélynál
     const bookedTimes = bookedSlots
       .filter((b) => {
-        // Blokkolt időpontok kezelése (BARBER_BLOCKED|barber_name formátum)
         if (b.szolgal && b.szolgal.startsWith("BARBER_BLOCKED|")) {
-          if (!barber) return true; // Ha nincs borbély megadva, minden blokk számít
+          if (!barber) return true;
           const blockedBarber = b.szolgal.split("|")[1];
           return blockedBarber === barber;
         }
-        // Normál foglalások: csak az adott borbélynál szűrünk
-        if (!barber) return true; // Ha nincs borbély megadva, minden foglalás számít
+        if (!barber) return true;
         const bookedBarber = b.szolgal ? b.szolgal.split("|")[0] : null;
         return bookedBarber === barber;
       })
@@ -562,17 +552,16 @@ app.get("/api/available-times/:date", async (req, res) => {
         return `${hour}:${minute}`;
       });
 
-    // Szabad időpontok
     const availableTimes = timeSlots.filter((t) => !bookedTimes.includes(t));
 
     return res.json({ ok: true, available: availableTimes, booked: bookedTimes });
   } catch (err) {
-    console.error("Error fetching available times:", err);
+    console.error("Hiba az elérhető időpontok lekérdezésekor:", err);
     return res.status(500).json({ error: "Nem sikerült lekérni az elérhető időpontokat." });
   }
 });
 
-// Teli napok lekérése egy hónapra (ahol már nincs szabad időpont)
+// Teljesen lefoglalt napok lekérdezése egy hónapra
 app.get("/api/full-days/:year/:month", async (req, res) => {
   try {
     const year = parseInt(req.params.year);
@@ -646,7 +635,7 @@ app.get("/api/full-days/:year/:month", async (req, res) => {
 
     return res.json({ ok: true, fullDays, sundays });
   } catch (err) {
-    console.error("Error fetching full days:", err);
+    console.error("Teljesen lefoglalt napok lekérdezési hiba:", err);
     return res.status(500).json({ error: "Nem sikerült lekérni a teli napokat." });
   }
 });
@@ -667,7 +656,7 @@ app.post("/api/booking", urlencodedParser, async (req, res) => {
   const chosenService = service && String(service).trim() ? String(service).trim() : null;
   const chosenBarber = barber && String(barber).trim() ? String(barber).trim() : null;
 
-  // Parse date + time and construct a Date in UTC to avoid timezone shifts
+  // Dátum és idő feldolgozása, UTC-vel az időzóna-eltolódások elkerüléséhez
   const [y, m, d] = String(date)
     .split("-")
     .map((v) => Number(v));
@@ -838,7 +827,7 @@ app.delete("/api/barber/booking/:id", async (req, res) => {
 
     return res.json({ ok: true, message: "Foglalás sikeresen lemondva." });
   } catch (err) {
-    console.error("Barber booking delete error:", err);
+    console.error("Borbély foglalás törlési hiba:", err);
     return res.status(500).json({ error: "Nem sikerült törölni a foglalást." });
   }
 });
@@ -903,7 +892,7 @@ app.get("/api/barber/blocked-days/:year/:month", async (req, res) => {
 
     return res.json({ ok: true, fullyBlockedDays, partialBlockedDays });
   } catch (err) {
-    console.error("Error fetching blocked days:", err);
+    console.error("Blokkolva napok lekérdezési hiba:", err);
     return res.status(500).json({ error: "Nem sikerült lekérni az adatokat." });
   }
 });
@@ -962,7 +951,7 @@ app.get("/api/barber/times/:date", async (req, res) => {
 
     return res.json({ ok: true, times: timesWithStatus });
   } catch (err) {
-    console.error("Error fetching barber times:", err);
+    console.error("Borbély időpontok lekérdezési hiba:", err);
     return res.status(500).json({ error: "Nem sikerült lekérni az adatokat." });
   }
 });
@@ -1012,7 +1001,7 @@ app.post("/api/barber/toggle-time", async (req, res) => {
       return res.json({ ok: true, message: "Időpont blokkolva" });
     }
   } catch (err) {
-    console.error("Error toggling barber time:", err);
+    console.error("Borbély időpont váltogatási hiba:", err);
     return res.status(500).json({ error: "Nem sikerült módosítani az időpontot." });
   }
 });
@@ -1100,11 +1089,11 @@ app.post("/api/barber/block-day", async (req, res) => {
       return res.json({ ok: true, action: "blocked", message: "Nap blokkolva" });
     }
   } catch (err) {
-    console.error("Error blocking day:", err);
+    console.error("Nap blokkolása hiba:", err);
     return res.status(500).json({ error: "Nem sikerült módosítani a nap státuszát." });
   }
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Szerver hallgatózik a ${port} porton`);
 });

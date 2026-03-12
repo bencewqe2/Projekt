@@ -185,7 +185,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\nemethb\\Desktop\\fasz\\Projekt\\src\\generated\\prisma",
+      "value": "C:\\Users\\Felhasználó\\Desktop\\vizsgaremek_v8\\Projekt\\src\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -199,7 +199,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\nemethb\\Desktop\\fasz\\Projekt\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\Felhasználó\\Desktop\\vizsgaremek_v8\\Projekt\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -213,7 +213,6 @@ const config = {
     "db"
   ],
   "activeProvider": "mysql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {

@@ -255,7 +255,11 @@
                   <p><strong>Termékek:</strong></p>
                   <ul>
                     ${JSON.parse(order.products || "[]")
-                      .map((p) => `<li>${p.name} - ${p.price}</li>`)
+                      .map((p) => {
+                        const quantity = p.quantity || 1;
+                        const itemTotal = p.price * quantity;
+                        return `<li>${p.name}${quantity > 1 ? ` ×${quantity}` : ''} - ${itemTotal.toLocaleString("hu-HU")} Ft</li>`;
+                      })
                       .join("")}
                   </ul>
                   <p><strong>Szállítás:</strong> ${order.shippingType === "home" ? "🚚 Házhoz szállítás" : "🏪 Átvétel"}</p>

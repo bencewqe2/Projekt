@@ -124,7 +124,12 @@
             <ul class="dropdown" aria-hidden="true">
               <% if (user) { %>
               <li style="padding: 0.6rem 1rem; color: #3cbcc7; font-weight: 700"><%= user.felhnev %></li>
-              <li><a href="/fiok"><%= (user && user.role === 'ADMIN') ? 'Admin Panel' : 'Fiók' %></a></li>
+              <% if (user && user.role === 'ADMIN') { %>
+              <li><a href="/fiok">Fiók</a></li>
+              <li><a href="/admin">Admin Panel</a></li>
+              <% } else { %>
+              <li><a href="/fiok">Fiók</a></li>
+              <% } %>
               <li>
                 <form action="/api/logout" method="get">
                   <button type="submit" class="logout-btn">Kijelentkezés</button>
@@ -333,7 +338,7 @@
           itemsHtml = '<div class="cart-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>A kosár üres</span></div>';
         } else {
           cart.forEach((item, index) => {
-            const price = parseInt(item.price.replace(/\D/g, "")) || 0;
+            const price = typeof item.price === "number" ? item.price : parseInt((item.price || "").toString().replace(/\D/g, "")) || 0;
             const quantity = item.quantity || 1;
             const itemTotal = price * quantity;
             total += itemTotal;
@@ -431,6 +436,9 @@
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
         const existingItem = cart.find(item => item.name === currentProductData.name);
         
+        // Az árat szám formátumban tárolunk (nem szövegként)
+        const priceNum = parseInt(currentProductData.price.replace(/\D/g, "")) || 0;
+        
         if (existingItem) {
           const newTotal = (existingItem.quantity || 1) + quantity;
           if (newTotal > 5) {
@@ -441,7 +449,7 @@
         } else {
           cart.push({
             name: currentProductData.name,
-            price: currentProductData.price,
+            price: priceNum,
             quantity: quantity
           });
         }

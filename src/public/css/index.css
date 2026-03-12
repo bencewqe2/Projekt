@@ -24,7 +24,7 @@ body {
   z-index: -2;
 }
 
-/* 🌫️ Áttetsző sötét réteg a szöveg olvashatóságához */
+/* Áttetsző sötét réteg a szöveg olvashatóságához */
 body::before {
   content: "";
   position: fixed;
@@ -293,7 +293,7 @@ footer {
   align-items: center;
 }
 
-/* PROFIL IKON */
+/* Profil ikon */
 .profile-menu {
   position: relative;
   cursor: pointer;
@@ -390,7 +390,7 @@ footer {
   animation: dropdownOpen 0.22s ease forwards;
 }
 
-/* KOSÁR IKON */
+/* Kosár ikon */
 .cart-menu {
   position: relative;
   cursor: pointer;
@@ -442,7 +442,7 @@ footer {
     padding: 0 6px;
   }
 
-  /* avoid content being hidden under fixed top nav */
+  /* képenyő alatt rejtve tartalmazás elkerülése */
   body {
     padding-top: 56px;
   }
@@ -539,7 +539,7 @@ footer {
   border: 1px solid rgba(60, 188, 199, 0.25);
 }
 
-/* Items wrap */
+/* Ékek wrap */
 .cart-items-wrap {
   max-height: 260px;
   overflow-y: auto;
@@ -571,7 +571,7 @@ footer {
   opacity: 0.7;
 }
 
-/* Cart item row */
+/* Kosár tétel sor */
 .cart-item {
   display: flex;
   align-items: center;
@@ -649,7 +649,7 @@ footer {
   border-color: #e74c3c;
 }
 
-/* Total row */
+/* Összesen sor */
 .cart-total-row {
   display: flex;
   justify-content: space-between;

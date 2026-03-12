@@ -123,7 +123,12 @@
             <ul class="dropdown" aria-hidden="true">
               <% if (user) { %>
               <li style="padding: 0.6rem 1rem; color: #3cbcc7; font-weight: 700"><%= user.felhnev %></li>
-              <li><a href="/fiok"><%= (user && user.role === 'ADMIN') ? 'Admin Panel' : 'Fiók' %></a></li>
+              <% if (user && user.role === 'ADMIN') { %>
+              <li><a href="/fiok">Fiók</a></li>
+              <li><a href="/admin">Admin Panel</a></li>
+              <% } else { %>
+              <li><a href="/fiok">Fiók</a></li>
+              <% } %>
               <li>
                 <form action="/api/logout" method="get">
                   <button type="submit" class="logout-btn">Kijelentkezés</button>
@@ -156,19 +161,15 @@
       <div class="service-list">
         <div class="service">
           <h3>Hajvágás</h3>
-          <p>Ár: 5000 Ft</p>
+          <p>Ár: 4000 Ft</p>
         </div>
         <div class="service">
           <h3>Szakállvágás</h3>
           <p>Ár: 3000 Ft</p>
         </div>
         <div class="service">
-          <h3>Borotválás</h3>
-          <p>Ár: 4000 Ft</p>
-        </div>
-        <div class="service">
-          <h3>Férfi frizura & Szakáll csomag</h3>
-          <p>Ár: 8000 Ft</p>
+          <h3>Haj + szakáll</h3>
+          <p>Ár: 6500 Ft</p>
         </div>
       </div>
     </section>
