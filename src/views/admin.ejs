@@ -22,68 +22,47 @@
       </button>
 
       <nav id="mainNav">
-        <ul>
-          <li><a href="/">Főoldal</a></li>
+        <ul class="nav-list">
+          <!-- ADMIN PROFIL (mobilon felül) -->
+          <li class="profile-menu mobile-profile-top">
+            <div class="mobile-profile-header">
+              <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="mobile-profile-icon" alt="Admin" />
+              <span class="mobile-profile-toggle">Fiók ▼</span>
+            </div>
+            <ul class="mobile-profile-submenu">
+              <li><a href="#">Fiók részletek</a></li>
+              <li><a href="/fiok">Vissza a Fiók-ra</a></li>
+            </ul>
+          </li>
         </ul>
       </nav>
     </header>
 
     <div class="account-header">Admin: <%= user.felhnev %></div>
 
-    <div class="account-wrapper" style="flex-direction: column; gap: 0">
-      <!-- Tab Navigator -->
+    <div class="account-wrapper" style="flex-direction: column; max-width: 900px;">
+      <!-- Tab Navigator - Admin panelhez nem kell, mivel csak egy tab van -->
       <div class="account-tab-navigator">
         <button id="tab-prev-btn" class="tab-arrow-btn">◀</button>
-        <span id="tab-title-display" class="tab-title-display">Foglalások</span>
+        <span id="tab-title-display" class="tab-title-display">Fiók részletek</span>
         <button id="tab-next-btn" class="tab-arrow-btn">▶</button>
       </div>
 
       <main class="account-content">
         <section id="bookings" class="account-section active">
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 1rem;
-              gap: 0.5rem;
-              flex-wrap: wrap;
-            ">
-            <h2 style="margin: 0">Foglalások</h2>
-            <button onclick="deleteAllBookings()" class="btn-cancel-all" title="Összes foglalás törlése">
-              🗑️ Összes törlése
-            </button>
-          </div>
-          <div id="bookingsContainer">
-            <p style="text-align: center; color: #999">Betöltés...</p>
-          </div>
-        </section>
-
-        <section id="orders" class="account-section">
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 1rem;
-              gap: 0.5rem;
-              flex-wrap: wrap;
-            ">
-            <h2 style="margin: 0">Rendelések</h2>
-            <button onclick="deleteAllOrders()" class="btn-cancel-all" title="Összes rendelés törlése">
-              🗑️ Összes törlése
-            </button>
-          </div>
-          <div id="ordersContainer">
-            <p style="text-align: center; color: #999">Betöltés...</p>
-          </div>
+          <h2>Foglalások kezelése</h2>
+          <div id="bookingsContainer"></div>
         </section>
 
         <section id="users" class="account-section">
-          <h2>Felhasználók</h2>
-          <div id="usersContainer">
-            <p style="text-align: center; color: #999">Betöltés...</p>
-          </div>
+          <h2>Felhasználók kezelése</h2>
+          <div id="usersContainer"></div>
+        </section>
+
+        <section id="orders" class="account-section">
+          <h2>Rendelések kezelése</h2>
+          <button onclick="deleteAllOrders()" class="btn-danger" style="margin-bottom: 1rem;">🗑️ Az összes rendelés törlése</button>
+          <div id="ordersContainer"></div>
         </section>
       </main>
     </div>
@@ -134,11 +113,14 @@
     </div>
 
     <script>
-      // Tab System
+      // Az aktuális bejelentkezett admin ID-je
+      const currentAdminId = <%= user.id %>;
+      
+      // Tab System - Admin panelhez csak az "info" tab kell
       const tabs = [
         { id: "bookings", label: "Foglalások" },
-        { id: "orders", label: "Rendelések" },
         { id: "users", label: "Felhasználók" },
+        { id: "orders", label: "Rendelések" }
       ];
       let currentTabIndex = 0;
 
@@ -163,11 +145,6 @@
         if (currentTab) {
           document.getElementById("tab-title-display").textContent = currentTab.label;
         }
-
-        // Load data if needed
-        if (id === "bookings") loadBookings();
-        if (id === "orders") loadOrders();
-        if (id === "users") loadUsers();
       }
 
       function navigateTab(direction) {
@@ -314,6 +291,17 @@
         document.getElementById("up_telefonszam").value = u.telefonszam || "";
         document.getElementById("up_role").value = u.role || "USER";
         document.getElementById("up_password").value = "";
+        
+        // Ha az admin saját magát szerkeszti, a role selectet letiltjuk
+        const roleSelect = document.getElementById("up_role");
+        const isOwnProfile = id === currentAdminId;
+        roleSelect.disabled = isOwnProfile;
+        if (isOwnProfile) {
+          roleSelect.title = "Nem módosíthatod a saját jogosultságodat";
+        } else {
+          roleSelect.title = "";
+        }
+        
         document.getElementById("userModal").style.display = "flex";
         document.getElementById("userModal").dataset.userId = id;
       }
@@ -433,6 +421,11 @@
 
         // Initialize first tab
         showSection("bookings");
+        
+        // Load data
+        loadBookings();
+        loadUsers();
+        loadOrders();
 
         // Bezárás gomb
         document.getElementById("btnClosePanel").addEventListener("click", () => {

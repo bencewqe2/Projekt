@@ -62,7 +62,7 @@
             <div class="mobile-profile-header">
               <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="mobile-profile-icon" alt="Profil" />
               <% if (user) { %>
-              <span class="mobile-profile-toggle"><%= (user && user.role === 'ADMIN') ? 'Admin Panel' : 'Fiók' %> ▼</span>
+              <span class="mobile-profile-toggle">Fiók ▼</span>
               <% } else { %>
               <a href="/bejelentkezes">Bejelentkezés</a>
               <% } %>
@@ -70,8 +70,12 @@
             <% if (user) { %>
             <ul class="mobile-profile-submenu">
               <li><a href="/fiok">Fiók részletek</a></li>
+              <% if (user && user.role === 'ADMIN') { %>
+              <li><a href="/admin">Admin Panel</a></li>
+              <% } else { %>
               <li><a href="/fiok#foglalasaim">Foglalásaim</a></li>
               <li><a href="/fiok#rendeleseim">Rendeléseim</a></li>
+              <% } %>
             </ul>
             <% } %>
           </li>
@@ -392,22 +396,6 @@
           document.querySelectorAll(".cart-menu").forEach(cm => cm.classList.remove("open"));
           document.querySelectorAll(".cart-dropdown").forEach(cd => cd.setAttribute("aria-hidden", "true"));
         });
-
-        // Mobil profil almenü toggle
-        const mobileProfileHeader = document.querySelector(".mobile-profile-header");
-        const mobileProfileSubmenu = document.querySelector(".mobile-profile-submenu");
-        const mobileProfileToggle = document.querySelector(".mobile-profile-toggle");
-        
-        if (mobileProfileHeader && mobileProfileSubmenu) {
-          mobileProfileHeader.addEventListener("click", (e) => {
-            e.stopPropagation();
-            mobileProfileSubmenu.classList.toggle("open");
-            // Nyíl irány váltás
-            if (mobileProfileToggle) {
-              mobileProfileToggle.textContent = mobileProfileSubmenu.classList.contains("open") ? "Fiók ▲" : "Fiók ▼";
-            }
-          });
-        }
       });
     </script>
     <script src="/js/mobileNav.js"></script>

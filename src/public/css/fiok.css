@@ -76,6 +76,11 @@ header nav a:hover {
   color: #3cbcc7;
 }
 
+/* ===== MOBILE PROFIL MENÜ (csak mobilon) ===== */
+.mobile-profile-top {
+  display: none !important;
+}
+
 /* ===== ÜDV ===== */
 .account-header {
   max-width: 1100px;
@@ -381,6 +386,59 @@ header nav a:hover {
   }
   #hatter_video {
     display: none;
+  }
+
+  .mobile-profile-top {
+    display: flex !important;
+    flex-direction: column;
+    padding: 0 !important;
+    border-bottom: 2px solid rgba(60, 188, 199, 0.4) !important;
+    background: rgba(60, 188, 199, 0.1);
+  }
+
+  .mobile-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+  }
+
+  .mobile-profile-top .mobile-profile-icon {
+    width: 22px;
+    height: 22px;
+    filter: invert(1);
+  }
+
+  .mobile-profile-toggle {
+    font-size: 1.1rem;
+    color: #3cbcc7;
+    pointer-events: auto;
+  }
+
+  .mobile-profile-submenu {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .mobile-profile-submenu.open {
+    display: block;
+  }
+
+  .mobile-profile-submenu li a {
+    display: block;
+    padding: 0.8rem 1.5rem 0.8rem 3rem;
+    font-size: 1rem;
+    color: #8ad4db;
+    text-decoration: none;
+  }
+
+  .mobile-profile-submenu li a:hover {
+    color: #3cbcc7;
+    background: rgba(60, 188, 199, 0.1);
   }
 }
 

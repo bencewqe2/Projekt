@@ -287,6 +287,12 @@ app.post("/api/admin/user/:id/update", urlencodedParser, async (req, res) => {
   if (!session || !session.user || session.user.role !== "ADMIN") return res.status(403).json({ error: "Hozzáférés megtagadva" });
   const id = parseInt(req.params.id);
   const { felhnev, email, telefonszam, role, emailVerified } = req.body || {};
+  
+  // Az admin nem tudja megváltoztatni a saját szerepét
+  if (id === session.user.id && role !== undefined && role !== session.user.role) {
+    return res.status(403).json({ error: "Nem módosíthatod a saját jogosultságodat" });
+  }
+  
   try {
     const data = {};
     if (felhnev !== undefined) data.felhnev = String(felhnev);
