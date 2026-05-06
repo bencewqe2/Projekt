@@ -1,0 +1,21 @@
+=========Adatbazis setup(mariadb)=========
+
+- Nyisd meg a HeidiSQL-t
+- Hozz létre egy adatbázist Beachbarbeshop néven
+- A frissites gomb mellett levo "Felhasznaloi hitelesitesek es jogosultsagok kezelese" menupontra kattintva hozz letre egy fiokot ezekkel a pontokkal:
+
+	- Felhasznalonev: Beachbarbershop
+	- Jelszo: Beachbarbershop
+
+- Miután létrehoztad add hozza objektumkent a Beachbarbshop adatbázist amit krealtal és pipáld be a mellette levo dobozt majd mentsed el
+	
+- Nyisd meg a projektet Visual Studio-ba és indits azon belul egy konzolt majd ird be "npx prisma db push" miután fel push-olta schema-ba levo adatokat ird be a kovetkezot "npx prisma generate" és kesz vagy
+
+=============================================
+
+============== Projekt elinditasa ===========
+
+- Nyisd meg a projekt mappajat Visual Studioba es azon belul nyiss meg egy konzolt
+
+- Ird be a konzolba a kovetkezot 'npm run dev' , ezzel nodemon-al inditod el a projektet
+- Nyiss meg egy bongeszot és a keresobe címnek ird be , hogy 'localhost:3000' és keszen vagy
